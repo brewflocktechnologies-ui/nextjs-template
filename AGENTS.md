@@ -102,7 +102,7 @@ Use `.github/pull_request_template.md`. Every PR states the spec and task IDs, t
 
 - Do not edit `docs/architecture/ARCHITECTURE-001-*.md`. Propose changes in `SPECS/DECISIONS.md` and cite the section.
 - An ADR with `Status: Accepted` is immutable except for its status line, a "Superseded by" link and its `<!-- verification -->` block. Supersede it with a new ADR instead. CI enforces this.
-- Generated files are committed and never hand-edited: `apps/web/next-env.d.ts` and `apps/web/AGENTS.md` (written by `next dev`), and from later phases the design-token outputs, `libs/theme/schema/theme.v1.json` and `shadcn-bridge.css`.
+- Generated files are committed and never hand-edited: `apps/admin-dashboard/next-env.d.ts` and `apps/admin-dashboard/AGENTS.md` (written by `next dev`; restore `next-env.d.ts` before committing, since `next dev` and `next build` write different paths into it), and from later phases the design-token outputs, `libs/theme/schema/theme.v1.json` and `shadcn-bridge.css`.
 - Next.js 16 has breaking changes against older App Router versions. Check `node_modules/next/dist/docs/` before relying on remembered APIs.
 
 ## Windows
@@ -110,7 +110,7 @@ Use `.github/pull_request_template.md`. Every PR states the spec and task IDs, t
 The product owner develops on Windows 11, so Windows is a first-class environment.
 
 - All scripts are Node; never assume bash, curl or GNU tools. Build paths with `path.join`.
-- Line endings are LF everywhere (`.gitattributes`, Prettier `endOfLine: lf`). If a fresh clone shows every file modified, run `git config core.autocrlf false` and check out again.
+- Line endings are LF everywhere (`.gitattributes`, Prettier `endOfLine: lf`). `.gitattributes` keeps a clone clean even with `core.autocrlf=true`; only if a clone still shows every file modified, run `git config core.autocrlf false` and check out again.
 - Use one checkout per environment: native Windows or WSL2, not both on the same folder.
 - Do not change the local ports in `SPECS/validation/local-stack.md`; the widget's preview mode is pinned to the dashboard origin.
 
