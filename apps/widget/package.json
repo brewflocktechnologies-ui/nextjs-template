@@ -1,0 +1,16 @@
+{
+  "name": "@byteflock/widget",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "tags": [
+      "type:app",
+      "scope:widget",
+      "platform:lit"
+    ]
+  },
+  "dependencies": {
+    "@byteflock/chat-widget": "workspace:*",
+    "@byteflock/theme": "workspace:*"
+  }
+}

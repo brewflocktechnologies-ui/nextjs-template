@@ -16,5 +16,6 @@ allowBuilds:
   '@swc/core': false
   nx: false
   unrs-resolver: false
+  esbuild: false
 
 engineStrict: true

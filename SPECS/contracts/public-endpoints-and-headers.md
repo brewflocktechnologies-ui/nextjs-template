@@ -1,6 +1,6 @@
 # Contract: public widget endpoints, response headers and embedding (ENDP)
 
-Source: ARCH-001 §8.7, §10.7, §10.11, Appendix C (ADR-007, ADR-009), §13 T-08, T-12. Static files live in `apps/widget/public/v1/`; headers are defined once in `apps/widget/headers.config.ts` (D-14) and applied by the Vite dev/preview plugin locally and emitted as `dist/_headers` at build for the static host.
+Source: ARCH-001 §8.7, §10.7, §10.11, Appendix C (ADR-007, ADR-009), §13 T-08, T-12. Static files live in `apps/widget/public/v1/`; headers are defined once in `apps/widget/src/headers.config.ts` (D-14) and applied by the Vite dev/preview plugin locally and emitted as `dist/_headers` at build for the static host.
 
 ## ENDP-01 Paths (all under the widget origin)
 

@@ -35,6 +35,9 @@
     "@nx/next": "24.0.0",
     "@nx/playwright": "24.0.0",
     "@nx/react": "24.0.0",
+    "@nx/vite": "24.0.0",
+    "@nx/vitest": "24.0.0",
+    "@nx/web": "24.0.0",
     "@nx/workspace": "24.0.0",
     "@playwright/test": "^1.37.0",
     "@swc-node/register": "~1.11.1",
@@ -47,6 +50,9 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "@vitest/coverage-v8": "~5.0.1",
+    "@vitest/ui": "~5.0.1",
     "babel-jest": "~30.3.0",
     "eslint": "^9.8.0",
     "eslint-config-next": "^16.4.3",
@@ -59,12 +65,17 @@
     "jest": "~30.3.0",
     "jest-environment-jsdom": "~30.3.0",
     "jest-util": "~30.3.0",
+    "jiti": "2.4.2",
+    "jsdom": "^27.1.0",
     "nx": "24.0.0",
     "prettier": "~3.6.2",
+    "swc-loader": "0.1.15",
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.40.0",
+    "vite": "^8.0.0",
+    "vitest": "~5.0.1"
   }
 }
