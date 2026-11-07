@@ -81,6 +81,9 @@ importers:
       '@storybook/react-vite':
         specifier: 10.6.5
         version: 10.6.5(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8))(supports-color@8.1.1)(typescript@6.0.3)(vite@8.3.5(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))
+      '@storybook/web-components-vite':
+        specifier: 10.6.5
+        version: 10.6.5(lit@3.3.3)(storybook@10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8))(vite@8.3.5(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))
       '@swc-node/register':
         specifier: ~1.11.1
         version: 1.11.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(supports-color@8.1.1)(typescript@6.0.3)
@@ -246,6 +249,15 @@ importers:
       '@fontsource/inter':
         specifier: 5.3.0
         version: 5.3.0
+      '@fontsource/noto-sans':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource/roboto':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource/source-sans-3':
+        specifier: 5.3.1
+        version: 5.3.1
 
   apps/widget-playground:
     devDependencies:
@@ -1367,6 +1379,15 @@ packages:
 
   '@fontsource/inter@5.3.0':
     resolution: {integrity: sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==}
+
+  '@fontsource/noto-sans@5.3.0':
+    resolution: {integrity: sha512-fBCog2PY7DiVVTEEqtI/Qdinx/knobHYfoGpjFXdfBX5RoJaBp1Prw2G75p0OIsdlMZg3cLo0c+YbIUYOxnQJw==}
+
+  '@fontsource/roboto@5.3.0':
+    resolution: {integrity: sha512-BapRJOWYP+LZ21zp+wBQjfpPYKRoxc4LspJ/RLuI+HSMBD5u/X4O+ESDrSvEqDSy0rAl7GwBJ+09mdc16cVQ1Q==}
+
+  '@fontsource/source-sans-3@5.3.1':
+    resolution: {integrity: sha512-O3YxvbotUOgYI2Zx0bBcEMNjnwitRf9P2+9pd54sMoux1NHrdXnMwZusw2P78lFhEzOPN4glOEQmX0ASaS68uA==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2927,6 +2948,18 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  '@storybook/web-components-vite@10.6.5':
+    resolution: {integrity: sha512-jkhUqoSpFk2LMVKQga5mqF23C+lhzPFoAevqssCciqBvcmA3+JJXoMCe3hoCg8CSWqRhC3EE2nL/upJJQ0z/Eg==}
+    peerDependencies:
+      storybook: ^10.6.5
+      vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+
+  '@storybook/web-components@10.6.5':
+    resolution: {integrity: sha512-PqTS2ycQAqWg+q+XhYSCd7KhtmTFZDcFoGU6XDzR32VJvgyBQ6T5wibqadZbmAV8t+8R4yWwieorYbsQy3ZX+Q==}
+    peerDependencies:
+      lit: ^2.0.0 || ^3.0.0
+      storybook: ^10.6.5
 
   '@swc-node/core@1.15.0':
     resolution: {integrity: sha512-WAerrrl087WgenB92XG4Th2t0NQFfMNLYSe0sW2cEMMqM/LQmP4rozsDJl0vuzTrbewjpKQryxFXI+aYig/dBg==}
@@ -8699,6 +8732,12 @@ snapshots:
 
   '@fontsource/inter@5.3.0': {}
 
+  '@fontsource/noto-sans@5.3.0': {}
+
+  '@fontsource/roboto@5.3.0': {}
+
+  '@fontsource/source-sans-3@5.3.1': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -10271,6 +10310,23 @@ snapshots:
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
+
+  '@storybook/web-components-vite@10.6.5(lit@3.3.3)(storybook@10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8))(vite@8.3.5(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))':
+    dependencies:
+      '@storybook/builder-vite': 10.6.5(storybook@10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8))(vite@8.3.5(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0))
+      '@storybook/web-components': 10.6.5(lit@3.3.3)(storybook@10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8))
+      storybook: 10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8)
+      vite: 8.3.5(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.4.2)(terser@5.51.2)(yaml@2.9.0)
+    transitivePeerDependencies:
+      - lit
+
+  '@storybook/web-components@10.6.5(lit@3.3.3)(storybook@10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8))':
+    dependencies:
+      '@storybook/global': 5.0.0
+      lit: 3.3.3
+      storybook: 10.6.5(@types/react@19.2.18)(prettier@3.6.2)(react@19.2.8)
+      tiny-invariant: 1.3.3
+      ts-dedent: 2.3.0
 
   '@swc-node/core@1.15.0(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)':
     dependencies:

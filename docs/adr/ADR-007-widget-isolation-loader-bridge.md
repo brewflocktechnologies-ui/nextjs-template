@@ -75,6 +75,16 @@ Residual risks for sign-off:
 - **Screenshot-based recording** tools capture what is displayed on screen; DOM-based recorders such as rrweb see nothing.
 - **T-05** is mitigated in P1.5 by the per-widget-key domain allowlist (D-21), not in PoC-A.
 
+**P1.5 hardening** (2026-11-07, branch `p1.5-frame-foundation`, evidence `SPECS/evidence/P1.5.md`):
+
+- **Frame on the library.** The frame now composes the `@byteflock/chat-widget` elements and uses `ThemeController`, `ConsentController` and `InMemoryTransport`. The provisional theme mapper is gone; the frame uses the contract guard and resolver from `@byteflock/theme/guard` and `@byteflock/theme/resolve`, so the frame and the dashboard resolve themes identically.
+- **T-05 mitigated (D-21).** Every config lists `allowedOrigins` (1–20 exact origins). The frame checks the parent origin before `ready` and again when the channel pins, renders nothing and posts nothing when it is not listed, and sends one `ORIGIN_NOT_ALLOWED` beacon. Preview mode from the build-time dashboard origin is always allowed. Playwright covers the refusal, the preview exception and a refused production embed on the dashboard origin, in Chromium and once in Firefox. A config that fails to load leaves the allowlist unknown; the frame then runs with embedded defaults, as before.
+- **Consent gates storage (Q-006).** Only `consent-controller.ts` may use browser storage (lint-enforced). The one persisted value is `byteflock.visitorId`, written after consent, or at once when the tenant does not require consent; withdrawing consent removes it. Playwright inspects the frame's storage before and after consent.
+- **Q-015 applied.** The frame is still created at idle by default.
+- **Merge-blocking from P1.5.** The widget unit tests, the playground suite (Chromium), the chat-widget story tests, the bundle budgets and the production header test (T-12, `vite preview` of the build). CI is deferred (D-22), so `pnpm verify` is the gate.
+
+Residual risks after P1.5, unchanged from the PoC-A sign-off: **T-13** (the host page owns its launcher host element) and **screenshot-based recording**. T-05 is now mitigated by D-21.
+
 <!-- /verification -->
 
 ## Links

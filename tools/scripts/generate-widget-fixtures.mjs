@@ -5,7 +5,7 @@
 //   node tools/scripts/generate-widget-fixtures.mjs --check   fail if they are stale
 //
 // Only the tenants' files are generated. The deliberate failure fixtures (t_broken, wk_broken_*,
-// wk_slow) are hand-written and left alone. `pnpm stack:reset` copies the result into the widget.
+// wk_slow, wk_wrong_domain) are hand-written and left alone. `pnpm stack:reset` copies the result into the widget.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -27,6 +27,7 @@ for (const t of tenants) {
     locale: { default: t.locale, supported: t.supportedLocales },
     features: { proactive: t.proactive, consent: t.consent },
     launcher: { position: theme.launcher.position },
+    allowedOrigins: t.allowedOrigins,
   });
 }
 

@@ -26,10 +26,13 @@ test.describe('keyboard and accessibility (PoC-A-AC05)', () => {
     const frame = await widgetFrame(page);
     await expect
       .poll(() =>
-        frame.evaluate(
-          () =>
-            document.activeElement?.shadowRoot?.activeElement?.tagName ?? '',
-        ),
+        frame.evaluate(() => {
+          // Follow focus through nested shadow roots (frame app → composer → textarea).
+          let el: Element | null = document.activeElement;
+          while (el?.shadowRoot?.activeElement)
+            el = el.shadowRoot.activeElement;
+          return el?.tagName ?? '';
+        }),
       )
       .toBe('TEXTAREA');
 

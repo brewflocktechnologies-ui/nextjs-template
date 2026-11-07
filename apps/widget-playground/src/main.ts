@@ -28,6 +28,10 @@ const SINGLE = [
   },
   { href: '/slow-config.html?case=missing', title: 'Missing config' },
   {
+    href: '/wrong-domain.html',
+    title: 'Widget key not allowed on this origin (ENDP-02a)',
+  },
+  {
     href: '/clean.html?key=wk_acme_demo&frame=open',
     title: 'Frame created on first open (Q-015)',
   },

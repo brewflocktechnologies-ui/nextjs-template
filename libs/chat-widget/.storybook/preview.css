@@ -1,0 +1,8 @@
+/* The story page stands in for the frame document: its background and text follow the theme. */
+body {
+  margin: 0;
+  padding: 1rem;
+  background: var(--sem-color-surface);
+  color: var(--sem-color-on-surface);
+  font-family: var(--sem-font-family-sans);
+}

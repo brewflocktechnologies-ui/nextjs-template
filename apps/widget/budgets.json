@@ -1,0 +1,20 @@
+{
+  "$comment": "Widget bundle budgets, gzip bytes (ARCH-001 §14.3, P1.5-T07). Enforced by scripts/assert-bundle.mjs on every build; checked by tools/scripts/policy/check-budget-exception.mjs.",
+  "method": "budget = ceil(baseline × 1.15). A budget above that needs an entry in exceptions and a BUDGET-EXCEPTION: line in the pull request.",
+  "baseline": {
+    "source": "docs/architecture/baselines.md (PoC-A, 2026-11-07)",
+    "loader": 721,
+    "launcher": 5161,
+    "frame JS": 11639,
+    "frame CSS": 20
+  },
+  "budgets": {
+    "loader": 830,
+    "launcher": 5936,
+    "frame JS": 16000,
+    "frame CSS": 23
+  },
+  "exceptions": {
+    "frame JS": "P1.5 turns the PoC-A frame into the production frame: six library elements, consent gate, transport, i18n, and the contract guard and resolver. Measured 14,573 B after minifying element CSS; the budget leaves about 10% headroom."
+  }
+}

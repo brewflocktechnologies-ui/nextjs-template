@@ -60,12 +60,12 @@ Open `http://localhost:4600` (ui-react Storybook).
 
 ## P1.5 — Frame app foundation
 
-1. `http://localhost:4700` (chat-widget Storybook): `Frame/MessageList` and `Frame/Composer` under the three tenant themes. **Expect:** same three visual identities as the React composite (compare side by side with 4600).
-2. Playground `clean.html?key=wk_acme_demo` (consent `required`): open the widget, type a message, reload. **Expect:** before consent, DevTools → Application → Storage for `localhost:4400` is empty; after the page calls `ByteflockChat('consent', {granted:true})` (button on the fixture), a visitor id appears; reload keeps it.
+1. `http://localhost:4700` (chat-widget Storybook, `pnpm nx run @byteflock/chat-widget:storybook`): the `Composites/Conversation` stories Acme, Globex and Initech, or any element story with the Tenant toolbar. **Expect:** same three visual identities as the React composite (compare side by side with 4600).
+2. Playground `clean.html?key=wk_acme_demo` (consent `required`): open the widget, type a message, reload. **Expect:** before consent, DevTools → Application → Storage for `localhost:4400` is empty; after the page calls `ByteflockChat('consent', {granted:true})` (button on the fixture), a visitor id appears; reload keeps it. (The consent decision itself is not stored: your page sends it again on every load, and the frame asks until it does.)
 3. `clean.html?key=wk_globex_demo` (consent `notRequired`). **Expect:** visitor id present on first open.
-4. Open `docs/architecture/baselines.md`. **Expect:** budgets (baseline + 15 %) now listed next to each measurement, and `pnpm nx run @byteflock/widget:build` prints each bundle's size against its budget.
+4. Open `docs/architecture/baselines.md` and `apps/widget/budgets.json`. **Expect:** budgets (baseline + 15 %) listed next to each measurement, with the one written exception for the frame JS, and `pnpm nx run @byteflock/widget:build` prints each bundle's size against its budget.
 5. Open `docs/developer-guide/embedding.md`. **Expect:** the snippet and the two-directive CSP text; nothing else required.
-6. `wrong-domain.html?key=wk_wrong_domain`. **Expect:** the launcher shows "Chat unavailable" after about 5 s, and the widget dev console logs one `ORIGIN_NOT_ALLOWED` beacon. The embedding guide explains `allowedOrigins`.
+6. `http://localhost:4300/wrong-domain.html`. **Expect:** the launcher shows "Chat unavailable" after about 5 s, and the widget dev console logs one `ORIGIN_NOT_ALLOWED` beacon. The embedding guide explains `allowedOrigins`.
 
 ## P1.6 — Themed vertical slice (the full tenant loop)
 

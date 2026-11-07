@@ -11,6 +11,7 @@
       "supportedLocales": ["en-AU", "en-US"],
       "consent": "required",
       "proactive": true,
+      "allowedOrigins": ["http://localhost:4300"],
       "theme": "libs/theme/fixtures/valid/acme-light.json"
     },
     {
@@ -23,6 +24,7 @@
       "supportedLocales": ["en-US"],
       "consent": "notRequired",
       "proactive": true,
+      "allowedOrigins": ["http://localhost:4300"],
       "theme": "libs/theme/fixtures/valid/globex-dark.json"
     },
     {
@@ -35,6 +37,7 @@
       "supportedLocales": ["en-AU"],
       "consent": "required",
       "proactive": true,
+      "allowedOrigins": ["http://localhost:4300"],
       "theme": "libs/theme/fixtures/valid/initech-compact.json"
     }
   ],
@@ -63,6 +66,12 @@
       "widgetKey": "wk_slow",
       "tenantId": "t_acme",
       "exercises": "CONFIG_TIMEOUT"
+    },
+    {
+      "widgetKey": "wk_wrong_domain",
+      "tenantId": "t_acme",
+      "allowedOrigins": ["https://customer.example"],
+      "exercises": "ORIGIN_NOT_ALLOWED"
     }
   ],
   "brokenUser": {

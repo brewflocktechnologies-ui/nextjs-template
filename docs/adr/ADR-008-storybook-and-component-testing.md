@@ -50,7 +50,7 @@ React and Lit components need living documentation that also serves as their int
 - **Tenant themes.** A global toolbar resolves the P1.3 fixtures with `resolveTheme` and renders `ThemeStyleTag`; a story can pin a tenant with story-level `globals`.
 - **Jest exception.** The dashboard keeps Jest through `next/jest` (P1.1). Its `transpilePackages` lists TanStack Table, which ships ESM only, so Jest transforms it too.
 
-**Lit half:** added by P1.5-T06.
+**Lit half, P1.5** (2026-11-07, evidence `SPECS/evidence/P1.5.md`): `@storybook/web-components-vite` 10.6.5 with the same two addons; the chat-widget Storybook runs on port 4700. Stories render the Lit elements in the real DOM; `play()` functions query inside each element's shadow root. A Tenant toolbar applies the P1.3 fixtures with the frame's own `ThemeController`, and a Locale toolbar switches `lang` and `dir` (including `ar`). `Composites/Conversation` runs the message list and composer under Acme, Globex and Initech, matching ui-react's `Composites/FilterDialog`. The configuration is hand-written like ui-react's, not generated.
 
 <!-- /verification -->
 

@@ -19,7 +19,10 @@
   };
 
   var params = new URLSearchParams(location.search);
-  var key = CASES[params.get('case')] || params.get('key') || 'wk_acme_demo';
+  // A fixture page can pin its key with data-key on this script tag (wrong-domain.html).
+  var pinned = document.currentScript && document.currentScript.dataset.key;
+  var key =
+    pinned || CASES[params.get('case')] || params.get('key') || 'wk_acme_demo';
 
   var s = document.createElement('script');
   s.async = true;

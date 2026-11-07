@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 import { widgetOriginPlugin } from './src/dev-server-plugin.ts';
+import { minifyLitCss } from './src/minify-lit-css.ts';
 
 const pkg = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -37,7 +38,7 @@ export default defineConfig(() => ({
     host: 'localhost',
     strictPort: true,
   },
-  plugins: [nxReadySignal(), widgetOriginPlugin()],
+  plugins: [nxReadySignal(), widgetOriginPlugin(), minifyLitCss()],
   // Production builds go through scripts/build.mjs (frame, launcher, loader: D-15).
   build: {
     outDir: './dist',
