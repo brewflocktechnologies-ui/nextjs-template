@@ -1,11 +1,11 @@
 # ADR-004: Theme contract, grammar and lifecycle
 
-|          |                                                                       |
-| -------- | --------------------------------------------------------------------- |
-| Status   | Proposed                                                              |
-| Date     | 2026-11-07                                                            |
-| Deciders | Madhusudan C P (product owner, architecture owner, security reviewer) |
-| Source   | ARCH-001 §8, Appendix B; SPECS/contracts/theme-contract-v1.md; D-20   |
+|          |                                                                                 |
+| -------- | ------------------------------------------------------------------------------- |
+| Status   | Proposed (PoC-C passed with TypeBox; awaiting product-owner acceptance of P1.3) |
+| Date     | 2026-11-07                                                                      |
+| Deciders | Madhusudan C P (product owner, architecture owner, security reviewer)           |
+| Source   | ARCH-001 §8, Appendix B; SPECS/contracts/theme-contract-v1.md; D-20             |
 
 ## Context and problem statement
 
@@ -42,7 +42,27 @@ Tenants customise the widget and the dashboard. Their input crosses into SSR sty
 
 <!-- verification -->
 
-To be filled by P1.3-T14: PoC-C outcome, chosen library and version.
+P1.3 on 2026-11-07, branch `p1.3-theme-contract`. Evidence: `SPECS/evidence/P1.3.md`. Status stays **Proposed** until the product owner accepts P1.3.
+
+**PoC-C result: TypeBox 0.34.52 is chosen.** Zod 4 was not tried, because the friction threshold (more than two non-trivial workarounds, or an emitted schema that differs from Appendix B) was not reached.
+
+| PoC-C check                                                               | Result                                                                                 |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| THEME-02 authored in TypeBox, JSON Schema 2020-12 emitted                 | yes: `libs/theme/schema/theme.v1.json`, `additionalProperties: false` on all 9 objects |
+| Same outcome in TypeBox and in Ajv 8.20 (Draft 2020-12) for every fixture | yes: 5 valid accepted, 8 invalid and 8 malicious rejected by both                      |
+| Guard + resolver size for the frame                                       | 970 B (guard) and 889 B (resolver) gzip, without TypeBox                               |
+
+TypeBox workarounds (two, both minor):
+
+1. A typed helper for unions of string literals. The first attempt typed every enum field as `unknown`; this was caught by typecheck and fixed.
+2. Contract constants live in a separate TypeBox-free file, so the frame entries do not pull TypeBox in. TypeBox `Type.*` values cannot be imported for their data alone.
+
+Decisions recorded with the implementation:
+
+- Validation uses TypeBox's `Value` API (no code generation) so it runs under the dashboard's CSP; the faster compiled validator can be added server-side later if needed.
+- The resolver emits 18 allow-listed variables (THEME-11); `--sem-elevation-surface` was added to the design tokens for the tenant's elevation choice.
+- The contrast policy includes the D-20 dashboard pairs. The Initech fixture's `onAccent` was darkened to pass (3.77:1 → about 5.6:1); the tenant's accent colour is unchanged.
+- The guard rejects prototype-pollution keys at any depth.
 
 <!-- /verification -->
 
