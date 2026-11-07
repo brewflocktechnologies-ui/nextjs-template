@@ -16,3 +16,7 @@ apps/**/AGENTS.md
 
 # Lockfile is written by pnpm
 /pnpm-lock.yaml
+
+# Deliberately invalid fixture (PoC-A failure case) and vendored third-party code
+**/themes/t_broken/2.json
+/apps/widget-playground/public/vendor

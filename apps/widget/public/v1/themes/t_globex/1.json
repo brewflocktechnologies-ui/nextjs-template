@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "appearance": {
+    "mode": "dark"
+  },
+  "color": {
+    "light": {
+      "primary": "#0f766e",
+      "onPrimary": "#ffffff",
+      "surface": "#f8fafc",
+      "onSurface": "#0f172a",
+      "surfaceVariant": "#f0fdfa",
+      "onSurfaceVariant": "#134e4a",
+      "outline": "#64748b",
+      "accent": "#f59e0b",
+      "onAccent": "#111827",
+      "success": "#15803d",
+      "warning": "#b45309",
+      "danger": "#b91c1c",
+      "focusRing": "#0d9488"
+    },
+    "dark": {
+      "primary": "#5eead4",
+      "onPrimary": "#111827",
+      "surface": "#111827",
+      "onSurface": "#f9fafb",
+      "surfaceVariant": "#1f2937",
+      "onSurfaceVariant": "#d1d5db",
+      "outline": "#9ca3af",
+      "accent": "#fbbf24",
+      "onAccent": "#111827",
+      "success": "#4ade80",
+      "warning": "#fbbf24",
+      "danger": "#f87171",
+      "focusRing": "#2dd4bf"
+    }
+  },
+  "typography": {
+    "fontFamily": "roboto",
+    "scale": "md"
+  },
+  "shape": {
+    "radius": "sm"
+  },
+  "elevation": "medium",
+  "density": "spacious",
+  "brand": {
+    "name": "Globex"
+  },
+  "launcher": {
+    "position": "bottom-left",
+    "shape": "pill",
+    "icon": "message"
+  }
+}

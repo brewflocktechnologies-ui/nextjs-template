@@ -34,14 +34,14 @@ const endpoints = [
   {
     name: 'Widget loader',
     url: 'http://localhost:4400/v1/loader.js',
-    required: false,
+    required: true,
     from: 'PoC-A',
     type: 'javascript',
   },
   {
     name: 'Widget config (wk_acme_demo)',
     url: 'http://localhost:4400/v1/config/wk_acme_demo.json',
-    required: false,
+    required: true,
     from: 'PoC-A',
     type: 'json',
   },

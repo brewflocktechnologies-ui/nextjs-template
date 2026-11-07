@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+      The customer CSP promise (ENDP-05): only script-src and frame-src for the widget origin, plus
+      Trusted Types enforced with NO policy for the widget. 'self' entries are this page's own files.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' http://localhost:4400; frame-src http://localhost:4400; require-trusted-types-for 'script'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Strict CSP host page</title>
+    <script src="/fixtures/csp-log.js"></script>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+    <!-- Must be blocked by this page's own policy: proves the policy is enforced. -->
+    <style id="blocked-inline-style">
+      body {
+        background: rgb(255, 0, 0);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Strict CSP (T-08)</h1>
+    <p>
+      The widget must work with only <code>script-src</code> and
+      <code>frame-src</code> for its origin, and without a Trusted Types policy.
+      Key: <code>wk_acme_demo</code>
+    </p>
+    <pre id="csp-violations">[]</pre>
+    <script
+      async
+      src="http://localhost:4400/v1/loader.js"
+      data-widget-key="wk_acme_demo"
+      data-launcher-label="Chat with Acme Corp"
+      data-mode="test"
+    ></script>
+  </body>
+</html>

@@ -4,16 +4,17 @@ Source: ARCH-001 §8.7, §10.7, §10.11, Appendix C (ADR-007, ADR-009), §13 T-0
 
 ## ENDP-01 Paths (all under the widget origin)
 
-| Path                                    | Content                                                                                    | `Cache-Control`                                  |
-| --------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------ |
-| `/v1/loader.js`                         | Tiny loader, IIFE, the one mutable entry                                                   | `public, max-age=300`                            |
-| `/v1/launcher.[hash].js`                | Launcher ESM bundle                                                                        | `public, max-age=31536000, immutable`            |
-| `/v1/frame/` (`index.html`)             | Frame document                                                                             | `public, max-age=60, must-revalidate`            |
-| `/v1/frame/assets/*.[hash].*`           | Frame bundles, CSS                                                                         | `public, max-age=31536000, immutable`            |
-| `/v1/config/{widgetKey}.json`           | Bootstrap config (ENDP-02)                                                                 | `public, max-age=60, stale-while-revalidate=600` |
-| `/v1/themes/{tenantId}/{revision}.json` | Validated theme document (THEME contract)                                                  | `public, max-age=31536000, immutable`            |
-| `/v1/fonts/{family}/*.woff2`            | Curated font files                                                                         | `public, max-age=31536000, immutable`            |
-| `/v1/telemetry`                         | `POST` beacon sink (dev plugin stub; static host returns 204 via a function or is ignored) | `no-store`                                       |
+| Path                                                                         | Content                                                                                                            | `Cache-Control`                                  |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+| `/v1/loader.js`                                                              | Tiny loader, IIFE, the one mutable entry                                                                           | `public, max-age=300`                            |
+| `/v1/launcher.[hash].js`                                                     | Launcher ESM bundle                                                                                                | `public, max-age=31536000, immutable`            |
+| (PoC-A) `/v1/launcher.[hash].js` also sends `Access-Control-Allow-Origin: *` | The loader imports the launcher as a module from the customer's page, and module scripts are fetched in CORS mode. | —                                                |
+| `/v1/frame/` (`index.html`)                                                  | Frame document                                                                                                     | `public, max-age=60, must-revalidate`            |
+| `/v1/frame/assets/*.[hash].*`                                                | Frame bundles, CSS                                                                                                 | `public, max-age=31536000, immutable`            |
+| `/v1/config/{widgetKey}.json`                                                | Bootstrap config (ENDP-02)                                                                                         | `public, max-age=60, stale-while-revalidate=600` |
+| `/v1/themes/{tenantId}/{revision}.json`                                      | Validated theme document (THEME contract)                                                                          | `public, max-age=31536000, immutable`            |
+| `/v1/fonts/{family}/*.woff2`                                                 | Curated font files                                                                                                 | `public, max-age=31536000, immutable`            |
+| `/v1/telemetry`                                                              | `POST` beacon sink (dev plugin stub; static host returns 204 via a function or is ignored)                         | `no-store`                                       |
 
 `widgetKey` is public, revocable and non-secret (Q-008). Nothing under `/v1/` is tenant-authenticated.
 
@@ -86,7 +87,7 @@ Public JS API (queued until ready): `window.ByteflockChat('open' | 'close' | 'id
 ## ENDP-06 Loader behaviour
 
 1. Feature-detect `attachShadow`, `customElements`, `postMessage`, `IntersectionObserver`, `fetch`, dynamic `import()`. Missing → set `data-byteflock-chat="unsupported"` on its own `<script>` and exit. No other DOM mutation.
-2. Read `data-widget-key` (required; `^wk_[a-z0-9_]{3,40}$`), `data-locale`, `data-position`, `data-launcher` (`auto` | `manual`), `data-launcher-label`.
+2. Read `data-widget-key` (required; `^wk_[a-z0-9_]{3,40}$`), `data-locale`, `data-position`, `data-launcher-label`, and two attributes added in PoC-A: `data-frame="open"` (create the frame on first open instead of at idle; used to measure Q-015, default idle) and `data-mode="test"` (playground only: asks the frame for its test hook, which the frame grants only to playground origins). `data-launcher` (`auto` | `manual`) is not implemented in PoC-A.
 3. Derive `widgetOrigin` from `document.currentScript.src` (fallback: the script element found by `data-widget-key`).
 4. `import(widgetOrigin + '/v1/launcher.[hash].js')` (hash injected at build, D-15) and hand over config + queue.
 5. Must not: fetch, inject styles, use `innerHTML`, touch `localStorage`, or reference `window.parent`.

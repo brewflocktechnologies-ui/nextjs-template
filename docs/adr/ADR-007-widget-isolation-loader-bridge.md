@@ -2,7 +2,7 @@
 
 |          |                                                                                                                    |
 | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| Status   | Proposed                                                                                                           |
+| Status   | Proposed (PoC-A passed; awaiting residual-risk sign-off)                                                           |
 | Date     | 2026-11-07                                                                                                         |
 | Deciders | Madhusudan C P (product owner, architecture owner, security reviewer)                                              |
 | Source   | ARCH-001 §10, Appendix A, Appendix C; SPECS/contracts/bridge-protocol-v1.md, public-endpoints-and-headers.md; D-21 |
@@ -42,7 +42,38 @@ Conversation content must be confidential from JavaScript on the tenant host pag
 
 <!-- verification -->
 
-To be filled by PoC-A-T13, then P1.5-T11.
+PoC-A on 2026-11-07, branch `poc-a-widget-isolation`. Evidence: `SPECS/evidence/POC-A.md`. Status stays **Proposed** until the product owner signs the residual risks below (ARCH-001 §20.2).
+
+Results against ARCH-001 §17.1 (automated in `apps/widget-playground/src/tests`, run in Chromium, Firefox 153 and WebKit; Chromium also against the production build):
+
+| #   | Criterion                                                                                                            | Result                                                                                                              |
+| --- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 1   | Hostile script cannot read composer text                                                                             | pass: `contentDocument` is null, `contentWindow.document` throws SecurityError, no key events reach the host        |
+| 2   | rrweb snapshot contains no frame content                                                                             | pass                                                                                                                |
+| 3   | Bridge negative cases dropped and counted                                                                            | pass (unit tests for origin and source; Playwright for envelope, type, payload, theme.preview in production, flood) |
+| 4   | Two-directive customer CSP, Trusted Types enforced without a policy                                                  | pass                                                                                                                |
+| 5   | Keyboard: Tab, Enter opens and focuses the composer, Esc closes and returns focus; accessible name with unread count | pass in all three engines (Firefox needed `window.focus()` in the frame)                                            |
+| 6   | Mobile: full viewport, composer visible with a shrunken viewport                                                     | pass (keyboard approximated by resizing; real-device check is manual)                                               |
+| 7   | Curated font in the frame; system font in the launcher under hostile typography                                      | pass                                                                                                                |
+| 8   | Failure modes of §10.10                                                                                              | pass: frame blocked, config timeout, invalid theme, unsupported version, missing config, re-mount once              |
+| 9   | Two instances themed independently                                                                                   | pass                                                                                                                |
+| 10  | Measurements recorded                                                                                                | `docs/architecture/baselines.md`                                                                                    |
+| 11  | Frame headers, sandbox, COOP with postMessage                                                                        | pass                                                                                                                |
+
+Decisions taken during the PoC, now part of this ADR's design:
+
+- The launcher keeps all layout on a wrapper inside its shadow root: host-page `!important` rules can reach the host element but not the wrapper.
+- `launcherTheme` carries `shape` (circle or pill), added to BRIDGE-02.
+- The launcher module is served with `Access-Control-Allow-Origin: *` because it is imported as a module from the customer's page.
+- The launcher, not the frame, chooses panel or full-screen layout from the host viewport.
+- Q-015: the frame is created at idle by default; measured cost of creating it on first open is about 1.3 s on the slow profile.
+- Option C (launcher inside the frame) was not needed: criteria 5 and 6 pass with the hybrid.
+
+Residual risks for sign-off:
+
+- **T-13** A host page can cover or restyle the launcher's host element (for example `display: none !important`); the launcher uses the maximum z-index and wins ties, but the host owns its page.
+- **Screenshot-based recording** tools capture what is displayed on screen; DOM-based recorders such as rrweb see nothing.
+- **T-05** is mitigated in P1.5 by the per-widget-key domain allowlist (D-21), not in PoC-A.
 
 <!-- /verification -->
 

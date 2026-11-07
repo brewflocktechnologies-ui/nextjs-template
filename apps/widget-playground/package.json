@@ -8,5 +8,8 @@
       "scope:widget",
       "platform:lit"
     ]
+  },
+  "devDependencies": {
+    "rrweb": "2.2.0"
   }
 }

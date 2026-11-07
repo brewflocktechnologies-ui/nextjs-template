@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Two widget instances</title>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+  </head>
+  <body>
+    <h1>Two instances (Q-005, test only)</h1>
+    <p>
+      Acme (bottom right) and Globex (bottom left) on one page. Each launcher
+      and frame is themed and operated independently.
+    </p>
+    <script
+      async
+      src="http://localhost:4400/v1/loader.js"
+      data-widget-key="wk_acme_demo"
+      data-launcher-label="Chat with Acme Corp"
+      data-mode="test"
+    ></script>
+    <script
+      async
+      src="http://localhost:4400/v1/loader.js"
+      data-widget-key="wk_globex_demo"
+      data-launcher-label="Chat with Globex"
+      data-mode="test"
+    ></script>
+  </body>
+</html>
