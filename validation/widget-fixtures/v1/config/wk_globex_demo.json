@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "t_globex",
+  "themeRevision": 1,
+  "locale": {
+    "default": "en-US",
+    "supported": [
+      "en-US"
+    ]
+  },
+  "features": {
+    "proactive": true,
+    "consent": "notRequired"
+  },
+  "launcher": {
+    "position": "bottom-left"
+  }
+}

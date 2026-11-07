@@ -30,6 +30,7 @@ type LauncherTheme = {
   radius: 'none' | 'sm' | 'md' | 'lg' | 'full';
   icon: 'chat' | 'help' | 'message';
   position: 'bottom-right' | 'bottom-left';
+  shape: 'circle' | 'pill'; // added in PoC-A: the tenant fixtures need circle vs pill launchers
 };
 type ErrorCode = 'CONFIG_TIMEOUT' | 'CONFIG_INVALID' | 'THEME_INVALID' | 'THEME_UNSUPPORTED_VERSION' | 'ORIGIN_MISMATCH' | 'ORIGIN_NOT_ALLOWED' | 'FRAME_INIT_FAILED' | 'RATE_LIMITED';
 ```

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "t_broken",
+  "themeRevision": 2,
+  "locale": {
+    "default": "en-AU",
+    "supported": [
+      "en-AU",
+      "en-US"
+    ]
+  },
+  "features": {
+    "proactive": true,
+    "consent": "required"
+  },
+  "launcher": {
+    "position": "bottom-right"
+  }
+}

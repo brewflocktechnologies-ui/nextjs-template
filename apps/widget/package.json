@@ -8,10 +8,34 @@
       "type:app",
       "scope:widget",
       "platform:lit"
-    ]
+    ],
+    "targets": {
+      "build": {
+        "command": "node scripts/build.mjs",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "production",
+          "^production"
+        ],
+        "outputs": [
+          "{projectRoot}/dist"
+        ],
+        "dependsOn": [
+          "^build",
+          "^typecheck"
+        ],
+        "cache": true
+      }
+    }
   },
   "dependencies": {
     "@byteflock/chat-widget": "workspace:*",
-    "@byteflock/theme": "workspace:*"
+    "@byteflock/theme": "workspace:*",
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "5.3.0"
   }
 }

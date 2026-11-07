@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "revision": 3,
+  "appearance": {
+    "mode": "light"
+  },
+  "color": {
+    "light": {
+      "primary": "#1d4ed8",
+      "onPrimary": "#1d4ed8",
+      "surface": "#ffffff",
+      "onSurface": "#0f172a",
+      "surfaceVariant": "#eff6ff",
+      "onSurfaceVariant": "#1e3a8a",
+      "outline": "#64748b",
+      "accent": "#7c3aed",
+      "onAccent": "#ffffff",
+      "success": "#15803d",
+      "warning": "#b45309",
+      "danger": "#b91c1c",
+      "focusRing": "#2563eb"
+    },
+    "dark": {
+      "primary": "#93c5fd",
+      "onPrimary": "#0b1220",
+      "surface": "#0b1220",
+      "onSurface": "#f8fafc",
+      "surfaceVariant": "#1e293b",
+      "onSurfaceVariant": "#cbd5e1",
+      "outline": "#94a3b8",
+      "accent": "#c4b5fd",
+      "onAccent": "#0b1220",
+      "success": "#4ade80",
+      "warning": "#fbbf24",
+      "danger": "#f87171",
+      "focusRing": "#60a5fa"
+    }
+  },
+  "typography": {
+    "fontFamily": "inter",
+    "scale": "md"
+  },
+  "shape": {
+    "radius": "md"
+  },
+  "elevation": "low",
+  "density": "comfortable",
+  "brand": {
+    "name": "Broken Co"
+  },
+  "launcher": {
+    "position": "bottom-right",
+    "shape": "circle",
+    "icon": "chat"
+  }
+}
