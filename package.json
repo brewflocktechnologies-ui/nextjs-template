@@ -1,19 +1,20 @@
 {
-  "name": "@nextjs-template/source",
+  "name": "@byteflock/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx run @nextjs-template/web:dev",
+    "dev": "nx run @byteflock/admin-dashboard:dev",
     "build": "nx run-many -t build",
     "test": "nx run-many -t test",
     "test:affected": "nx affected -t test",
     "lint:affected": "nx affected -t lint",
     "graph": "nx graph",
-    "e2e": "nx run @nextjs-template/web-e2e:e2e",
+    "e2e": "nx run @byteflock/admin-dashboard-e2e:e2e",
     "policy:check": "node tools/scripts/policy/run-all.mjs",
     "verify": "node tools/scripts/verify.mjs"
   },
   "private": true,
+  "packageManager": "pnpm@11.28.10",
   "engines": {
     "node": ">=24 <25"
   },
@@ -65,9 +66,5 @@
     "tslib": "^2.3.0",
     "typescript": "6.0.3",
     "typescript-eslint": "^8.40.0"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  }
 }

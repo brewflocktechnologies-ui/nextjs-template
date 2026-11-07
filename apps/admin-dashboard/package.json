@@ -1,5 +1,5 @@
 {
-  "name": "@nextjs-template/web",
+  "name": "@byteflock/admin-dashboard",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
@@ -9,7 +9,9 @@
   },
   "nx": {
     "tags": [
-      "scope:web"
+      "type:app",
+      "scope:dashboard",
+      "platform:react"
     ],
     "targets": {
       "build": {
@@ -18,6 +20,7 @@
           "^typecheck"
         ]
       }
-    }
+    },
+    "name": "@byteflock/admin-dashboard"
   }
 }

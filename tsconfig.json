@@ -4,13 +4,10 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/web-e2e"
+      "path": "./apps/admin-dashboard"
     },
     {
-      "path": "./apps/web"
-    },
-    {
-      "path": "./packages/ui"
+      "path": "./apps/admin-dashboard-e2e"
     }
   ]
 }
