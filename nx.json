@@ -76,5 +76,6 @@
         "unitTestRunner": "jest"
       }
     }
-  }
+  },
+  "analytics": false
 }

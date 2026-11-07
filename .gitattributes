@@ -1,0 +1,23 @@
+# LF everywhere (ARCH-001 §6.5); Windows checkouts must not convert line endings.
+* text=auto eol=lf
+
+# Binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.zip binary
+
+# Generated files: committed, never hand-edited (D-19 and later phases)
+apps/**/next-env.d.ts linguist-generated
+apps/**/AGENTS.md linguist-generated
+libs/design-tokens/dist/** linguist-generated
+libs/theme/schema/*.json linguist-generated
+libs/ui-react/src/shadcn-bridge.css linguist-generated

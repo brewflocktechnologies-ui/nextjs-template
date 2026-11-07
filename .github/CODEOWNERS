@@ -1,0 +1,11 @@
+# Architecture-owner review is required for these paths (ARCH-001 §15.3, SPECS/phases/P1.0 T05).
+# Replace @OWNER with the architecture owner's GitHub handle. tools/scripts/policy/check-codeowners.mjs fails until then.
+
+/docs/adr/                    @OWNER
+/docs/architecture/           @OWNER
+/SPECS/                       @OWNER
+/libs/theme/schema/           @OWNER
+/apps/widget/src/bridge/      @OWNER
+/.github/                     @OWNER
+/pnpm-workspace.yaml          @OWNER
+/package.json                 @OWNER
