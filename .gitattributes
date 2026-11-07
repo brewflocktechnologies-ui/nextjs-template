@@ -21,3 +21,7 @@ apps/**/AGENTS.md linguist-generated
 libs/design-tokens/src/generated/** linguist-generated
 libs/theme/schema/*.json linguist-generated
 libs/ui-react/src/shadcn-bridge.css linguist-generated
+
+# Windows batch files need CRLF: cmd.exe misreads labels and blocks in LF files
+*.bat text eol=crlf
+*.cmd text eol=crlf

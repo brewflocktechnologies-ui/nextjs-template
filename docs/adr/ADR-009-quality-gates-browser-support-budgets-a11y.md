@@ -54,6 +54,16 @@ The frame exception: P1.5 replaces the PoC frame with the production one (six li
 
 Accessibility: chat-widget stories run axe through the Storybook Vitest addon with `a11y.test = 'error'`, as ui-react does since P1.4; any violation fails.
 
+**P1.7 review (2026-11-07).** Gates as built, all in `pnpm verify` (CI deferred, D-22):
+
+- **Accessibility:** axe blocks every violation, any impact, in both Storybooks (P1.4, P1.5) and on the three dashboard pages under three tenants (P1.6). Moderate violations were blocking before P1.7 required it.
+- **Visual regression:** nine `@visual` Playwright snapshots (launcher ready and unavailable, frame open for three tenants, dashboard home, FilterDialog for three tenants), made and compared only in the pinned `mcr.microsoft.com/playwright:v1.62.1-noble` image (`pnpm visual`, CI job `visual`).
+- **Budgets:** as recorded above; one written exception (frame JS).
+- **Governance:** `check-contract-change`, `check-dependency-diff` (with licence allowlist and `tools/license-exceptions.json`), `check-test-count` (`tools/test-count.json`) and `check-telemetry-tripwire`, each with a recorded negative run. They read the pull request body in CI and commit trailers since `main` locally.
+- **Browser support:** Chromium on every run; Firefox and WebKit nightly (`.github/workflows/nightly.yml`), plus Lighthouse on `/settings/theme` as warnings (indicative only: Phase 1 can measure only `next dev`, because the production session adapter does not exist).
+
+Not yet verified: the nightly workflow and the `visual`, `lint-test-build` and `widget-windows` jobs as required checks have never run on GitHub (D-22).
+
 <!-- /verification -->
 
 ## Links

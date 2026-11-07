@@ -4,20 +4,20 @@ States: `Not started` → `Approved` → `In progress` → `Implemented` → `Ve
 
 **Rule:** a phase moves to `Approved` only by the product owner writing their name and the date in the Approval column. Agents never set `Approved` or `Accepted`.
 
-| Spec    | State       | Approval (name, date)      | Started    | Evidence                               | Accepted (name, date)      | Notes                                                                       |
-| ------- | ----------- | -------------------------- | ---------- | -------------------------------------- | -------------------------- | --------------------------------------------------------------------------- |
-| P0      | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P0.md](evidence/P0.md)       | Madhusudan C P, 2026-11-07 | D-02 migrate, D-06 byteflock, Q-013 full theme, Q-014 allowlist, Q-015 idle |
-| P1.0    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.0.md](evidence/P1.0.md)   | Madhusudan C P, 2026-11-07 | GitHub items deferred (D-22)                                                |
-| P1.1    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.1.md](evidence/P1.1.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
-| PoC-A   | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-A.md](evidence/POC-A.md) | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
-| P1.2    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.2.md](evidence/P1.2.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
-| P1.3    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.3.md](evidence/P1.3.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
-| PoC-B   | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-B.md](evidence/POC-B.md) | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
-| P1.4    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.4.md](evidence/P1.4.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
-| P1.5    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.5.md](evidence/P1.5.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); frame JS budget exception accepted                 |
-| P1.6    | Verified    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.6.md](evidence/P1.6.md)   |                            | Verified locally (D-22); manual check: runbook P1.6                         |
-| P1.7    | Not started |                            |            |                                        |                            |                                                                             |
-| P1 exit | Not started |                            |            |                                        |                            | ARCH-001 v1.0 Accepted                                                      |
+| Spec    | State       | Approval (name, date)      | Started    | Evidence                               | Accepted (name, date)      | Notes                                                                                                   |
+| ------- | ----------- | -------------------------- | ---------- | -------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| P0      | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P0.md](evidence/P0.md)       | Madhusudan C P, 2026-11-07 | D-02 migrate, D-06 byteflock, Q-013 full theme, Q-014 allowlist, Q-015 idle                             |
+| P1.0    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.0.md](evidence/P1.0.md)   | Madhusudan C P, 2026-11-07 | GitHub items deferred (D-22)                                                                            |
+| P1.1    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.1.md](evidence/P1.1.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| PoC-A   | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-A.md](evidence/POC-A.md) | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| P1.2    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.2.md](evidence/P1.2.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| P1.3    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.3.md](evidence/P1.3.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| PoC-B   | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-B.md](evidence/POC-B.md) | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| P1.4    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.4.md](evidence/P1.4.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| P1.5    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.5.md](evidence/P1.5.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); frame JS budget exception accepted                                             |
+| P1.6    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.6.md](evidence/P1.6.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
+| P1.7    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.7.md](evidence/P1.7.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); CI, nightly and ARCH v1.0 still open for P1 exit                               |
+| P1 exit | In progress |                            |            |                                        |                            | Open: CI green on Linux and Windows (D-22), nightly run, ARCH-001 v1.0 (owner); see evidence/P1-exit.md |
 
 ## Product-owner answers to open questions
 
@@ -39,7 +39,7 @@ Record here when answered; otherwise the defaults in `DECISIONS.md` apply.
 | ADR-002 | Application and library boundaries                      | Accepted (P0, 2026-11-07)                      | P0 accepts, P1.1 verifies  |
 | ADR-003 | Token source and build                                  | Accepted (P0, 2026-11-07); verified at P1.2    | P1.2 verified              |
 | ADR-004 | Theme contract, grammar, lifecycle                      | Accepted (P1.3, 2026-11-07): TypeBox           | P1.3 accepts (after PoC-C) |
-| ADR-005 | Tenant context, authorization boundary, SSR cache rules | Proposed; verified in P1.6                     | P1.6 accepts               |
+| ADR-005 | Tenant context, authorization boundary, SSR cache rules | Accepted (P1.6, 2026-11-07)                    | P1.6 accepts               |
 | ADR-006 | Primitive and React styling                             | Accepted (PoC-B, 2026-11-07): Base UI          | PoC-B                      |
 | ADR-007 | Widget conversation isolation, loader and bridge        | Accepted (PoC-A, 2026-11-07); hardened in P1.5 | PoC-A; P1.5 hardens        |
 | ADR-008 | Storybook and component testing                         | Accepted (P0, 2026-11-07)                      | P1.4 / P1.5 add notes      |

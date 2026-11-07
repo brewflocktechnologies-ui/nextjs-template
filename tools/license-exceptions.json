@@ -1,0 +1,10 @@
+{
+  "$comment": "Direct dependencies outside the licence allowlist (MIT, BSD, Apache-2.0, ISC, 0BSD), each with the reason it is acceptable. Read by tools/scripts/policy/check-dependency-diff.mjs (ADR-011, P1.7-T04).",
+  "exceptions": {
+    "@axe-core/playwright": "MPL-2.0, dev-only test tool; never bundled or distributed. File-level copyleft does not reach our code.",
+    "@fontsource/inter": "OFL-1.1 font files, vendored unmodified with their LICENSE into the widget and dashboard public folders. OFL allows bundling and redistribution.",
+    "@fontsource/roboto": "OFL-1.1 font files, vendored unmodified with their LICENSE (see @fontsource/inter).",
+    "@fontsource/source-sans-3": "OFL-1.1 font files, vendored unmodified with their LICENSE (see @fontsource/inter).",
+    "@fontsource/noto-sans": "OFL-1.1 font files, vendored unmodified with their LICENSE (see @fontsource/inter)."
+  }
+}

@@ -11,6 +11,8 @@ const nextConfig = {
   transpilePackages: ['@tanstack/react-table', '@tanstack/table-core'],
   // The e2e production server builds into its own folder so it cannot wipe a running dev server.
   distDir: process.env.NEXT_DIST_DIR || '.next',
+  // No development badge: it would change visual-regression screenshots (P1.7-T03).
+  devIndicators: false,
   // Explicitly off (P1.6-T05): authenticated pages are rendered per request and never cached.
   cacheComponents: false,
   // See: https://nextjs.org/docs/app/api-reference/config/next-config-js

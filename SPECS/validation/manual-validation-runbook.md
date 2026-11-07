@@ -84,8 +84,11 @@ Start `pnpm stack`. Follow `local-stack.md` → "Observing the publish loop", th
 
 ## P1.7 — Hardening and exit
 
-1. Open a PR that deletes one test. **Expect:** CI fails with the test-count ratchet message until `TESTS-REMOVED:` is in the PR body.
-2. Open a PR that edits an Accepted ADR's body. **Expect:** CI fails with the ADR immutability message.
-3. Open a PR that edits `theme.v1.json`. **Expect:** CI fails until `CONTRACT-CHANGE:` trailer and a migration note exist.
-4. Walk ARCH-001 §14.4 items 1–11 with the evidence file open. **Expect:** each item has a link to a green CI run or a signed manual entry.
+While CI is deferred (D-22), each pull-request step has a local equivalent: make the change, run `pnpm policy:check`, then undo it with `git checkout -- <file>` (or `git restore`). Locally, trailers come from commit messages since `main`, or from `POLICY_TRAILERS`.
+
+1. Open a PR that deletes one test. **Expect:** CI fails with the test-count ratchet message until `TESTS-REMOVED:` is in the PR body. Locally: delete `libs/chat-widget/src/i18n/t.spec.ts`; `pnpm policy:check` fails on `check-test-count`; `POLICY_TRAILERS="TESTS-REMOVED: test" pnpm policy:check` passes it.
+2. Open a PR that edits an Accepted ADR's body. **Expect:** CI fails with the ADR immutability message. Locally: edit a sentence in `docs/adr/ADR-002-*.md` outside the verification block; `pnpm policy:check` fails on `check-adr-immutability`.
+3. Open a PR that edits `theme.v1.json`. **Expect:** CI fails until `CONTRACT-CHANGE:` trailer and a migration note exist. Locally: edit `apps/widget/src/bridge/protocol.ts`; `pnpm policy:check` fails on `check-contract-change`.
+4. Walk ARCH-001 §14.4 items 1–11 with the evidence file open. **Expect:** each item has its proof; item 10 (CI green) stays open until the repository is pushed (D-22). Sign the last column.
 5. README links to AGENTS.md, ADR index, SPECS, and the embedding guide.
+6. `pnpm visual` (needs Docker). **Expect:** "all snapshots match". Optionally change Globex's dark `primary` in both `validation/widget-fixtures/v1/themes/t_globex/1.json` and `apps/widget/public/v1/themes/t_globex/1.json`, rerun, see the Globex frame snapshot fail, then undo both edits with `git checkout -- validation apps/widget/public`.

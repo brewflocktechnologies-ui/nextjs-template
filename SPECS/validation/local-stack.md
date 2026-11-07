@@ -27,7 +27,7 @@ pnpm stack:reset      # restores apps/widget/public/v1 from validation fixtures 
 
 `pnpm stack` is `nx run-many -t dev -p @byteflock/admin-dashboard @byteflock/widget @byteflock/widget-playground --output-style=stream`. Nx runs continuous `dev` targets side by side; stop with Ctrl+C once.
 
-`stack:check` is a Node script, so it needs no curl on Windows. It fetches `http://localhost:3000/`, `http://localhost:4300/` and `http://localhost:4400/v1/frame/`, and compares the frame's response headers with `apps/widget/src/headers.config.ts`. It also probes `http://localhost:4400/v1/loader.js` and `http://localhost:4400/v1/config/wk_acme_demo.json`, reported as "not yet" until PoC-A creates them. Each endpoint must return its expected content type, so an HTML fallback page never passes as JavaScript or JSON. `pnpm stack:check --wait 120` retries while the servers start.
+`stack:check` is a Node script, so it needs no curl on Windows. It fetches `http://localhost:3000/dev/session` (the dashboard redirects `/` without a session), `http://localhost:4300/` and `http://localhost:4400/v1/frame/`, and compares the frame's response headers with `apps/widget/src/headers.config.ts`. It also probes `http://localhost:4400/v1/loader.js` and `http://localhost:4400/v1/config/wk_acme_demo.json`, reported as "not yet" until PoC-A creates them. Each endpoint must return its expected content type, so an HTML fallback page never passes as JavaScript or JSON. `pnpm stack:check --wait 120` retries while the servers start.
 
 The widget origin uses Vite `appType: 'mpa'`: unknown paths return 404, as they will on the static host, and a request for `/v1/frame/` serves `/v1/frame/index.html`.
 
@@ -35,7 +35,7 @@ End-to-end tests work with or without `pnpm stack` running. Each Playwright conf
 
 ## Environment
 
-`.env.local.example` at the root (copied to `.env.local`, which is gitignored):
+No setup is needed: the dashboard's development defaults are committed in `apps/admin-dashboard/.env.development` (no secrets; P1.6). To override a value, put it in `apps/admin-dashboard/.env.local` (gitignored). `.env.local.example` at the root lists the values:
 
 ```
 DEV_SESSION_SECRET=dev-only-secret-change-me

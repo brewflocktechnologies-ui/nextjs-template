@@ -63,6 +63,22 @@ Linking (D-07) confirmed: libraries export `./src/index.ts`; consumers declare `
 
 Finding: `nx add` failed with a pnpm store error on this machine; plugins are added with `pnpm add -D -w @nx/<plugin>@24.0.0` followed by `pnpm nx g @nx/<plugin>:init`.
 
+**Remote cache decision, P1.7 (2026-11-07, ARCH-001 §6.5, PO-013, D-08).** Deferred.
+
+The rule: trial a remote cache (`@nx/s3-cache` against MinIO, or Nx Cloud) only if the median CI time on `main` over the last 20 runs exceeds 10 minutes. CI has not run yet (D-22), so the measurement is the local gate, `pnpm verify` in full mode after `pnpm nx reset` (no cache), on Windows 11:
+
+| Run (P1.6–P1.7) | Total of the step times |
+| --------------- | ----------------------- |
+| 1               | 253 s                   |
+| 2               | 220 s                   |
+| 3               | 237 s                   |
+| 4               | 235 s                   |
+| 5               | 236 s                   |
+
+Median 236 s, about 4 minutes, well under 10. End-to-end is the largest step (about 135 s), and a remote cache would not shorten it on a cold runner. Revisit when CI runs: measure the last 20 `main` runs and apply the same rule.
+
+Update to the linking note above: since P1.4 the dashboard's `next.config.js` lists `@tanstack/react-table` and `@tanstack/table-core` in `transpilePackages`, because TanStack Table ships ESM only and `next/jest` must transform it.
+
 <!-- /verification -->
 
 ## Links

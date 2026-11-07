@@ -7,7 +7,7 @@
 3. Make sure `pnpm` resolves to the version in `package.json` `packageManager` (11.28.10). Either run `corepack enable` once, or use a globally installed pnpm 9.7 or later, which switches versions automatically. Check with `pnpm --version` inside the repository.
 4. Install dependencies with `pnpm install --frozen-lockfile`. Never use npm or yarn here.
 5. Install the Playwright browser once with `pnpm exec playwright install --with-deps chromium`.
-6. Start the local stack with `pnpm stack`, then run `pnpm stack:check` in a second terminal. The dashboard is at `http://localhost:3000`, the widget origin at `http://localhost:4400` and the playground at `http://localhost:4300`.
+6. Start the local stack with `pnpm stack`, then run `pnpm stack:check --wait 120` in a second terminal; it retries until the servers are up. The first line of the `pnpm stack` log, "@nx/playwright: could not infer an Nx task from the webServer command…", is a harmless notice. The dashboard is at `http://localhost:3000`, the widget origin at `http://localhost:4400` and the playground at `http://localhost:4300`.
 7. Check everything CI checks with `pnpm verify` (add `--quick` to skip end-to-end tests).
 
 More on the local stack: `SPECS/validation/local-stack.md`.
@@ -41,7 +41,7 @@ Publishing writes into the widget's folder, which is development-only (D-13). Ru
 - Use PowerShell or Git Bash. Every repository script is Node, so neither needs extra tools.
 - Use one checkout per environment, either native Windows or WSL2, not both on the same folder.
 - If ports 3000, 4300, 4400, 4600 or 4700 are taken, free them rather than changing them. The widget's preview mode is pinned to the dashboard origin.
-- `next dev` regenerates `apps/admin-dashboard/next-env.d.ts` and `apps/admin-dashboard/AGENTS.md`. Commit them as they are.
+- `next dev` regenerates `apps/admin-dashboard/next-env.d.ts` (it points at `.next/dev/types`, while a build points it at `.next/types`) and `apps/admin-dashboard/AGENTS.md`. Expect `next-env.d.ts` to show as modified after running the stack; restore it with `git checkout -- apps/admin-dashboard/next-env.d.ts` before committing unless you meant to change it.
 - Stop `pnpm stack` with Ctrl+C in its terminal. If a dev server survives, for example after closing the terminal window, find it with `netstat -ano | findstr :4400` and end it in Task Manager.
 
 ## Where things are

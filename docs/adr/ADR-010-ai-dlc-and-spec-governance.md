@@ -41,7 +41,7 @@ AI agents implement most of Phase 1 under human review. Decisions, specs and con
 
 <!-- verification -->
 
-To be filled by P1.7-T07.
+**P1.7 review (2026-11-07).** The workflow held for all of Phase 1: no phase started without product-owner approval in `SPECS/STATUS.md`, agents never set `Approved` or `Accepted`, and every phase has an evidence file with commands, negative runs and deviations. ADR immutability, contract-change, dependency-diff and test-count controls are mechanical (`pnpm policy:check`). The retrospective is `docs/architecture/retrospective-phase-1.md`; it recommends keeping `SPECS/` instead of adopting the OpenSpec layout (D-09) and proposes six changes to `SPECS/00-conventions.md` for Phase 2, pending discussion with the product owner.
 
 <!-- /verification -->
 

@@ -13,8 +13,9 @@ const waitSeconds = waitIndex >= 0 ? Number(args[waitIndex + 1] ?? 120) : 0;
 
 const endpoints = [
   {
+    // `/` redirects to the tenant switcher without a session (P1.6 proxy); probe the public page.
     name: 'Admin dashboard',
-    url: 'http://localhost:3000/',
+    url: 'http://localhost:3000/dev/session',
     required: true,
     type: 'text/html',
   },

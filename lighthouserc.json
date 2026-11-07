@@ -1,0 +1,37 @@
+{
+  "$comment": "Lighthouse CI for the dashboard (P1.7-T02). /settings/theme is the representative route. It needs a session, and Phase 1 has only the development adapter, so this measures `next dev` with a session from tools/scripts/lighthouse-sign-in.cjs (the dev tenant switcher): the numbers are indicative until a production session adapter exists. Assertions warn first; change to error after two green weeks. Lighthouse runs its default mobile profile. A navigation run cannot measure INP, so Total Blocking Time (200 ms) stands in for the INP budget in the lab.",
+  "ci": {
+    "collect": {
+      "startServerCommand": "pnpm exec next dev apps/admin-dashboard --port 3000",
+      "startServerReadyPattern": "Ready",
+      "url": ["http://localhost:3000/settings/theme"],
+      "numberOfRuns": 3,
+      "puppeteerScript": "tools/scripts/lighthouse-sign-in.cjs"
+    },
+    "assert": {
+      "assertions": {
+        "largest-contentful-paint": [
+          "warn",
+          {
+            "maxNumericValue": 2500
+          }
+        ],
+        "total-blocking-time": [
+          "warn",
+          {
+            "maxNumericValue": 200
+          }
+        ],
+        "categories:accessibility": [
+          "warn",
+          {
+            "minScore": 0.95
+          }
+        ]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

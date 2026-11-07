@@ -1,0 +1,95 @@
+name: Nightly
+
+# Not running yet: GitHub push and CI are deferred (SPECS/DECISIONS.md D-22). P1.7-T02: the browser
+# matrix, the @measure baselines and Lighthouse. A failure opens an issue.
+
+on:
+  schedule:
+    - cron: '0 17 * * *' # 03:00 AEST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  browsers:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Playground and dashboard end-to-end, ${{ matrix.browser }}
+        run: pnpm nx run-many -t e2e --parallel=1 -- --project=${{ matrix.browser }}
+      - name: Write the failure report
+        if: failure()
+        run: >
+          node -e "require('fs').writeFileSync('nightly-failure.md',
+          'Nightly ${{ matrix.browser }} end-to-end failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n')"
+      - uses: peter-evans/create-issue-from-file@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          title: 'Nightly: ${{ matrix.browser }} end-to-end failed'
+          content-filepath: nightly-failure.md
+          labels: nightly
+
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Build the widget
+        run: pnpm nx run @byteflock/widget:build
+      # Baselines are an artifact, never committed (P1.7-T02).
+      - name: '@measure baselines'
+        env:
+          MEASURE: '1'
+        run: pnpm nx run @byteflock/widget-playground:e2e -- --project=chromium --grep @measure --reporter=line | tee measure.txt
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: baselines
+          path: measure.txt
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Budgets warn first; switch to error after two green weeks (P1.7-T02). See lighthouserc.json.
+      - name: Lighthouse on /settings/theme
+        run: pnpm dlx @lhci/cli@0.16.0 autorun --config=lighthouserc.json
+      - name: Write the failure report
+        if: failure()
+        run: >
+          node -e "require('fs').writeFileSync('nightly-failure.md',
+          'Nightly Lighthouse failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n')"
+      - uses: peter-evans/create-issue-from-file@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: failure()
+        with:
+          title: 'Nightly: Lighthouse failed'
+          content-filepath: nightly-failure.md
+          labels: nightly
