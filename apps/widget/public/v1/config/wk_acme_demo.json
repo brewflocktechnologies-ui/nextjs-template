@@ -15,5 +15,8 @@
   },
   "launcher": {
     "position": "bottom-right"
-  }
+  },
+  "allowedOrigins": [
+    "http://localhost:4300"
+  ]
 }

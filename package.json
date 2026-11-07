@@ -48,6 +48,7 @@
     "@storybook/addon-vitest": "10.6.5",
     "@storybook/react": "10.6.5",
     "@storybook/react-vite": "10.6.5",
+    "@storybook/web-components-vite": "10.6.5",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.8.0",
     "@swc/core": "~1.15.5",

@@ -18,7 +18,37 @@
       "type:lib",
       "scope:widget",
       "platform:lit"
-    ]
+    ],
+    "targets": {
+      "storybook": {
+        "command": "storybook dev -p 4700 --config-dir .storybook --no-open",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "continuous": true
+      },
+      "build-storybook": {
+        "command": "storybook build --config-dir .storybook --output-dir storybook-static --quiet",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "outputs": [
+          "{projectRoot}/storybook-static"
+        ],
+        "cache": true
+      },
+      "test-storybook": {
+        "command": "vitest run --config vitest.storybook.config.mts",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "cache": true,
+        "inputs": [
+          "default",
+          "^production"
+        ]
+      }
+    }
   },
   "dependencies": {
     "@byteflock/design-tokens": "workspace:*",

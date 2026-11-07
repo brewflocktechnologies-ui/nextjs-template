@@ -4,7 +4,10 @@
   "themeRevision": 1,
   "locale": {
     "default": "en-AU",
-    "supported": ["en-AU", "en-US"]
+    "supported": [
+      "en-AU",
+      "en-US"
+    ]
   },
   "features": {
     "proactive": true,
@@ -12,5 +15,8 @@
   },
   "launcher": {
     "position": "bottom-right"
-  }
+  },
+  "allowedOrigins": [
+    "http://localhost:4300"
+  ]
 }

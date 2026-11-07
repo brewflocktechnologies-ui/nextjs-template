@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wrong domain</title>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+  </head>
+  <body>
+    <h1>Wrong domain (ENDP-02a, D-21)</h1>
+    <p><a href="/">Back to the playground index</a></p>
+    <p>
+      Widget key <code>wk_wrong_domain</code> allows only
+      <code>https://customer.example</code>. On this origin the frame must
+      refuse to start: no <code>ready</code>, nothing rendered, one
+      <code>ORIGIN_NOT_ALLOWED</code> beacon. After the 5-second
+      <code>ready</code> timeout the launcher shows "Chat unavailable".
+    </p>
+    <script src="/fixtures/embed.js" data-key="wk_wrong_domain"></script>
+  </body>
+</html>

@@ -8,10 +8,12 @@ Measured on 2026-11-07, branch `poc-a-widget-isolation`, Windows 11, from `pnpm 
 
 | Measurement                                                    | Raw      | gzip     | brotli   | Budget (gzip) |
 | -------------------------------------------------------------- | -------- | -------- | -------- | ------------- |
-| `loader.js`                                                    | 1,354 B  | 721 B    | 590 B    | set in P1.5   |
-| `launcher.[hash].js`                                           | 14,891 B | 5,161 B  | 4,429 B  | set in P1.5   |
-| Frame initial JS (Lit, elements, bootstrap, provisional theme) | 31,059 B | 11,639 B | 10,444 B | set in P1.5   |
-| Frame initial CSS                                              | 0 B      | 20 B     | 1 B      | set in P1.5   |
+| `loader.js`                                                    | 1,354 B  | 721 B    | 590 B    | 830 B         |
+| `launcher.[hash].js`                                           | 14,891 B | 5,161 B  | 4,429 B  | 5,936 B       |
+| Frame initial JS (Lit, elements, bootstrap, provisional theme) | 31,059 B | 11,639 B | 10,444 B | 16,000 B (\*) |
+| Frame initial CSS                                              | 0 B      | 20 B     | 1 B      | 23 B          |
+
+Budgets were set in P1.5 as ceil(baseline × 1.15) and live in `apps/widget/budgets.json`. (\*) The frame JS budget is a recorded exception: the P1.5 production frame measured 14,573 B gzip, above the 13,385 B formula; the budget leaves about 10% headroom (ADR-009 verification block).
 
 The frame has no CSS file: its styles are Lit constructable stylesheets inside the JavaScript, because the frame CSP blocks `<style>` elements.
 

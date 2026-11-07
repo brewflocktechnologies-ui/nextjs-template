@@ -1,9 +1,26 @@
-// Frame bootstrap (PoC-A, ARCH-001 §10.3–§10.5, §10.10).
+// Frame bootstrap (ARCH-001 §10.3–§10.5, §10.10; PoC-A, hardened in P1.5).
 //
 // 1. Resolve the parent origin (BRIDGE-04). On mismatch: render nothing, post nothing, beacon only.
-// 2. Fetch config, then theme, from this origin (2 s timeout each). Any failure: embedded defaults + beacon.
-// 3. Apply --sem-* variables via CSSOM, load the curated font with the FontFace API, set lang/dir.
-// 4. Post `ready` with the allow-listed launcherTheme; handle host messages through the gate.
+// 2. Fetch config, then theme, from this origin (2 s timeout each). Any failure: embedded defaults
+//    and a beacon.
+// 3. Refuse to start when the parent origin is not in the config's allowedOrigins (ENDP-02a, D-21).
+// 4. Apply the theme with the contract guard and resolver (@byteflock/theme), load the curated
+//    font, set lang/dir.
+// 5. Post `ready` with the allow-listed launcherTheme; handle host messages through the gate.
+// Storage goes only through ConsentController (P1.5-T04); nothing else is persisted.
+import {
+  ConsentController,
+  InMemoryTransport,
+  ThemeController,
+  dirOf,
+  t,
+  type ChatMessage,
+} from '@byteflock/chat-widget';
+import {
+  SUPPORTED_SCHEMA_VERSIONS,
+  isSupportedTheme,
+  type Theme,
+} from '@byteflock/theme/guard';
 import {
   RateLimiter,
   createStats,
@@ -15,23 +32,21 @@ import {
   type FrameToHost,
   type HostToFrame,
 } from '../bridge/protocol';
-import { checkConfig, isWidgetKey, type WidgetConfig } from './config';
-// Side-effect import registers <byteflock-frame-app>; a type-only use would be elided by the compiler.
-import './elements';
-import type { ByteflockFrameApp, ChatMessage } from './elements';
-import { gate, resolveParentOrigin, type GateState } from './gate';
 import {
-  EMBEDDED_DEFAULT,
-  FONT_STACKS,
-  checkTheme,
-  launcherThemeOf,
-  themeToVars,
-  type Appearance,
-  type ProvisionalTheme,
-} from './provisional-theme';
+  checkConfig,
+  isOriginAllowed,
+  isWidgetKey,
+  type WidgetConfig,
+} from './config';
+// Side-effect import registers <byteflock-frame-app>; a type-only use would be elided.
+import './elements';
+import type { ByteflockFrameApp } from './elements';
+import { EMBEDDED_DEFAULT } from './embedded-default';
+import { loadFont } from './fonts';
+import { gate, resolveParentOrigin, type GateState } from './gate';
+import { launcherThemeOf } from './launcher-theme';
 
 const FETCH_TIMEOUT_MS = 2000;
-const RTL = new Set(['ar', 'he', 'fa', 'ur']);
 
 const params = new URLSearchParams(location.search);
 const widgetKey = params.get('key') ?? '';
@@ -53,6 +68,8 @@ let gateState: GateState = {
   pinned: null,
 };
 let lastRateLimitedError = -Infinity;
+let refused = false;
+let config: WidgetConfig | null = null;
 
 if (
   mode === 'test' &&
@@ -66,6 +83,14 @@ if (
 const app = document.querySelector('byteflock-frame-app') as ByteflockFrameApp;
 document.documentElement.style.setProperty('margin', '0');
 document.body.style.setProperty('margin', '0');
+
+const themeController = new ThemeController(app);
+let theme: Theme = EMBEDDED_DEFAULT;
+// Until the config says otherwise, consent is required: nothing may be stored.
+let consent = new ConsentController('required');
+const transport = new InMemoryTransport({
+  reply: () => t('agent.reply', app.locale),
+});
 
 // --- telemetry (ENDP-08): frame only, codes only ---------------------------------------------
 
@@ -87,11 +112,22 @@ function beacon(code: ErrorCode) {
 
 let readySent = false;
 function post(message: FrameToHost) {
+  if (refused) return;
   const target = gateState.pinned ?? gateState.expected;
   if (!target) return;
   // Before pinning, only `ready` may go out, once (BRIDGE-04 rule 4).
   if (!gateState.pinned && message.type !== 'ready') return;
   window.parent.postMessage(makeEnvelope(message), target);
+}
+
+/** Refuse to run: render nothing, post nothing, one beacon (BRIDGE-04 rules 6 and 7). */
+function refuse(code: ErrorCode | null) {
+  refused = true;
+  gateState = { expected: null, pinned: null };
+  app.available = false;
+  app.hidden = true;
+  transport.disconnect();
+  if (code) beacon(code);
 }
 
 // --- fetching -----------------------------------------------------------------------------
@@ -131,9 +167,9 @@ async function loadConfig(): Promise<WidgetConfig | null> {
     return null;
   }
   try {
-    const config = checkConfig(await fetchJson(`/v1/config/${widgetKey}.json`));
-    if (!config) beacon('CONFIG_INVALID');
-    return config;
+    const doc = checkConfig(await fetchJson(`/v1/config/${widgetKey}.json`));
+    if (!doc) beacon('CONFIG_INVALID');
+    return doc;
   } catch (e) {
     beacon(
       e instanceof FetchError && e.kind === 'timeout'
@@ -144,17 +180,18 @@ async function loadConfig(): Promise<WidgetConfig | null> {
   }
 }
 
-async function loadTheme(
-  config: WidgetConfig,
-): Promise<ProvisionalTheme | null> {
+async function loadTheme(c: WidgetConfig): Promise<Theme | null> {
   try {
-    const result = checkTheme(
-      await fetchJson(
-        `/v1/themes/${config.tenantId}/${config.themeRevision}.json`,
-      ),
+    const doc = await fetchJson(
+      `/v1/themes/${c.tenantId}/${c.themeRevision}.json`,
     );
-    if (result.ok) return result.theme;
-    beacon(result.code);
+    const version = (doc as { schemaVersion?: unknown } | null)?.schemaVersion;
+    if (!SUPPORTED_SCHEMA_VERSIONS.includes(version as number)) {
+      beacon('THEME_UNSUPPORTED_VERSION');
+      return null;
+    }
+    if (isSupportedTheme(doc)) return doc;
+    beacon('THEME_INVALID');
     return null;
   } catch {
     beacon('THEME_INVALID');
@@ -162,61 +199,34 @@ async function loadTheme(
   }
 }
 
-// --- applying the theme -------------------------------------------------------------------
-
-let theme: ProvisionalTheme = EMBEDDED_DEFAULT;
-const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-const appearance = (): Appearance =>
-  theme.appearance.mode === 'system'
-    ? darkQuery.matches
-      ? 'dark'
-      : 'light'
-    : theme.appearance.mode;
-
-function applyVars(vars: Record<string, string>) {
-  for (const [name, value] of Object.entries(vars))
-    document.documentElement.style.setProperty(name, value);
-}
+// --- theme and locale ---------------------------------------------------------------------
 
 function applyTheme() {
-  applyVars(themeToVars(theme, appearance()));
-  document.documentElement.dataset.appearance = appearance();
+  themeController.setTheme(theme);
   app.brandName = theme.brand.name;
-}
-darkQuery.addEventListener(
-  'change',
-  () => theme.appearance.mode === 'system' && applyTheme(),
-);
-
-async function loadFont(family: ProvisionalTheme['typography']['fontFamily']) {
-  // Only Inter ships in PoC-A; the other curated families arrive in P1.5 and fall back to the stack.
-  if (family !== 'inter' || !('fonts' in document)) return;
-  const faces = [
-    new FontFace('Inter', 'url(/v1/fonts/inter/inter-latin-400-normal.woff2)', {
-      weight: '400',
-    }),
-    new FontFace('Inter', 'url(/v1/fonts/inter/inter-latin-600-normal.woff2)', {
-      weight: '600',
-    }),
-  ];
-  for (const face of faces) document.fonts.add(face);
-  await Promise.allSettled(faces.map((f) => f.load()));
-  document.documentElement.style.setProperty(
-    '--sem-font-family-sans',
-    FONT_STACKS.inter,
-  );
 }
 
 function setLocale(tag: string) {
-  const language = tag.split('-')[0].toLowerCase();
   document.documentElement.lang = tag;
-  document.documentElement.dir = RTL.has(language) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dirOf(tag);
   app.locale = tag;
+}
+
+// --- consent ------------------------------------------------------------------------------
+
+function syncConsent() {
+  app.consentPending = consent.state === 'unknown';
+  // The visitor id is created only once storage is allowed (Q-006).
+  if (consent.allowed) consent.visitorId();
+}
+
+function decideConsent(granted: boolean) {
+  consent.decide(granted);
+  syncConsent();
 }
 
 // --- host messages ------------------------------------------------------------------------
 
-let consent: boolean | null = null;
 let claimedTraits: Record<string, string> = {};
 let unread = 0;
 
@@ -241,27 +251,36 @@ function handle(message: HostToFrame, origin: string) {
     case 'close':
       break;
     case 'consent':
-      // Persistence is gated on consent from P1.5; PoC-A only records the decision.
-      consent = message.payload.granted;
+      decideConsent(message.payload.granted);
       break;
     case 'locale':
       setLocale(message.payload.tag);
       break;
     case 'identify':
-      // Tenant-supplied and unverified: stored as claimed, never echoed back (BRIDGE-03).
+      // Tenant-supplied and unverified: stored in memory as claimed, never echoed (BRIDGE-03).
       claimedTraits = { ...message.payload.traits };
       break;
     case 'visibility':
+      if (message.payload.hidden) transport.pause();
+      else transport.resume();
       break;
     case 'theme.preview':
       if (mode !== 'preview') return drop('theme_in_production');
       if (origin !== __DASHBOARD_ORIGIN__) return drop('origin');
-      applyVars(message.payload.vars);
+      themeController.apply(message.payload.vars);
       break;
   }
 }
 
+const allowed = (origin: string) =>
+  !config ||
+  isOriginAllowed(config, origin, {
+    mode,
+    dashboardOrigin: __DASHBOARD_ORIGIN__,
+  });
+
 window.addEventListener('message', (event: MessageEvent) => {
+  if (refused) return;
   const g = gate(gateState, event.origin, event.source === window.parent);
   if (!g.ok) return drop(g.reason);
   const env = parseEnvelope(event.data);
@@ -277,6 +296,9 @@ window.addEventListener('message', (event: MessageEvent) => {
     }
     return;
   }
+  // Second allowlist check, on the origin the channel pins to (BRIDGE-04 rule 7).
+  if (!gateState.pinned && g.state.pinned && !allowed(g.state.pinned))
+    return refuse('ORIGIN_NOT_ALLOWED');
   gateState = g.state;
   stats.accepted++;
   handle(msg.value, event.origin);
@@ -285,6 +307,25 @@ window.addEventListener('message', (event: MessageEvent) => {
 app.addEventListener('frame-close', () =>
   post({ type: 'state', payload: { open: false } }),
 );
+app.addEventListener('consent-decision', (event) =>
+  decideConsent(event.detail.granted),
+);
+app.addEventListener('composer-send', (event) => {
+  const message: ChatMessage = {
+    id: `v-${Date.now()}-${app.messages.length}`,
+    from: 'visitor',
+    text: event.detail.text,
+    at: new Date(),
+  };
+  app.messages = [...app.messages, message];
+  transport.send({ type: 'message', text: event.detail.text });
+});
+transport.subscribe((event) => {
+  app.messages = [
+    ...app.messages,
+    { id: event.id, from: 'agent', text: event.text, at: new Date(event.at) },
+  ];
+});
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') post({ type: 'state', payload: { open: false } });
 });
@@ -294,15 +335,18 @@ document.addEventListener('keydown', (event) => {
 async function bootstrap() {
   if (embedded && !parent.ok) {
     // ORIGIN_MISMATCH: refuse to open. Nothing is rendered or posted to the parent.
-    app.available = false;
-    app.hidden = true;
-    if (parent.reason === 'ORIGIN_MISMATCH') beacon('ORIGIN_MISMATCH');
+    refuse(parent.reason === 'ORIGIN_MISMATCH' ? 'ORIGIN_MISMATCH' : null);
     return;
   }
 
   applyTheme(); // embedded defaults first, so the frame is never unstyled
-  const config = await loadConfig();
+  config = await loadConfig();
+  if (config && parent.ok && !allowed(parent.origin)) {
+    refuse('ORIGIN_NOT_ALLOWED');
+    return;
+  }
   if (config) {
+    consent = new ConsentController(config.features.consent);
     setLocale(params.get('locale') ?? config.locale.default);
     const loaded = await loadTheme(config);
     if (loaded) theme = loaded;
@@ -310,42 +354,51 @@ async function bootstrap() {
     setLocale(params.get('locale') ?? 'en');
   }
   applyTheme();
+  syncConsent();
   await loadFont(theme.typography.fontFamily);
+  await transport.connect();
 
-  const greeting: ChatMessage = {
-    id: 1,
-    from: 'agent',
-    text: `Hi! Welcome to ${theme.brand.name}. How can we help?`,
-    at: new Date(),
-  };
-  app.messages = [greeting];
+  app.messages = [
+    {
+      id: 'greeting',
+      from: 'agent',
+      text: t('greeting', app.locale, { brand: theme.brand.name }),
+      at: new Date(),
+    },
+  ];
 
   if (!readySent) {
     readySent = true;
     post({
       type: 'ready',
-      payload: { launcherTheme: launcherThemeOf(theme, appearance()) },
+      payload: {
+        launcherTheme: launcherThemeOf(theme, themeController.appearance),
+      },
     });
   }
   if (config?.features.proactive) {
     unread = 1;
     // Sent once the host has pinned the channel; until then post() holds non-ready messages back.
     const announce = () =>
-      gateState.pinned
-        ? post({ type: 'unread', payload: { count: unread } })
-        : setTimeout(announce, 100);
+      refused
+        ? undefined
+        : gateState.pinned
+          ? post({ type: 'unread', payload: { count: unread } })
+          : setTimeout(announce, 100);
     announce();
   }
-  if (config?.features.consent === 'required' && consent === null) {
+  if (config?.features.consent === 'required' && consent.state === 'unknown') {
     const ask = () =>
-      gateState.pinned
-        ? post({ type: 'consent.request', payload: {} })
-        : setTimeout(ask, 100);
+      refused
+        ? undefined
+        : gateState.pinned
+          ? post({ type: 'consent.request', payload: {} })
+          : setTimeout(ask, 100);
     ask();
   }
 }
 
 bootstrap().catch(() => beacon('FRAME_INIT_FAILED'));
 
-// Referenced so the claimed traits are not tree-shaken away before P1.5 uses them.
+// Referenced so the claimed traits are kept until the realtime phase sends them.
 export const _claimed = () => claimedTraits;

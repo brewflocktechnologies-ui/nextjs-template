@@ -10,7 +10,8 @@
       "vitest"
     ],
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es2022", "dom", "dom.iterable"]
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "resolveJsonModule": true
   },
   "include": [
     "vite.config.ts",

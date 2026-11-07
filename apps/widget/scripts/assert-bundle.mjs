@@ -4,7 +4,9 @@
 // Fails when:
 //   - any file under dist/v1 contains React or Next.js code;
 //   - the loader contains a static `import` or more than one dynamic import;
-//   - a gzip size exceeds its budget in budgets.json (from P1.5; PoC-A only records sizes).
+//   - a gzip size exceeds its budget in budgets.json (P1.5-T07);
+//   - an absolute URL in dist/v1 does not start with /v1/, or the loader lacks the versioned
+//     element name (P1.5-T08).
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -81,9 +83,7 @@ const sizes = {
 };
 
 const budgetsFile = path.join(root, 'budgets.json');
-const budgets = fs.existsSync(budgetsFile)
-  ? JSON.parse(fs.readFileSync(budgetsFile, 'utf8'))
-  : {};
+const budgets = JSON.parse(fs.readFileSync(budgetsFile, 'utf8')).budgets;
 console.log('\nwidget bundle sizes (bytes)');
 for (const [name, s] of Object.entries(sizes)) {
   if (!s) continue;
@@ -98,10 +98,34 @@ for (const [name, s] of Object.entries(sizes)) {
   );
 }
 
+console.log('\nwidget budgets (gzip bytes, actual / budget)');
+for (const [name, s] of Object.entries(sizes)) {
+  if (!s) continue;
+  console.log(`  ${name}: ${s.gzip} / ${budgets[name] ?? 'none'}`);
+  if (budgets[name] === undefined)
+    problems.push(`${name}: no budget in budgets.json`);
+}
+
+// Versioned paths (P1.5-T08): every absolute URL the widget references lives under /v1/.
+const ABSOLUTE = /["'`](\/[a-z0-9][\w.${}-]*(?:\/[\w.${}-]*)+)/gi;
+for (const file of files) {
+  const text = fs.readFileSync(file, 'utf8');
+  for (const [, url] of text.matchAll(ABSOLUTE)) {
+    if (!url.startsWith('/v1/'))
+      problems.push(
+        `${path.relative(root, file)}: absolute URL ${url} is not under /v1/`,
+      );
+  }
+}
+if (!loader.includes('byteflock-chat-v1'))
+  problems.push(
+    'dist/v1/loader.js: the versioned element name byteflock-chat-v1 is missing',
+  );
+
 if (problems.length) {
   console.error(`\nassert-bundle failed:\n  ${problems.join('\n  ')}`);
   process.exit(1);
 }
 console.log(
-  'assert-bundle: no React/Next code, loader has one dynamic import and no static imports\n',
+  'assert-bundle: no React/Next code, one dynamic import in the loader, all URLs under /v1/, budgets met\n',
 );
