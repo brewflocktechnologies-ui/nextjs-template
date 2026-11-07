@@ -4,20 +4,20 @@ States: `Not started` → `Approved` → `In progress` → `Implemented` → `Ve
 
 **Rule:** a phase moves to `Approved` only by the product owner writing their name and the date in the Approval column. Agents never set `Approved` or `Accepted`.
 
-| Spec    | State       | Approval (name, date)      | Started    | Evidence                               | Accepted (name, date)      | Notes                                                                           |
-| ------- | ----------- | -------------------------- | ---------- | -------------------------------------- | -------------------------- | ------------------------------------------------------------------------------- |
-| P0      | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P0.md](evidence/P0.md)       | Madhusudan C P, 2026-11-07 | D-02 migrate, D-06 byteflock, Q-013 full theme, Q-014 allowlist, Q-015 idle     |
-| P1.0    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.0.md](evidence/P1.0.md)   | Madhusudan C P, 2026-11-07 | GitHub items deferred (D-22)                                                    |
-| P1.1    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.1.md](evidence/P1.1.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                       |
-| PoC-A   | Verified    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-A.md](evidence/POC-A.md) |                            | Verified locally (D-22); needs residual sign-off for ADR-007 and manual runbook |
-| P1.2    | Verified    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.2.md](evidence/P1.2.md)   |                            | Verified locally (D-22); manual check: preview page                             |
-| P1.3    | Not started |                            |            |                                        |                            | Includes PoC-C (day 1)                                                          |
-| PoC-B   | Approved    | Madhusudan C P, 2026-11-07 |            |                                        |                            | Can run parallel to PoC-A/P1.2                                                  |
-| P1.4    | Not started |                            |            |                                        |                            |                                                                                 |
-| P1.5    | Not started |                            |            |                                        |                            | Adds the domain allowlist (D-21)                                                |
-| P1.6    | Not started |                            |            |                                        |                            | Full tenant theme (D-20); widget domain settings (D-21)                         |
-| P1.7    | Not started |                            |            |                                        |                            |                                                                                 |
-| P1 exit | Not started |                            |            |                                        |                            | ARCH-001 v1.0 Accepted                                                          |
+| Spec    | State       | Approval (name, date)      | Started    | Evidence                               | Accepted (name, date)      | Notes                                                                       |
+| ------- | ----------- | -------------------------- | ---------- | -------------------------------------- | -------------------------- | --------------------------------------------------------------------------- |
+| P0      | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P0.md](evidence/P0.md)       | Madhusudan C P, 2026-11-07 | D-02 migrate, D-06 byteflock, Q-013 full theme, Q-014 allowlist, Q-015 idle |
+| P1.0    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.0.md](evidence/P1.0.md)   | Madhusudan C P, 2026-11-07 | GitHub items deferred (D-22)                                                |
+| P1.1    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.1.md](evidence/P1.1.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
+| PoC-A   | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-A.md](evidence/POC-A.md) | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
+| P1.2    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.2.md](evidence/P1.2.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
+| P1.3    | In progress | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.3.md](evidence/P1.3.md)   |                            | Includes PoC-C (day 1)                                                      |
+| PoC-B   | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/POC-B.md](evidence/POC-B.md) | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                   |
+| P1.4    | Not started |                            |            |                                        |                            |                                                                             |
+| P1.5    | Not started |                            |            |                                        |                            | Adds the domain allowlist (D-21)                                            |
+| P1.6    | Not started |                            |            |                                        |                            | Full tenant theme (D-20); widget domain settings (D-21)                     |
+| P1.7    | Not started |                            |            |                                        |                            |                                                                             |
+| P1 exit | Not started |                            |            |                                        |                            | ARCH-001 v1.0 Accepted                                                      |
 
 ## Product-owner answers to open questions
 
@@ -33,16 +33,16 @@ Record here when answered; otherwise the defaults in `DECISIONS.md` apply.
 
 ## ADR status tracker
 
-| ADR     | Title                                                   | Status                     | Set by phase                |
-| ------- | ------------------------------------------------------- | -------------------------- | --------------------------- |
-| ADR-001 | Nx + pnpm workspace and toolchain                       | Accepted (P0, 2026-11-07)  | P0 accepts, P1.1 verifies   |
-| ADR-002 | Application and library boundaries                      | Accepted (P0, 2026-11-07)  | P0 accepts, P1.1 verifies   |
-| ADR-003 | Token source and build                                  | Accepted (P0, 2026-11-07)  | P0 accepts, P1.2 verifies   |
-| ADR-004 | Theme contract, grammar, lifecycle                      | Proposed                   | P1.3 accepts (after PoC-C)  |
-| ADR-005 | Tenant context, authorization boundary, SSR cache rules | Proposed                   | P1.6 accepts                |
-| ADR-006 | Primitive and React styling                             | Proposed                   | PoC-B accepts               |
-| ADR-007 | Widget conversation isolation, loader and bridge        | Proposed (amended by D-21) | PoC-A accepts, P1.5 hardens |
-| ADR-008 | Storybook and component testing                         | Accepted (P0, 2026-11-07)  | P1.4 / P1.5 add notes       |
-| ADR-009 | Quality gates, browser support, budgets, accessibility  | Accepted (P0, 2026-11-07)  | P1.5 budgets, P1.7 reviews  |
-| ADR-010 | AI-DLC and specification governance                     | Accepted (P0, 2026-11-07)  | P1.7 reviews                |
-| ADR-011 | Dependency and supply-chain policy                      | Accepted (P0, 2026-11-07)  | P1.1 verifies               |
+| ADR     | Title                                                   | Status                                         | Set by phase               |
+| ------- | ------------------------------------------------------- | ---------------------------------------------- | -------------------------- |
+| ADR-001 | Nx + pnpm workspace and toolchain                       | Accepted (P0, 2026-11-07)                      | P0 accepts, P1.1 verifies  |
+| ADR-002 | Application and library boundaries                      | Accepted (P0, 2026-11-07)                      | P0 accepts, P1.1 verifies  |
+| ADR-003 | Token source and build                                  | Accepted (P0, 2026-11-07); verified at P1.2    | P1.2 verified              |
+| ADR-004 | Theme contract, grammar, lifecycle                      | Proposed                                       | P1.3 accepts (after PoC-C) |
+| ADR-005 | Tenant context, authorization boundary, SSR cache rules | Proposed                                       | P1.6 accepts               |
+| ADR-006 | Primitive and React styling                             | Accepted (PoC-B, 2026-11-07): Base UI          | PoC-B                      |
+| ADR-007 | Widget conversation isolation, loader and bridge        | Accepted (PoC-A, 2026-11-07); residuals signed | PoC-A; P1.5 hardens        |
+| ADR-008 | Storybook and component testing                         | Accepted (P0, 2026-11-07)                      | P1.4 / P1.5 add notes      |
+| ADR-009 | Quality gates, browser support, budgets, accessibility  | Accepted (P0, 2026-11-07)                      | P1.5 budgets, P1.7 reviews |
+| ADR-010 | AI-DLC and specification governance                     | Accepted (P0, 2026-11-07)                      | P1.7 reviews               |
+| ADR-011 | Dependency and supply-chain policy                      | Accepted (P0, 2026-11-07)                      | P1.1 verifies              |

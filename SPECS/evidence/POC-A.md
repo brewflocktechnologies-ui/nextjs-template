@@ -92,21 +92,23 @@ Not run yet. A fresh clone should run `pnpm verify`, which includes the 27 Chrom
 
 ## Manual validation
 
-| Runbook step (PoC-A)                                 | Result  | Date | Validator |
-| ---------------------------------------------------- | ------- | ---- | --------- |
-| 1. Clean page, three tenants                         | pending |      |           |
-| 2. Hostile CSS                                       | pending |      |           |
-| 3. Hostile script                                    | pending |      |           |
-| 4. rrweb                                             | pending |      |           |
-| 5. Strict CSP                                        | pending |      |           |
-| 6. Two instances                                     | pending |      |           |
-| 7. Frame blocked                                     | pending |      |           |
-| 8. Slow or broken config                             | pending |      |           |
-| 9. Keyboard, plus a screen reader (Narrator or NVDA) | pending |      |           |
-| 10. Mobile, device emulation                         | pending |      |           |
-| 11. Measurements in `baselines.md`                   | pending |      |           |
+| Runbook step (PoC-A)                                 | Result                        | Date       | Validator      |
+| ---------------------------------------------------- | ----------------------------- | ---------- | -------------- |
+| 1. Clean page, three tenants                         | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 2. Hostile CSS                                       | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 3. Hostile script                                    | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 4. rrweb                                             | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 5. Strict CSP                                        | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 6. Two instances                                     | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 7. Frame blocked                                     | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 8. Slow or broken config                             | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 9. Keyboard, plus a screen reader (Narrator or NVDA) | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 10. Mobile, device emulation                         | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 11. Measurements in `baselines.md`                   | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
 
 ## Residual risks for product-owner sign-off (ADR-007)
+
+Signed by Madhusudan C P on 2026-11-07.
 
 | Risk                                                            | Status                                                                 |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------- |
@@ -157,10 +159,10 @@ rrweb ships no LICENSE file in its npm package; its licence is MIT per its `pack
 
 ## Status transitions
 
-| Transition  | By                              | Date       |
-| ----------- | ------------------------------- | ---------- |
-| Approved    | Madhusudan C P                  | 2026-11-07 |
-| Implemented | Claude Code (agent)             | 2026-11-07 |
-| Verified    | Claude Code (agent), under D-22 | 2026-11-07 |
-| Validated   |                                 |            |
-| Accepted    |                                 |            |
+| Transition  | By                                                 | Date       |
+| ----------- | -------------------------------------------------- | ---------- |
+| Approved    | Madhusudan C P                                     | 2026-11-07 |
+| Implemented | Claude Code (agent)                                | 2026-11-07 |
+| Verified    | Claude Code (agent), under D-22                    | 2026-11-07 |
+| Validated   | Madhusudan C P (accepted without per-step results) | 2026-11-07 |
+| Accepted    | Madhusudan C P                                     | 2026-11-07 |

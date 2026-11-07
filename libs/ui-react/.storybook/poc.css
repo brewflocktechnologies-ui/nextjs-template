@@ -1,0 +1,60 @@
+/* TEMPORARY (PoC-B-T02): Tailwind entry for Storybook only. P1.4 replaces the hand-written mapping
+   below with the generated shadcn-bridge.css and deletes this file (P1.4-AC07). */
+@import 'tailwindcss';
+@import '@byteflock/design-tokens/css/semantic.css';
+@source '../src';
+
+/* shadcn's variable names → the semantic contract. Components never see a raw colour. */
+:root {
+  --background: var(--sem-color-surface);
+  --foreground: var(--sem-color-on-surface);
+  --card: var(--sem-color-surface);
+  --card-foreground: var(--sem-color-on-surface);
+  --popover: var(--sem-color-surface);
+  --popover-foreground: var(--sem-color-on-surface);
+  --primary: var(--sem-color-primary);
+  --primary-foreground: var(--sem-color-on-primary);
+  --secondary: var(--sem-color-surface-variant);
+  --secondary-foreground: var(--sem-color-on-surface-variant);
+  --muted: var(--sem-color-surface-variant);
+  --muted-foreground: var(--sem-color-on-surface-variant);
+  --accent: var(--sem-color-surface-variant);
+  --accent-foreground: var(--sem-color-on-surface-variant);
+  --destructive: var(--sem-color-danger);
+  --border: var(--sem-color-outline-variant);
+  --input: var(--sem-color-outline);
+  --ring: var(--sem-color-focus-ring);
+  --radius: var(--sem-radius-md);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--sem-font-family-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--sem-font-family-sans);
+}

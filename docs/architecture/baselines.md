@@ -27,9 +27,13 @@ Profile: Chromium (Playwright 1.62.1), CPU 4× slowdown, network 150 ms latency 
 
 ## React (PoC-B, P1.4)
 
-| Measurement                      | gzip | Date | Commit |
-| -------------------------------- | ---- | ---- | ------ |
-| Dialog + Combobox minimal bundle |      |      |        |
+Measured on 2026-11-07, branch `poc-b-react-primitives`: a minimal consumer importing the shadcn Dialog and Combobox (Base UI 1.9.0), built in production mode with React and React DOM excluded.
+
+| Measurement                      | Raw       | gzip     | brotli   |
+| -------------------------------- | --------- | -------- | -------- |
+| Dialog + Combobox minimal bundle | 264,965 B | 73,706 B | 62,252 B |
+
+Tree-shaking works (4 icons, no unrelated Base UI components). The weight is Base UI's positioning and filtering code plus the shadcn helpers (`tailwind-merge`, `class-variance-authority`, `clsx`). It applies to the dashboard only; nothing from `ui-react` reaches the widget. A Radix comparison was not run, because no PoC-B criterion failed with Base UI.
 
 ## Dashboard
 
