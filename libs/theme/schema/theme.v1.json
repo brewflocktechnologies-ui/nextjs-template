@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.byteflock.dev/theme/v1.json",
+  "additionalProperties": false,
+  "title": "Byteflock tenant theme",
+  "description": "Tenant theme contract, schema version 1.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "revision",
+    "appearance",
+    "color",
+    "typography",
+    "shape",
+    "elevation",
+    "density",
+    "brand",
+    "launcher"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1,
+      "type": "number"
+    },
+    "revision": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "appearance": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "anyOf": [
+            {
+              "const": "light",
+              "type": "string"
+            },
+            {
+              "const": "dark",
+              "type": "string"
+            },
+            {
+              "const": "system",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "color": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "light",
+        "dark"
+      ],
+      "properties": {
+        "light": {
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "primary",
+            "onPrimary",
+            "surface",
+            "onSurface",
+            "surfaceVariant",
+            "onSurfaceVariant",
+            "outline",
+            "accent",
+            "onAccent",
+            "success",
+            "warning",
+            "danger",
+            "focusRing"
+          ],
+          "properties": {
+            "primary": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onPrimary": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "surface": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onSurface": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "surfaceVariant": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onSurfaceVariant": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "outline": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "accent": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onAccent": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "success": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "warning": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "danger": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "focusRing": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            }
+          }
+        },
+        "dark": {
+          "additionalProperties": false,
+          "type": "object",
+          "required": [
+            "primary",
+            "onPrimary",
+            "surface",
+            "onSurface",
+            "surfaceVariant",
+            "onSurfaceVariant",
+            "outline",
+            "accent",
+            "onAccent",
+            "success",
+            "warning",
+            "danger",
+            "focusRing"
+          ],
+          "properties": {
+            "primary": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onPrimary": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "surface": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onSurface": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "surfaceVariant": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onSurfaceVariant": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "outline": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "accent": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "onAccent": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "success": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "warning": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "danger": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            },
+            "focusRing": {
+              "pattern": "^#[0-9a-f]{6}$",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "typography": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "fontFamily",
+        "scale"
+      ],
+      "properties": {
+        "fontFamily": {
+          "anyOf": [
+            {
+              "const": "system",
+              "type": "string"
+            },
+            {
+              "const": "inter",
+              "type": "string"
+            },
+            {
+              "const": "roboto",
+              "type": "string"
+            },
+            {
+              "const": "source-sans",
+              "type": "string"
+            },
+            {
+              "const": "noto-sans",
+              "type": "string"
+            }
+          ]
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "const": "sm",
+              "type": "string"
+            },
+            {
+              "const": "md",
+              "type": "string"
+            },
+            {
+              "const": "lg",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "shape": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "radius"
+      ],
+      "properties": {
+        "radius": {
+          "anyOf": [
+            {
+              "const": "none",
+              "type": "string"
+            },
+            {
+              "const": "sm",
+              "type": "string"
+            },
+            {
+              "const": "md",
+              "type": "string"
+            },
+            {
+              "const": "lg",
+              "type": "string"
+            },
+            {
+              "const": "full",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "elevation": {
+      "anyOf": [
+        {
+          "const": "flat",
+          "type": "string"
+        },
+        {
+          "const": "low",
+          "type": "string"
+        },
+        {
+          "const": "medium",
+          "type": "string"
+        }
+      ]
+    },
+    "density": {
+      "anyOf": [
+        {
+          "const": "compact",
+          "type": "string"
+        },
+        {
+          "const": "comfortable",
+          "type": "string"
+        },
+        {
+          "const": "spacious",
+          "type": "string"
+        }
+      ]
+    },
+    "brand": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "maxLength": 60,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$",
+          "type": "string"
+        },
+        "logoAssetId": {
+          "pattern": "^[a-z0-9]{8,32}$",
+          "type": "string"
+        }
+      }
+    },
+    "launcher": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "position",
+        "shape",
+        "icon"
+      ],
+      "properties": {
+        "position": {
+          "anyOf": [
+            {
+              "const": "bottom-right",
+              "type": "string"
+            },
+            {
+              "const": "bottom-left",
+              "type": "string"
+            }
+          ]
+        },
+        "shape": {
+          "anyOf": [
+            {
+              "const": "circle",
+              "type": "string"
+            },
+            {
+              "const": "pill",
+              "type": "string"
+            }
+          ]
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "const": "chat",
+              "type": "string"
+            },
+            {
+              "const": "help",
+              "type": "string"
+            },
+            {
+              "const": "message",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

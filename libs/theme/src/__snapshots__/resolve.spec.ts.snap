@@ -1,0 +1,139 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`resolver (THEME-03) > P1.3-AC05 snapshot: acme-light (dark) 1`] = `
+{
+  "--sem-color-accent": "#c4b5fd",
+  "--sem-color-danger": "#f87171",
+  "--sem-color-focus-ring": "#60a5fa",
+  "--sem-color-on-accent": "#0b1220",
+  "--sem-color-on-primary": "#0b1220",
+  "--sem-color-on-surface": "#f8fafc",
+  "--sem-color-on-surface-variant": "#cbd5e1",
+  "--sem-color-outline": "#94a3b8",
+  "--sem-color-primary": "#93c5fd",
+  "--sem-color-success": "#4ade80",
+  "--sem-color-surface": "#0b1220",
+  "--sem-color-surface-variant": "#1e293b",
+  "--sem-color-warning": "#fbbf24",
+  "--sem-density-factor": "1",
+  "--sem-elevation-surface": "0px 1px 3px 0px #0f172a26",
+  "--sem-font-family-sans": "Inter, system-ui, sans-serif",
+  "--sem-radius-md": "8px",
+  "--sem-type-scale": "1",
+}
+`;
+
+exports[`resolver (THEME-03) > P1.3-AC05 snapshot: acme-light (light) 1`] = `
+{
+  "--sem-color-accent": "#7c3aed",
+  "--sem-color-danger": "#b91c1c",
+  "--sem-color-focus-ring": "#2563eb",
+  "--sem-color-on-accent": "#ffffff",
+  "--sem-color-on-primary": "#ffffff",
+  "--sem-color-on-surface": "#0f172a",
+  "--sem-color-on-surface-variant": "#1e3a8a",
+  "--sem-color-outline": "#64748b",
+  "--sem-color-primary": "#1d4ed8",
+  "--sem-color-success": "#15803d",
+  "--sem-color-surface": "#ffffff",
+  "--sem-color-surface-variant": "#eff6ff",
+  "--sem-color-warning": "#b45309",
+  "--sem-density-factor": "1",
+  "--sem-elevation-surface": "0px 1px 3px 0px #0f172a26",
+  "--sem-font-family-sans": "Inter, system-ui, sans-serif",
+  "--sem-radius-md": "8px",
+  "--sem-type-scale": "1",
+}
+`;
+
+exports[`resolver (THEME-03) > P1.3-AC05 snapshot: globex-dark (dark) 1`] = `
+{
+  "--sem-color-accent": "#fbbf24",
+  "--sem-color-danger": "#f87171",
+  "--sem-color-focus-ring": "#2dd4bf",
+  "--sem-color-on-accent": "#111827",
+  "--sem-color-on-primary": "#111827",
+  "--sem-color-on-surface": "#f9fafb",
+  "--sem-color-on-surface-variant": "#d1d5db",
+  "--sem-color-outline": "#9ca3af",
+  "--sem-color-primary": "#5eead4",
+  "--sem-color-success": "#4ade80",
+  "--sem-color-surface": "#111827",
+  "--sem-color-surface-variant": "#1f2937",
+  "--sem-color-warning": "#fbbf24",
+  "--sem-density-factor": "1.2",
+  "--sem-elevation-surface": "0px 4px 12px 0px #0f172a33",
+  "--sem-font-family-sans": "Roboto, system-ui, sans-serif",
+  "--sem-radius-md": "4px",
+  "--sem-type-scale": "1",
+}
+`;
+
+exports[`resolver (THEME-03) > P1.3-AC05 snapshot: globex-dark (light) 1`] = `
+{
+  "--sem-color-accent": "#f59e0b",
+  "--sem-color-danger": "#b91c1c",
+  "--sem-color-focus-ring": "#0d9488",
+  "--sem-color-on-accent": "#111827",
+  "--sem-color-on-primary": "#ffffff",
+  "--sem-color-on-surface": "#0f172a",
+  "--sem-color-on-surface-variant": "#134e4a",
+  "--sem-color-outline": "#64748b",
+  "--sem-color-primary": "#0f766e",
+  "--sem-color-success": "#15803d",
+  "--sem-color-surface": "#f8fafc",
+  "--sem-color-surface-variant": "#f0fdfa",
+  "--sem-color-warning": "#b45309",
+  "--sem-density-factor": "1.2",
+  "--sem-elevation-surface": "0px 4px 12px 0px #0f172a33",
+  "--sem-font-family-sans": "Roboto, system-ui, sans-serif",
+  "--sem-radius-md": "4px",
+  "--sem-type-scale": "1",
+}
+`;
+
+exports[`resolver (THEME-03) > P1.3-AC05 snapshot: initech-compact (dark) 1`] = `
+{
+  "--sem-color-accent": "#67e8f9",
+  "--sem-color-danger": "#f87171",
+  "--sem-color-focus-ring": "#22d3ee",
+  "--sem-color-on-accent": "#1c1917",
+  "--sem-color-on-primary": "#1c1917",
+  "--sem-color-on-surface": "#fafaf9",
+  "--sem-color-on-surface-variant": "#d6d3d1",
+  "--sem-color-outline": "#a8a29e",
+  "--sem-color-primary": "#fcd34d",
+  "--sem-color-success": "#4ade80",
+  "--sem-color-surface": "#1c1917",
+  "--sem-color-surface-variant": "#292524",
+  "--sem-color-warning": "#fcd34d",
+  "--sem-density-factor": "0.85",
+  "--sem-elevation-surface": "0px 0px 0px 0px #00000000",
+  "--sem-font-family-sans": ""Source Sans 3", system-ui, sans-serif",
+  "--sem-radius-md": "9999px",
+  "--sem-type-scale": "0.875",
+}
+`;
+
+exports[`resolver (THEME-03) > P1.3-AC05 snapshot: initech-compact (light) 1`] = `
+{
+  "--sem-color-accent": "#0891b2",
+  "--sem-color-danger": "#b91c1c",
+  "--sem-color-focus-ring": "#0e7490",
+  "--sem-color-on-accent": "#020617",
+  "--sem-color-on-primary": "#ffffff",
+  "--sem-color-on-surface": "#1c1917",
+  "--sem-color-on-surface-variant": "#78350f",
+  "--sem-color-outline": "#78716c",
+  "--sem-color-primary": "#b45309",
+  "--sem-color-success": "#15803d",
+  "--sem-color-surface": "#fffbeb",
+  "--sem-color-surface-variant": "#fef3c7",
+  "--sem-color-warning": "#b45309",
+  "--sem-density-factor": "0.85",
+  "--sem-elevation-surface": "0px 0px 0px 0px #00000000",
+  "--sem-font-family-sans": ""Source Sans 3", system-ui, sans-serif",
+  "--sem-radius-md": "9999px",
+  "--sem-type-scale": "0.875",
+}
+`;

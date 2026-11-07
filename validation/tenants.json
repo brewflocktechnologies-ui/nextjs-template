@@ -1,0 +1,72 @@
+{
+  "$comment": "Local tenant fixtures (D-11). Documentation: SPECS/validation/tenant-fixtures.md. Theme documents live in libs/theme/fixtures/valid.",
+  "tenants": [
+    {
+      "tenantId": "t_acme",
+      "name": "Acme Corp",
+      "widgetKey": "wk_acme_demo",
+      "user": "u_acme_admin",
+      "roles": ["tenant_admin"],
+      "locale": "en-AU",
+      "supportedLocales": ["en-AU", "en-US"],
+      "consent": "required",
+      "proactive": true,
+      "theme": "libs/theme/fixtures/valid/acme-light.json"
+    },
+    {
+      "tenantId": "t_globex",
+      "name": "Globex",
+      "widgetKey": "wk_globex_demo",
+      "user": "u_globex_admin",
+      "roles": ["tenant_admin"],
+      "locale": "en-US",
+      "supportedLocales": ["en-US"],
+      "consent": "notRequired",
+      "proactive": true,
+      "theme": "libs/theme/fixtures/valid/globex-dark.json"
+    },
+    {
+      "tenantId": "t_initech",
+      "name": "Initech",
+      "widgetKey": "wk_initech_demo",
+      "user": "u_initech_admin",
+      "roles": ["tenant_admin"],
+      "locale": "en-AU",
+      "supportedLocales": ["en-AU"],
+      "consent": "required",
+      "proactive": true,
+      "theme": "libs/theme/fixtures/valid/initech-compact.json"
+    }
+  ],
+  "failureFixtures": [
+    {
+      "widgetKey": "wk_broken_version",
+      "tenantId": "t_broken",
+      "exercises": "THEME_UNSUPPORTED_VERSION"
+    },
+    {
+      "widgetKey": "wk_broken_json",
+      "tenantId": "t_broken",
+      "exercises": "THEME_INVALID"
+    },
+    {
+      "widgetKey": "wk_broken_contrast",
+      "tenantId": "t_broken",
+      "exercises": "publish policy refusal (P1.6)"
+    },
+    {
+      "widgetKey": "wk_missing",
+      "tenantId": null,
+      "exercises": "CONFIG_INVALID"
+    },
+    {
+      "widgetKey": "wk_slow",
+      "tenantId": "t_acme",
+      "exercises": "CONFIG_TIMEOUT"
+    }
+  ],
+  "brokenUser": {
+    "user": "u_broken_admin",
+    "tenantId": "t_broken"
+  }
+}

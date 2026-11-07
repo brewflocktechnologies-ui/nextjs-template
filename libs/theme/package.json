@@ -11,6 +11,18 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./guard": {
+      "types": "./src/guard-entry.ts",
+      "import": "./src/guard-entry.ts",
+      "default": "./src/guard-entry.ts"
+    },
+    "./resolve": {
+      "types": "./src/resolve-entry.ts",
+      "import": "./src/resolve-entry.ts",
+      "default": "./src/resolve-entry.ts"
+    },
+    "./schema/theme.v1.json": "./schema/theme.v1.json",
+    "./fixtures/*": "./fixtures/*",
     "./package.json": "./package.json"
   },
   "nx": {
@@ -18,9 +30,42 @@
       "type:lib",
       "scope:shared",
       "platform:neutral"
-    ]
+    ],
+    "targets": {
+      "build": {
+        "command": "node scripts/emit-schema.mjs",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/src/schema/**/*",
+          "{projectRoot}/scripts/emit-schema.mjs"
+        ],
+        "outputs": [
+          "{projectRoot}/schema"
+        ],
+        "cache": true
+      },
+      "build:check": {
+        "command": "node scripts/emit-schema.mjs --check",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/src/schema/**/*",
+          "{projectRoot}/scripts/emit-schema.mjs",
+          "{projectRoot}/schema/**/*"
+        ],
+        "cache": true
+      }
+    }
   },
   "dependencies": {
-    "@byteflock/design-tokens": "workspace:*"
+    "@byteflock/design-tokens": "workspace:*",
+    "@sinclair/typebox": "0.34.52"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "fast-check": "4.10.2"
   }
 }
