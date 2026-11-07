@@ -17,6 +17,7 @@ Phase 1 is the frontend foundation. Progress and approvals are tracked phase by 
 | [docs/developer-guide/embedding.md](docs/developer-guide/embedding.md) | Embedding the chat widget on a customer site                             |
 | [docs/developer-guide/release.md](docs/developer-guide/release.md)     | Releasing the widget                                                     |
 | [docs/security/threat-model.md](docs/security/threat-model.md)         | Threats, mitigations and the tests that prove them                       |
+| [localrunverify.md](localrunverify.md)                                 | Run the stack and verify it by hand, step by step                        |
 
 ## Local commands
 
