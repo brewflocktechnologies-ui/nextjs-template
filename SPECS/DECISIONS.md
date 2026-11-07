@@ -93,7 +93,7 @@ The static endpoints are plain files, but PoC-A's `slow-config`, invalid-JSON an
 
 ### D-17 — CI runs the full target set on Linux; Windows job builds the widget and smoke-tests the playground — **Fixed (ARCH-001 §6.5)**
 
-Added in P1.1. Windows job: `pnpm install --frozen-lockfile`, `pnpm nx run @acme/widget:build`, `pnpm nx run @acme/widget-playground:e2e --project=chromium --grep @smoke`.
+Added in P1.1. Windows job: `pnpm install --frozen-lockfile`, `pnpm nx run @byteflock/widget:build`, `pnpm nx run @byteflock/widget-playground:e2e --project=chromium --grep @smoke`.
 
 ### D-18 — Git remote and branch protection are the product owner's manual steps — **Fixed**
 

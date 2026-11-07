@@ -4,16 +4,16 @@ Source: ARCH-001 §6.2, §6.3 (ADR-002), §13 T-10. Introduced in P1.1, enforced
 
 ## BOUND-01 Day-one projects and tags
 
-| Nx project (= package name) | Path                       | Tags                                          |
-| --------------------------- | -------------------------- | --------------------------------------------- |
-| `@acme/admin-dashboard`     | `apps/admin-dashboard`     | `type:app` `scope:dashboard` `platform:react` |
-| `@acme/admin-dashboard-e2e` | `apps/admin-dashboard-e2e` | `type:app` `scope:dashboard` `platform:react` |
-| `@acme/widget`              | `apps/widget`              | `type:app` `scope:widget` `platform:lit`      |
-| `@acme/widget-playground`   | `apps/widget-playground`   | `type:app` `scope:widget` `platform:lit`      |
-| `@acme/design-tokens`       | `libs/design-tokens`       | `type:lib` `scope:shared` `platform:neutral`  |
-| `@acme/theme`               | `libs/theme`               | `type:lib` `scope:shared` `platform:neutral`  |
-| `@acme/ui-react`            | `libs/ui-react`            | `type:lib` `scope:shared` `platform:react`    |
-| `@acme/chat-widget`         | `libs/chat-widget`         | `type:lib` `scope:widget` `platform:lit`      |
+| Nx project (= package name)      | Path                       | Tags                                          |
+| -------------------------------- | -------------------------- | --------------------------------------------- |
+| `@byteflock/admin-dashboard`     | `apps/admin-dashboard`     | `type:app` `scope:dashboard` `platform:react` |
+| `@byteflock/admin-dashboard-e2e` | `apps/admin-dashboard-e2e` | `type:app` `scope:dashboard` `platform:react` |
+| `@byteflock/widget`              | `apps/widget`              | `type:app` `scope:widget` `platform:lit`      |
+| `@byteflock/widget-playground`   | `apps/widget-playground`   | `type:app` `scope:widget` `platform:lit`      |
+| `@byteflock/design-tokens`       | `libs/design-tokens`       | `type:lib` `scope:shared` `platform:neutral`  |
+| `@byteflock/theme`               | `libs/theme`               | `type:lib` `scope:shared` `platform:neutral`  |
+| `@byteflock/ui-react`            | `libs/ui-react`            | `type:lib` `scope:shared` `platform:react`    |
+| `@byteflock/chat-widget`         | `libs/chat-widget`         | `type:lib` `scope:widget` `platform:lit`      |
 
 Tags live in each project's `package.json` under `nx.tags`. Every project must carry exactly one tag from each of the three dimensions; a lint-time script (`tools/scripts/check-tags.mjs`) fails CI otherwise.
 
@@ -36,12 +36,12 @@ depConstraints: [
 
 ## BOUND-03 Restricted imports (ESLint `no-restricted-imports`)
 
-| Applies to projects tagged | Forbidden import patterns                                                          | Message                                         |
-| -------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `platform:lit`             | `react`, `react-dom`, `react/*`, `react-dom/*`, `next`, `next/*`, `@acme/ui-react` | React/Next must not enter widget bundles (T-10) |
-| `platform:react`           | `lit`, `lit/*`, `lit-html`, `lit-element`, `@lit/*`, `@acme/chat-widget`           | Lit must not enter React bundles                |
-| all                        | `@radix-ui/*`                                                                      | Forbidden unless ADR-006 selects Radix          |
-| all                        | `../../apps/*`, `@acme/admin-dashboard*`, `@acme/widget*` from a `type:lib`        | Libraries never import apps                     |
+| Applies to projects tagged | Forbidden import patterns                                                               | Message                                         |
+| -------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `platform:lit`             | `react`, `react-dom`, `react/*`, `react-dom/*`, `next`, `next/*`, `@byteflock/ui-react` | React/Next must not enter widget bundles (T-10) |
+| `platform:react`           | `lit`, `lit/*`, `lit-html`, `lit-element`, `@lit/*`, `@byteflock/chat-widget`           | Lit must not enter React bundles                |
+| all                        | `@radix-ui/*`                                                                           | Forbidden unless ADR-006 selects Radix          |
+| all                        | `../../apps/*`, `@byteflock/admin-dashboard*`, `@byteflock/widget*` from a `type:lib`   | Libraries never import apps                     |
 
 Implemented as a per-tag ESLint config fragment in the root `eslint.config.mjs`, selected by project tag (a small helper reads the project's `package.json` `nx.tags`). The lint rules are in addition to BOUND-02, which catches package-level dependencies; BOUND-03 catches direct module imports and third-party packages.
 
@@ -59,7 +59,7 @@ Implemented as a per-tag ESLint config fragment in the root `eslint.config.mjs`,
 
 ## BOUND-05 Bundle-level assertions (from P1.5, `[auto]`)
 
-After `@acme/widget:build`, a script (`apps/widget/scripts/assert-bundle.mjs`) fails if any file under `dist/v1/` contains the strings `react.production`, `react-dom`, `__next`, `next/dist`, or `React.createElement`, or if gzip sizes exceed the budgets in `docs/architecture/baselines.md`. The loader output must contain no static `import` statement (only one dynamic `import(` of the launcher URL).
+After `@byteflock/widget:build`, a script (`apps/widget/scripts/assert-bundle.mjs`) fails if any file under `dist/v1/` contains the strings `react.production`, `react-dom`, `__next`, `next/dist`, or `React.createElement`, or if gzip sizes exceed the budgets in `docs/architecture/baselines.md`. The loader output must contain no static `import` statement (only one dynamic `import(` of the launcher URL).
 
 ## BOUND-06 Triggers for new projects
 

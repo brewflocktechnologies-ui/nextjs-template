@@ -44,13 +44,13 @@ Source: ARCH-001 §8.7, §10.7, §10.11, Appendix C (ADR-007, ADR-009), §13 T-0
 
 ## ENDP-03 Frame document response headers
 
-| Header                       | Value (Phase 1)                                                                                                                                                                                                                                                                                 |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Content-Security-Policy`    | `default-src 'none'; script-src 'self'; style-src 'self' 'nonce-{nonce}'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://rt.<platform>; frame-ancestors *; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html acme-frame` |
-| `Referrer-Policy`            | `strict-origin-when-cross-origin`                                                                                                                                                                                                                                                               |
-| `Permissions-Policy`         | `camera=(), microphone=(), geolocation=(), payment=()`                                                                                                                                                                                                                                          |
-| `Cross-Origin-Opener-Policy` | `same-origin`                                                                                                                                                                                                                                                                                   |
-| `X-Content-Type-Options`     | `nosniff`                                                                                                                                                                                                                                                                                       |
+| Header                       | Value (Phase 1)                                                                                                                                                                                                                                                                                      |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Content-Security-Policy`    | `default-src 'none'; script-src 'self'; style-src 'self' 'nonce-{nonce}'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://rt.<platform>; frame-ancestors *; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html byteflock-frame` |
+| `Referrer-Policy`            | `strict-origin-when-cross-origin`                                                                                                                                                                                                                                                                    |
+| `Permissions-Policy`         | `camera=(), microphone=(), geolocation=(), payment=()`                                                                                                                                                                                                                                               |
+| `Cross-Origin-Opener-Policy` | `same-origin`                                                                                                                                                                                                                                                                                        |
+| `X-Content-Type-Options`     | `nosniff`                                                                                                                                                                                                                                                                                            |
 
 Notes: the frame is a static document, so the `nonce` is per-build (acceptable in Phase 1 because the frame injects no inline styles at runtime except through `adoptedStyleSheets`/constructable stylesheets, which are not subject to `style-src`); if a runtime nonce is ever needed, it becomes a server concern. `frame-ancestors *` stays even with the allowlist (D-21): one static frame document serves every widget key, so per-key restriction is enforced by the frame bootstrap (ENDP-02a), not by the header. Locally `connect-src` adds `http://localhost:4400` (self) only; `rt.<platform>` is a placeholder until the realtime phase.
 
@@ -79,13 +79,13 @@ frame-src  https://widget.<platform>;
 
 Nothing else: no `connect-src`, `style-src`, `font-src`, `img-src`, and no Trusted Types policy for the widget. The playground's `strict-csp.html` fixture asserts this at every release (PoC-A criterion 4; `[auto]` from P1.5).
 
-Optional declarative API: `<acme-chat-v1 widget-key="…">`, defined only if `customElements.get('acme-chat-v1') === undefined`.
+Optional declarative API: `<byteflock-chat-v1 widget-key="…">`, defined only if `customElements.get('byteflock-chat-v1') === undefined`.
 
-Public JS API (queued until ready): `window.AcmeChat('open' | 'close' | 'identify' | 'consent' | 'locale', payload?)`. The loader records calls in `window.AcmeChat.q` until the launcher is ready, in the style of analytics snippets.
+Public JS API (queued until ready): `window.ByteflockChat('open' | 'close' | 'identify' | 'consent' | 'locale', payload?)`. The loader records calls in `window.ByteflockChat.q` until the launcher is ready, in the style of analytics snippets.
 
 ## ENDP-06 Loader behaviour
 
-1. Feature-detect `attachShadow`, `customElements`, `postMessage`, `IntersectionObserver`, `fetch`, dynamic `import()`. Missing → set `data-acme-chat="unsupported"` on its own `<script>` and exit. No other DOM mutation.
+1. Feature-detect `attachShadow`, `customElements`, `postMessage`, `IntersectionObserver`, `fetch`, dynamic `import()`. Missing → set `data-byteflock-chat="unsupported"` on its own `<script>` and exit. No other DOM mutation.
 2. Read `data-widget-key` (required; `^wk_[a-z0-9_]{3,40}$`), `data-locale`, `data-position`, `data-launcher` (`auto` | `manual`), `data-launcher-label`.
 3. Derive `widgetOrigin` from `document.currentScript.src` (fallback: the script element found by `data-widget-key`).
 4. `import(widgetOrigin + '/v1/launcher.[hash].js')` (hash injected at build, D-15) and hand over config + queue.
@@ -95,9 +95,9 @@ Public JS API (queued until ready): `window.AcmeChat('open' | 'close' | 'identif
 
 | Failure                                          | Observable behaviour                                                                                                   | Fixture                                 |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| Unsupported browser                              | `data-acme-chat="unsupported"`, nothing else                                                                           | unit test with stubbed globals          |
+| Unsupported browser                              | `data-byteflock-chat="unsupported"`, nothing else                                                                      | unit test with stubbed globals          |
 | Loader blocked by CSP                            | nothing renders; CSP report on customer side                                                                           | `frame-blocked.html` variant            |
-| Frame blocked (`frame-src`) or no `ready` in 5 s | launcher disabled state, tooltip "Chat unavailable", one `console.warn`, `data-acme-chat="unavailable"`                | `frame-blocked.html`                    |
+| Frame blocked (`frame-src`) or no `ready` in 5 s | launcher disabled state, tooltip "Chat unavailable", one `console.warn`, `data-byteflock-chat="unavailable"`           | `frame-blocked.html`                    |
 | Config/theme fetch failure or timeout (2 s)      | frame renders embedded defaults; `error` beacon                                                                        | `slow-config.html`                      |
 | Unsupported theme version                        | embedded defaults; `THEME_UNSUPPORTED_VERSION` beacon                                                                  | `slow-config.html?case=version`         |
 | Origin mismatch                                  | frame refuses to open; beacon only                                                                                     | Playwright negative test                |
@@ -110,7 +110,7 @@ Public JS API (queued until ready): `window.AcmeChat('open' | 'close' | 'identif
 
 ## ENDP-09 Build outputs (D-15)
 
-`pnpm nx run @acme/widget:build` produces:
+`pnpm nx run @byteflock/widget:build` produces:
 
 ```
 apps/widget/dist/
