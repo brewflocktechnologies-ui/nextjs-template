@@ -42,7 +42,22 @@ The widget runs on customer pages, so a compromised dependency would reach custo
 
 <!-- verification -->
 
-To be filled by P1.1-T11: final `pnpm-workspace.yaml` settings pasted here.
+Verified at P1.1 on 2026-11-07. Evidence: `SPECS/evidence/P1.1.md`.
+
+`pnpm-workspace.yaml`:
+
+```yaml
+minimumReleaseAge: 10080
+strictDepBuilds: true
+allowBuilds:
+  '@parcel/watcher': false
+  '@swc/core': false
+  nx: false
+  unrs-resolver: false
+engineStrict: true
+```
+
+All four packages with install scripts are denied: every target passes without their scripts. The cooldown is active in practice: installs resolved Vite 8.3.5 and Vitest 5.0.5, not the newest releases, and pnpm itself is pinned to 11.28.10 rather than the two-day-old 11.28.11. `tools/scripts/policy/check-supply-chain.mjs` enforces these settings; with `minimumReleaseAge: 0` it fails.
 
 <!-- /verification -->
 

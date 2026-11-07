@@ -12,7 +12,7 @@ Conventions: **Expect** lines are what you must see. If you see something else, 
 ## P1.1 — Workspace foundation
 
 1. `pnpm install --frozen-lockfile` from a fresh clone. **Expect:** no prompts, no "ignored build scripts" warning for packages listed in `allowBuilds`.
-2. `pnpm nx graph` → opens the browser. **Expect:** exactly eight projects (D-16) and the edges `admin-dashboard → ui-react, theme, design-tokens`, `widget → chat-widget, theme, design-tokens`, `admin-dashboard-e2e → admin-dashboard`, `widget-playground → (none)`, `ui-react → theme, design-tokens`, `chat-widget → theme, design-tokens`, `theme → design-tokens`.
+2. `pnpm nx graph` → opens the browser. **Expect:** exactly eight projects (D-16) and the edges `admin-dashboard → ui-react, theme, design-tokens`, `widget → chat-widget, theme`, `admin-dashboard-e2e → admin-dashboard`, `widget-playground → (none)`, `ui-react → theme, design-tokens`, `chat-widget → theme, design-tokens`, `theme → design-tokens`.
 3. `pnpm nx run @byteflock/admin-dashboard:dev` → `http://localhost:3000`. **Expect:** an empty "Admin dashboard" page, no template demo content, no console errors.
 4. Open `libs/chat-widget/src/index.ts`, add `import React from 'react'`, run `pnpm nx lint @byteflock/chat-widget`. **Expect:** error naming the restricted import. Revert.
 

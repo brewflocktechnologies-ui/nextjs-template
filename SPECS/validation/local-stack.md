@@ -21,13 +21,17 @@ Root `package.json` scripts (added in P1.1, extended as processes appear):
 ```bash
 pnpm stack            # dashboard + widget + playground, streaming logs
 pnpm stack:check      # prints OK/FAIL for each origin (tools/scripts/stack-check.mjs)
-pnpm stack:books      # both Storybooks
+pnpm stack:books      # both Storybooks (added in PoC-B / P1.5)
 pnpm stack:reset      # restores apps/widget/public/v1 from validation fixtures (undoes local publishes)
 ```
 
 `pnpm stack` is `nx run-many -t dev -p @byteflock/admin-dashboard @byteflock/widget @byteflock/widget-playground --output-style=stream`. Nx runs continuous `dev` targets side by side; stop with Ctrl+C once.
 
-`stack:check` must be a Node script (no curl dependency on Windows): it fetches `http://localhost:3000/`, `http://localhost:4400/v1/loader.js`, `http://localhost:4400/v1/config/wk_acme_demo.json`, `http://localhost:4300/` and prints status codes and the frame headers of `http://localhost:4400/v1/frame/`.
+`stack:check` is a Node script, so it needs no curl on Windows. It fetches `http://localhost:3000/`, `http://localhost:4300/` and `http://localhost:4400/v1/frame/`, and compares the frame's response headers with `apps/widget/src/headers.config.ts`. It also probes `http://localhost:4400/v1/loader.js` and `http://localhost:4400/v1/config/wk_acme_demo.json`, reported as "not yet" until PoC-A creates them. Each endpoint must return its expected content type, so an HTML fallback page never passes as JavaScript or JSON. `pnpm stack:check --wait 120` retries while the servers start.
+
+The widget origin uses Vite `appType: 'mpa'`: unknown paths return 404, as they will on the static host, and a request for `/v1/frame/` serves `/v1/frame/index.html`.
+
+End-to-end tests work with or without `pnpm stack` running. Each Playwright config starts Vite or `next dev` directly and reuses a server that is already listening. (Using `nx run …:dev` there would make Nx start a second server, which collides with the stack on the strict ports.)
 
 ## Environment
 
