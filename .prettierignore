@@ -20,3 +20,6 @@ apps/**/AGENTS.md
 # Deliberately invalid fixture (PoC-A failure case) and vendored third-party code
 **/themes/t_broken/2.json
 /apps/widget-playground/public/vendor
+
+# Storybook static builds
+**/storybook-static

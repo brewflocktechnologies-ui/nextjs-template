@@ -10,6 +10,29 @@ export default defineConfig({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/ui-react-storybook',
   plugins: [react(), tailwindcss(), storybookTest({ configDir: '.storybook' })],
+  // Pre-bundle every dependency the stories import. Otherwise Vite discovers one mid-run on a cold
+  // cache, re-optimises and reloads the test page, failing every story (seen in the PoC-B dry run).
+  optimizeDeps: {
+    include: [
+      '@base-ui/react/button',
+      '@base-ui/react/checkbox',
+      '@base-ui/react/combobox',
+      '@base-ui/react/csp-provider',
+      '@base-ui/react/dialog',
+      '@base-ui/react/input',
+      '@base-ui/react/popover',
+      '@base-ui/react/select',
+      '@base-ui/react/tooltip',
+      '@tanstack/react-table',
+      'class-variance-authority',
+      'clsx',
+      'lucide-react',
+      'tailwind-merge',
+      'react',
+      'react-dom',
+      'react/jsx-dev-runtime',
+    ],
+  },
   test: {
     name: 'ui-react-storybook',
     watch: false,
