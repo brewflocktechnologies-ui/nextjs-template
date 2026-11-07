@@ -77,13 +77,13 @@ Not run yet. A fresh clone should run `pnpm verify`.
 
 ## Manual validation
 
-| Runbook step (PoC-B)                        | Result  | Date | Validator |
-| ------------------------------------------- | ------- | ---- | --------- |
-| 1. Dialog with nested popover, Esc layering | pending |      |           |
-| 2. Searchable combobox                      | pending |      |           |
-| 3. Multi-select filter in a dialog          | pending |      |           |
-| 4. Data table, keyboard, a11y panel         | pending |      |           |
-| 5. Strict CSP story                         | pending |      |           |
+| Runbook step (PoC-B)                        | Result                        | Date       | Validator      |
+| ------------------------------------------- | ----------------------------- | ---------- | -------------- |
+| 1. Dialog with nested popover, Esc layering | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 2. Searchable combobox                      | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 3. Multi-select filter in a dialog          | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 4. Data table, keyboard, a11y panel         | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
+| 5. Strict CSP story                         | accepted, result not recorded | 2026-11-07 | Madhusudan C P |
 
 Start it with `pnpm nx run @byteflock/ui-react:storybook`, then open http://localhost:4600.
 
@@ -120,10 +120,10 @@ Removed: `cn@0.5.1`, which shadcn installed by mistake (below), and `@storybook/
 
 ## Status transitions
 
-| Transition  | By                              | Date       |
-| ----------- | ------------------------------- | ---------- |
-| Approved    | Madhusudan C P                  | 2026-11-07 |
-| Implemented | Claude Code (agent)             | 2026-11-07 |
-| Verified    | Claude Code (agent), under D-22 | 2026-11-07 |
-| Validated   |                                 |            |
-| Accepted    |                                 |            |
+| Transition  | By                                                 | Date       |
+| ----------- | -------------------------------------------------- | ---------- |
+| Approved    | Madhusudan C P                                     | 2026-11-07 |
+| Implemented | Claude Code (agent)                                | 2026-11-07 |
+| Verified    | Claude Code (agent), under D-22                    | 2026-11-07 |
+| Validated   | Madhusudan C P (accepted without per-step results) | 2026-11-07 |
+| Accepted    | Madhusudan C P                                     | 2026-11-07 |
