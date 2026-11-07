@@ -2,8 +2,20 @@
   "name": "@nextjs-template/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "nx run @nextjs-template/web:dev",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test",
+    "test:affected": "nx affected -t test",
+    "lint:affected": "nx affected -t lint",
+    "graph": "nx graph",
+    "e2e": "nx run @nextjs-template/web-e2e:e2e",
+    "policy:check": "node tools/scripts/policy/run-all.mjs"
+  },
   "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

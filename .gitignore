@@ -51,3 +51,7 @@ out
 test-output
 
 .nx/polygraph
+.env.local
+playwright-report
+apps/widget/dist
+.local
