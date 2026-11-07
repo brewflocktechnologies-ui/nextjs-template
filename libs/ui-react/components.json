@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": ".storybook/poc.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@byteflock/ui-react/components",
+    "utils": "@byteflock/ui-react/lib/utils",
+    "ui": "@byteflock/ui-react/components/ui",
+    "lib": "@byteflock/ui-react/lib",
+    "hooks": "@byteflock/ui-react/hooks"
+  }
+}

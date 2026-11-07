@@ -23,6 +23,11 @@ const steps = [
     name: 'Lint, test, typecheck, build',
     cmd: 'pnpm nx run-many -t lint test typecheck build --output-style=static',
   },
+  // Stories are component specs and tests (ADR-008): render, play() and axe in Chromium (PoC-B on).
+  {
+    name: 'Storybook builds and story tests',
+    cmd: 'pnpm nx run-many -t build-storybook test-storybook --output-style=static',
+  },
   {
     name: 'End-to-end, Chromium',
     cmd: 'pnpm nx run-many -t e2e --output-style=static -- --project=chromium',

@@ -59,3 +59,6 @@ apps/widget/dist
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 .vitest
+
+
+storybook-static

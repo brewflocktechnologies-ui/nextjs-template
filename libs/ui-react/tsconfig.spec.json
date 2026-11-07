@@ -9,7 +9,11 @@
       "node",
       "vitest"
     ],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@byteflock/ui-react/*": ["./src/*"]
+    },
+    "lib": ["es2022", "dom", "dom.iterable"]
   },
   "include": [
     "vite.config.ts",

@@ -9,6 +9,10 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./lib/*": "./src/lib/*.ts",
+    "./components/ui/*": "./src/components/ui/*.tsx",
+    "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
     "./package.json": "./package.json"
   },
   "nx": {
@@ -16,10 +20,46 @@
       "type:lib",
       "scope:shared",
       "platform:react"
-    ]
+    ],
+    "targets": {
+      "storybook": {
+        "command": "storybook dev -p 4600 --config-dir .storybook --no-open",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "continuous": true
+      },
+      "build-storybook": {
+        "command": "storybook build --config-dir .storybook --output-dir storybook-static --quiet",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "outputs": [
+          "{projectRoot}/storybook-static"
+        ],
+        "cache": true
+      },
+      "test-storybook": {
+        "command": "vitest run --config vitest.storybook.config.mts",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "cache": true,
+        "inputs": [
+          "default",
+          "^production"
+        ]
+      }
+    }
   },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
     "@byteflock/design-tokens": "workspace:*",
-    "@byteflock/theme": "workspace:*"
+    "@byteflock/theme": "workspace:*",
+    "@tanstack/react-table": "9.3.1",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.66.0",
+    "tailwind-merge": "3.7.0"
   }
 }
