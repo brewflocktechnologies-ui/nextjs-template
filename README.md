@@ -17,14 +17,13 @@ Phase 1 is the frontend foundation. Progress and approvals are tracked phase by 
 
 ## Local commands
 
-Requires Node 24 (see `.node-version`). The workspace moves from npm to pnpm in phase P1.1, and these commands change then.
+Requires Node 24 (see `.node-version`) and pnpm, whose exact version comes from `packageManager` in `package.json`.
 
 ```bash
-npm ci
-npx nx run @nextjs-template/web:dev
-npx nx run-many -t lint test typecheck build
-npm run policy:check
-npm run verify   # all CI gates locally
+pnpm install --frozen-lockfile
+pnpm stack          # dashboard :3000, widget origin :4400, playground :4300
+pnpm stack:check    # confirm all three are up
+pnpm verify         # all CI gates locally
 ```
 
 Built with [Nx](https://nx.dev) and [Next.js](https://nextjs.org).

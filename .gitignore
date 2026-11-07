@@ -55,3 +55,7 @@ test-output
 playwright-report
 apps/widget/dist
 .local
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+.vitest

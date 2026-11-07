@@ -1,9 +1,10 @@
-// Policy (ARCH-001 §15.3, ADR-010): an ADR whose status at the base ref is "Accepted" may only
+// Policy (ARCH-001 §15.3, ADR-010): an ADR whose status is "Accepted" at a base ref may only
 // change its status line, add a "Superseded by" line, or edit inside its
 // <!-- verification --> … <!-- /verification --> block. Accepted ADRs may not be deleted.
 //
-// Base ref: origin/$GITHUB_BASE_REF on pull requests, otherwise origin/main, falling back to main.
-// The current side is the working tree, so uncommitted edits are checked too.
+// Bases: the PR base (origin/$GITHUB_BASE_REF), otherwise origin/main, falling back to main; and
+// always HEAD. HEAD matters while CI is deferred (D-22): branches are stacked locally, so main may
+// predate the ADRs entirely. The current side is the working tree, so uncommitted edits count.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -27,20 +28,25 @@ const candidates = [
   'origin/main',
   'main',
 ].filter(Boolean);
-const base = candidates.find(refExists);
-if (!base) {
+const bases = [
+  ...new Set(
+    [candidates.find(refExists), refExists('HEAD') && 'HEAD'].filter(Boolean),
+  ),
+];
+if (!bases.length) {
   console.log('check-adr-immutability: no base ref found; skipped');
   process.exit(0);
 }
 
-let baseFiles = [];
-try {
-  baseFiles = git('ls-tree', '-r', '--name-only', base, '--', 'docs/adr')
-    .split('\n')
-    .filter((f) => /^docs\/adr\/ADR-\d+.*\.md$/.test(f));
-} catch {
-  baseFiles = [];
-}
+const adrFilesAt = (ref) => {
+  try {
+    return git('ls-tree', '-r', '--name-only', ref, '--', 'docs/adr')
+      .split('\n')
+      .filter((f) => /^docs\/adr\/ADR-\d+.*\.md$/.test(f));
+  } catch {
+    return [];
+  }
+};
 
 const statusOf = (text) => {
   const m =
@@ -61,28 +67,30 @@ const normalise = (text) =>
     .join('\n')
     .trim();
 
-const problems = [];
-let checked = 0;
-for (const file of baseFiles) {
-  const before = git('show', `${base}:${file}`);
-  if (!/^Accepted\b/.test(statusOf(before))) continue;
-  checked++;
-  const abs = path.join(process.cwd(), file);
-  if (!fs.existsSync(abs)) {
-    problems.push(`${file}: Accepted ADR was deleted; supersede it instead`);
-    continue;
-  }
-  if (normalise(before) !== normalise(fs.readFileSync(abs, 'utf8'))) {
-    problems.push(
-      `${file}: Accepted ADR changed outside its status line, a "Superseded by" line or the verification block`,
-    );
+const problems = new Set();
+const checked = new Set();
+for (const base of bases) {
+  for (const file of adrFilesAt(base)) {
+    const before = git('show', `${base}:${file}`);
+    if (!/^Accepted\b/.test(statusOf(before))) continue;
+    checked.add(file);
+    const abs = path.join(process.cwd(), file);
+    if (!fs.existsSync(abs)) {
+      problems.add(`${file}: Accepted ADR was deleted; supersede it instead`);
+      continue;
+    }
+    if (normalise(before) !== normalise(fs.readFileSync(abs, 'utf8'))) {
+      problems.add(
+        `${file}: Accepted ADR changed outside its status line, a "Superseded by" line or the verification block (compared with ${base})`,
+      );
+    }
   }
 }
 
-if (problems.length) {
-  console.error(problems.join('\n'));
+if (problems.size) {
+  console.error([...problems].join('\n'));
   process.exit(1);
 }
 console.log(
-  `check-adr-immutability: base ${base}, ${checked} Accepted ADR(s) unchanged`,
+  `check-adr-immutability: compared with ${bases.join(' and ')}; ${checked.size} Accepted ADR(s) unchanged`,
 );

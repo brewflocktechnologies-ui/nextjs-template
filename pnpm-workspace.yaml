@@ -1,0 +1,21 @@
+# pnpm workspace and supply-chain settings (ADR-011, SPECS/phases/P1.1 T01).
+packages:
+  - apps/*
+  - libs/*
+
+# Refuse packages published less than 7 days ago (minutes).
+minimumReleaseAge: 10080
+
+# Fail the install when a dependency has an install script not listed below.
+strictDepBuilds: true
+
+# Install-script allowlist. false = the script is never run. Each entry is justified in
+# SPECS/evidence/P1.1.md; every target passes with all of them denied.
+allowBuilds:
+  '@parcel/watcher': false
+  '@swc/core': false
+  nx: false
+  unrs-resolver: false
+  esbuild: false
+
+engineStrict: true

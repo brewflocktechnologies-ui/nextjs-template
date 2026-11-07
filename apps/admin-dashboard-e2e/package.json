@@ -1,0 +1,16 @@
+{
+  "name": "@byteflock/admin-dashboard-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@byteflock/admin-dashboard"
+    ],
+    "tags": [
+      "type:app",
+      "scope:dashboard",
+      "platform:react"
+    ],
+    "name": "@byteflock/admin-dashboard-e2e"
+  }
+}

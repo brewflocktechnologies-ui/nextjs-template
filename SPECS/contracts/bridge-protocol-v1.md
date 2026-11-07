@@ -62,7 +62,7 @@ Token bucket per message type in the frame: capacity 20, refill 20/s (constants 
 
 ## BRIDGE-06 Counters and observability
 
-`bridgeStats(): Record<string, number>` exposes drop counters in the frame (test hook, readable by Playwright via `window.__acmeBridgeStats` only when `mode=test` is in the URL and the origin is a playground origin). The launcher exposes nothing on the host page beyond the `data-acme-chat` status attribute on the script tag (`loading` → `ready` | `unsupported` | `unavailable`).
+`bridgeStats(): Record<string, number>` exposes drop counters in the frame (test hook, readable by Playwright via `window.__byteflockBridgeStats` only when `mode=test` is in the URL and the origin is a playground origin). The launcher exposes nothing on the host page beyond the `data-byteflock-chat` status attribute on the script tag (`loading` → `ready` | `unsupported` | `unavailable`).
 
 ## BRIDGE-07 Versioning
 

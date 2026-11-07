@@ -22,10 +22,10 @@ Source: ARCH-001 §13. Each threat maps to the test(s) that prove its mitigation
 
 | Suite                                   | Runner        | Project                                                                    | Command                                                                                            |
 | --------------------------------------- | ------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Bridge unit tests                       | Vitest (Node) | `@acme/widget`                                                             | `pnpm nx test @acme/widget`                                                                        |
-| Theme fixtures, resolver, guard, policy | Vitest (Node) | `@acme/theme`                                                              | `pnpm nx test @acme/theme`                                                                         |
-| Playground scenarios                    | Playwright    | `@acme/widget-playground`                                                  | `pnpm nx e2e @acme/widget-playground`                                                              |
-| Dashboard SSR, headers, isolation       | Playwright    | `@acme/admin-dashboard-e2e`                                                | `pnpm nx e2e @acme/admin-dashboard-e2e`                                                            |
+| Bridge unit tests                       | Vitest (Node) | `@byteflock/widget`                                                        | `pnpm nx test @byteflock/widget`                                                                   |
+| Theme fixtures, resolver, guard, policy | Vitest (Node) | `@byteflock/theme`                                                         | `pnpm nx test @byteflock/theme`                                                                    |
+| Playground scenarios                    | Playwright    | `@byteflock/widget-playground`                                             | `pnpm nx e2e @byteflock/widget-playground`                                                         |
+| Dashboard SSR, headers, isolation       | Playwright    | `@byteflock/admin-dashboard-e2e`                                           | `pnpm nx e2e @byteflock/admin-dashboard-e2e`                                                       |
 | Policy scripts                          | Node          | root (not an Nx project, so `nx graph` keeps exactly eight projects, D-16) | `pnpm policy:check` → runs every `tools/scripts/policy/check-*.mjs`; the same command is a CI step |
 
 Playwright tests carry the threat ID in their title (`test('T-01 hostile script cannot read composer text', …)`) so `--grep T-0` runs the security subset.

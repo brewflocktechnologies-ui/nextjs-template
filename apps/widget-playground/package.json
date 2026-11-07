@@ -1,0 +1,12 @@
+{
+  "name": "@byteflock/widget-playground",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "tags": [
+      "type:app",
+      "scope:widget",
+      "platform:lit"
+    ]
+  }
+}

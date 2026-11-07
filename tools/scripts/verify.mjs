@@ -2,8 +2,8 @@
 // Runs every gate in order, keeps going after a failure, and prints a summary table that
 // is pasted into SPECS/evidence/<phase>.md in place of a CI link.
 //
-//   npm run verify             all gates
-//   npm run verify -- --quick  skip end-to-end tests
+//   pnpm verify             all gates
+//   pnpm verify --quick     skip end-to-end tests
 //
 // When a phase adds a gate to ci.yml, it adds the same step here.
 import { execSync, spawnSync } from 'node:child_process';
@@ -11,15 +11,16 @@ import { execSync, spawnSync } from 'node:child_process';
 const quick = process.argv.includes('--quick');
 
 const steps = [
-  { name: 'Policy checks', cmd: 'npm run -s policy:check' },
-  { name: 'Format check (all files)', cmd: 'npx nx format:check --all' },
+  { name: 'Policy checks', cmd: 'pnpm policy:check' },
+  { name: 'Format check (all files)', cmd: 'pnpm nx format:check --all' },
+  { name: 'TypeScript project references in sync', cmd: 'pnpm nx sync:check' },
   {
     name: 'Lint, test, typecheck, build',
-    cmd: 'npx nx run-many -t lint test typecheck build --output-style=static',
+    cmd: 'pnpm nx run-many -t lint test typecheck build --output-style=static',
   },
   {
     name: 'End-to-end, Chromium',
-    cmd: 'npx nx run-many -t e2e --output-style=static -- --project=chromium',
+    cmd: 'pnpm nx run-many -t e2e --output-style=static -- --project=chromium',
     skip: quick,
   },
 ];

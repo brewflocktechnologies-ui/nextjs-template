@@ -12,9 +12,9 @@ Conventions: **Expect** lines are what you must see. If you see something else, 
 ## P1.1 — Workspace foundation
 
 1. `pnpm install --frozen-lockfile` from a fresh clone. **Expect:** no prompts, no "ignored build scripts" warning for packages listed in `allowBuilds`.
-2. `pnpm nx graph` → opens the browser. **Expect:** exactly eight projects (D-16) and the edges `admin-dashboard → ui-react, theme, design-tokens`, `widget → chat-widget, theme, design-tokens`, `admin-dashboard-e2e → admin-dashboard`, `widget-playground → (none)`, `ui-react → theme, design-tokens`, `chat-widget → theme, design-tokens`, `theme → design-tokens`.
-3. `pnpm nx run @acme/admin-dashboard:dev` → `http://localhost:3000`. **Expect:** an empty "Admin dashboard" page, no template demo content, no console errors.
-4. Open `libs/chat-widget/src/index.ts`, add `import React from 'react'`, run `pnpm nx lint @acme/chat-widget`. **Expect:** error naming the restricted import. Revert.
+2. `pnpm nx graph` → opens the browser. **Expect:** exactly eight projects (D-16) and the edges `admin-dashboard → ui-react, theme, design-tokens`, `widget → chat-widget, theme`, `admin-dashboard-e2e → admin-dashboard`, `widget-playground → (none)`, `ui-react → theme, design-tokens`, `chat-widget → theme, design-tokens`, `theme → design-tokens`.
+3. `pnpm nx run @byteflock/admin-dashboard:dev` → `http://localhost:3000`. **Expect:** an empty "Admin dashboard" page, no template demo content, no console errors.
+4. Open `libs/chat-widget/src/index.ts`, add `import React from 'react'`, run `pnpm nx lint @byteflock/chat-widget`. **Expect:** error naming the restricted import. Revert.
 
 ## PoC-A — Widget isolation
 
@@ -35,13 +35,13 @@ Start `pnpm stack` (dashboard may be empty). Open `http://localhost:4300/`.
 ## P1.2 — Design tokens
 
 1. Open `libs/design-tokens/dist/css/semantic.css`. **Expect:** `:root { --sem-… }` block and a `[data-appearance="dark"]` block; names follow `--sem-<category>-<role>[-<state>]`; no primitive names (`--blue-500`) appear.
-2. Edit a primitive value in `tokens/`, run `pnpm nx run @acme/design-tokens:build`, then `git diff`. **Expect:** only the derived semantic outputs changed. Revert.
+2. Edit a primitive value in `tokens/`, run `pnpm nx run @byteflock/design-tokens:build`, then `git diff`. **Expect:** only the derived semantic outputs changed. Revert.
 
 ## P1.3 — Theme contract
 
 1. Open `libs/theme/schema/theme.v1.json`. **Expect:** `additionalProperties: false` under every object; the colour pattern; enums as in THEME-02.
 2. Open the three valid fixtures. **Expect:** they match `validation/tenant-fixtures.md` field by field.
-3. In the terminal, `pnpm nx test @acme/theme`. **Expect:** all malicious fixtures reported as rejected "before resolution".
+3. In the terminal, `pnpm nx test @byteflock/theme`. **Expect:** all malicious fixtures reported as rejected "before resolution".
 
 ## PoC-B — React primitives
 
@@ -56,14 +56,14 @@ Open `http://localhost:4600` (ui-react Storybook).
 ## P1.4 — React UI foundation
 
 1. Storybook → "Themes" toolbar: switch between Acme, Globex, Initech for the `Composite/FilterDialog` story. **Expect:** colours, radius, density change together; dark Globex is dark; text remains readable.
-2. A11y panel across all stories (use the "Run all" in the addon or `pnpm nx run @acme/ui-react:test-storybook`). **Expect:** zero serious/critical.
+2. A11y panel across all stories (use the "Run all" in the addon or `pnpm nx run @byteflock/ui-react:test-storybook`). **Expect:** zero serious/critical.
 
 ## P1.5 — Frame app foundation
 
 1. `http://localhost:4700` (chat-widget Storybook): `Frame/MessageList` and `Frame/Composer` under the three tenant themes. **Expect:** same three visual identities as the React composite (compare side by side with 4600).
-2. Playground `clean.html?key=wk_acme_demo` (consent `required`): open the widget, type a message, reload. **Expect:** before consent, DevTools → Application → Storage for `localhost:4400` is empty; after the page calls `AcmeChat('consent', {granted:true})` (button on the fixture), a visitor id appears; reload keeps it.
+2. Playground `clean.html?key=wk_acme_demo` (consent `required`): open the widget, type a message, reload. **Expect:** before consent, DevTools → Application → Storage for `localhost:4400` is empty; after the page calls `ByteflockChat('consent', {granted:true})` (button on the fixture), a visitor id appears; reload keeps it.
 3. `clean.html?key=wk_globex_demo` (consent `notRequired`). **Expect:** visitor id present on first open.
-4. Open `docs/architecture/baselines.md`. **Expect:** budgets (baseline + 15 %) now listed next to each measurement, and `pnpm nx run @acme/widget:build` prints each bundle's size against its budget.
+4. Open `docs/architecture/baselines.md`. **Expect:** budgets (baseline + 15 %) now listed next to each measurement, and `pnpm nx run @byteflock/widget:build` prints each bundle's size against its budget.
 5. Open `docs/developer-guide/embedding.md`. **Expect:** the snippet and the two-directive CSP text; nothing else required.
 6. `wrong-domain.html?key=wk_wrong_domain`. **Expect:** the launcher shows "Chat unavailable" after about 5 s, and the widget dev console logs one `ORIGIN_NOT_ALLOWED` beacon. The embedding guide explains `allowedOrigins`.
 

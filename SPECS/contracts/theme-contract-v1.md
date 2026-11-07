@@ -39,7 +39,7 @@ Source: ARCH-001 §7, §8, Appendix B (ADR-003, ADR-004). Authored in P1.3; cons
 `resolveTheme(theme: Theme, options: { appearance: 'light' | 'dark' }): ResolvedVars` where `ResolvedVars = Record<`--sem-${string}`, string>`.
 
 - Colours pass through unchanged (already validated).
-- Enums map to numeric or token values taken from `@acme/design-tokens` (for example `shape.radius: 'md'` → `--sem-radius-md` value `8px`; `density` → the spacing scale multiplier; `typography.scale` → the type scale set).
+- Enums map to numeric or token values taken from `@byteflock/design-tokens` (for example `shape.radius: 'md'` → `--sem-radius-md` value `8px`; `density` → the spacing scale multiplier; `typography.scale` → the type scale set).
 - `fontFamily` maps to a fixed font-stack string from a table in `libs/theme/src/fonts.ts` (for example `inter` → `"Inter", system-ui, sans-serif`). The stack string is a constant from code, never derived from input.
 - The resolver emits **only** keys from the published list `libs/theme/src/resolved-keys.ts`. A unit test asserts the emitted key set equals that list for every valid fixture.
 - The resolver never emits `url(`, `expression(`, `;`, `}`, `{`, `<`, `>`, `\n`, or `\r` in any value (unit test over all fixtures and a property-based test over random valid themes).

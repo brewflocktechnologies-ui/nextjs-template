@@ -1,0 +1,29 @@
+{
+  "name": "@byteflock/admin-dashboard",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@byteflock/design-tokens": "workspace:*",
+    "@byteflock/theme": "workspace:*",
+    "@byteflock/ui-react": "workspace:*",
+    "next": "~16.4.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "nx": {
+    "tags": [
+      "type:app",
+      "scope:dashboard",
+      "platform:react"
+    ],
+    "targets": {
+      "build": {
+        "dependsOn": [
+          "^build",
+          "^typecheck"
+        ]
+      }
+    },
+    "name": "@byteflock/admin-dashboard"
+  }
+}

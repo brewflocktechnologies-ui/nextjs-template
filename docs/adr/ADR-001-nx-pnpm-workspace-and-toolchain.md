@@ -46,7 +46,22 @@ The frontend needs one repository for a Next.js dashboard, a static widget origi
 
 <!-- verification -->
 
-To be filled by P1.1-T11: exact versions, pnpm settings and the linking mechanism confirmed by a build.
+Verified at P1.1 on 2026-11-07, Windows 11. Evidence: `SPECS/evidence/P1.1.md`.
+
+| Tool                       | Installed                                          |
+| -------------------------- | -------------------------------------------------- |
+| Node.js                    | 24.20.0 (`.node-version` = 24, `engines` >=24 <25) |
+| pnpm                       | 11.28.10 (`packageManager`)                        |
+| Nx and all `@nx/*` plugins | 24.0.0                                             |
+| Next.js / React            | 16.4.3 / 19.2.8                                    |
+| TypeScript                 | 6.0.3                                              |
+| Vite / Vitest              | 8.3.5 / 5.0.5                                      |
+| Lit                        | 3.3.3                                              |
+| Playwright / Jest / ESLint | 1.62.1 / 30.3.0 / 9.39.5                           |
+
+Linking (D-07) confirmed: libraries export `./src/index.ts`; consumers declare `workspace:*` dependencies; `apps/admin-dashboard/tsconfig.json` references `libs/ui-react`, `libs/theme` and `libs/design-tokens`; `pnpm nx sync:check` passes; `pnpm nx run @byteflock/admin-dashboard:build` succeeds with `dependsOn: ["^build", "^typecheck"]`. No `transpilePackages` is needed.
+
+Finding: `nx add` failed with a pnpm store error on this machine; plugins are added with `pnpm add -D -w @nx/<plugin>@24.0.0` followed by `pnpm nx g @nx/<plugin>:init`.
 
 <!-- /verification -->
 

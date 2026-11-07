@@ -17,36 +17,31 @@ Byteflock is a multi-tenant customer-support and live-chat SaaS. Phase 1 builds 
 
 ## Project map
 
-**Current (until P1.1):** the Nx Next.js template on npm workspaces.
+pnpm 11 workspace (`pnpm-workspace.yaml`), `@byteflock` scope. Projects are named by their package name. Tags follow `SPECS/contracts/boundary-rules.md` (BOUND-01).
 
-| Project                    | Path           | Notes                                                        |
-| -------------------------- | -------------- | ------------------------------------------------------------ |
-| `@nextjs-template/web`     | `apps/web`     | Next.js 16 App Router app; becomes `admin-dashboard` in P1.1 |
-| `@nextjs-template/web-e2e` | `apps/web-e2e` | Playwright; becomes `admin-dashboard-e2e`                    |
-| `@nextjs-template/ui`      | `packages/ui`  | Template demo library; removed in P1.1                       |
+| Project                          | Path                       | Tags                                      | Runs on                                                                   |
+| -------------------------------- | -------------------------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| `@byteflock/admin-dashboard`     | `apps/admin-dashboard`     | `type:app scope:dashboard platform:react` | Next.js 16, http://localhost:3000                                         |
+| `@byteflock/admin-dashboard-e2e` | `apps/admin-dashboard-e2e` | `type:app scope:dashboard platform:react` | Playwright                                                                |
+| `@byteflock/widget`              | `apps/widget`              | `type:app scope:widget platform:lit`      | Vite static origin, http://localhost:4400                                 |
+| `@byteflock/widget-playground`   | `apps/widget-playground`   | `type:app scope:widget platform:lit`      | Vite host-page fixtures, http://localhost:4300; owns its Playwright tests |
+| `@byteflock/design-tokens`       | `libs/design-tokens`       | `type:lib scope:shared platform:neutral`  |                                                                           |
+| `@byteflock/theme`               | `libs/theme`               | `type:lib scope:shared platform:neutral`  |                                                                           |
+| `@byteflock/ui-react`            | `libs/ui-react`            | `type:lib scope:shared platform:react`    |                                                                           |
+| `@byteflock/chat-widget`         | `libs/chat-widget`         | `type:lib scope:widget platform:lit`      |                                                                           |
 
-**From P1.1** (`SPECS/contracts/boundary-rules.md`, BOUND-01), on pnpm 11, with the `@byteflock` scope:
+The libraries hold placeholders until their phases: tokens in P1.2, theme in P1.3, ui-react in PoC-B and P1.4, chat-widget in PoC-A and P1.5. The expected projects and dependency edges are committed in `tools/scripts/policy/expected-graph.json`, and `pnpm policy:check` fails if the graph drifts.
 
-| Project               | Path                       | Tags                                      |
-| --------------------- | -------------------------- | ----------------------------------------- |
-| `admin-dashboard`     | `apps/admin-dashboard`     | `type:app scope:dashboard platform:react` |
-| `admin-dashboard-e2e` | `apps/admin-dashboard-e2e` | `type:app scope:dashboard platform:react` |
-| `widget`              | `apps/widget`              | `type:app scope:widget platform:lit`      |
-| `widget-playground`   | `apps/widget-playground`   | `type:app scope:widget platform:lit`      |
-| `design-tokens`       | `libs/design-tokens`       | `type:lib scope:shared platform:neutral`  |
-| `theme`               | `libs/theme`               | `type:lib scope:shared platform:neutral`  |
-| `ui-react`            | `libs/ui-react`            | `type:lib scope:shared platform:react`    |
-| `chat-widget`         | `libs/chat-widget`         | `type:lib scope:widget platform:lit`      |
-
-Targets are inferred by Nx plugins from config files; there are no `project.json` files. Run `npx nx show project <name>` to see what a project exposes. Libraries are consumed from source: their `package.json` `exports` point at `./src/index.ts`, linked by workspaces plus TypeScript project references, and app builds depend on `^build` and `^typecheck` (D-07).
+Targets are inferred by Nx plugins from config files; there are no `project.json` files. Run `pnpm nx show project <name>` to see what a project exposes. Libraries are consumed from source: their `package.json` `exports` point at `./src/index.ts`, linked by `workspace:*` dependencies plus TypeScript project references (`pnpm nx sync` keeps those aligned), and app builds depend on `^build` and `^typecheck` (D-07). Unit tests run on Vitest, except the dashboard, which keeps Jest through `next/jest`.
 
 ## Boundaries
 
-Full rules: `SPECS/contracts/boundary-rules.md`. Enforced by `@nx/enforce-module-boundaries` and `no-restricted-imports` from P1.1.
+Full rules: `SPECS/contracts/boundary-rules.md`. Enforced on every lint run.
 
 - `platform:neutral` depends only on `platform:neutral`. `platform:lit` and `platform:react` depend on themselves or `platform:neutral`.
 - `scope:shared` depends only on `scope:shared`. Libraries never import apps.
 - Forbidden imports: `react`, `react-dom`, `next` in `platform:lit` projects; `lit`, `lit-html`, `@lit/*` in `platform:react` projects; `@radix-ui/*` everywhere unless ADR-006 selects Radix.
+- Workspace constraints live in the root `eslint.config.mjs`. Restricted imports come from `tools/eslint/tag-restrictions.mjs`, which every project's `eslint.config.mjs` calls with its own directory. A new project must call it too.
 
 ## Non-negotiables
 
@@ -58,32 +53,39 @@ These apply from day one, even before lint enforces them.
 
 ## Commands
 
-npm form until P1.1, which switches every command to `pnpm nx …`.
-
 ```bash
-npx nx run @nextjs-template/web:dev                # dashboard dev server, http://localhost:3000
-npx nx run-many -t lint test typecheck build e2e   # what CI runs on main
-npx nx affected -t lint test typecheck build e2e   # what CI runs on a pull request
-npx nx format:check                                # Prettier, enforced in CI
-npm run policy:check                               # governance checks: pinned actions, ADRs, CODEOWNERS
-npm run verify                                     # every CI gate locally, with a summary for the evidence file (D-22)
+pnpm install --frozen-lockfile                  # install; never npm or yarn
+pnpm stack                                      # dashboard 3000, widget origin 4400, playground 4300
+pnpm stack:check                                # are the three origins up, with the frame headers?
+pnpm stack:reset                                # restore widget config and themes from validation/widget-fixtures
+pnpm verify                                     # every CI gate locally; its summary goes in the evidence file (D-22)
+pnpm verify --quick                             # the same without end-to-end tests
+pnpm policy:check                               # pinned actions, ADRs, CODEOWNERS, supply chain, tags, project graph
+pnpm nx run-many -t lint test typecheck build   # all projects
+pnpm nx affected -t lint test typecheck build   # only what changed
+pnpm nx sync                                    # fix TypeScript project references after adding a dependency
+pnpm nx format:write                            # Prettier
 ```
 
 Single tests:
 
 ```bash
-npx nx test @nextjs-template/web -- --testPathPatterns=index      # Jest 30: the flag is plural
-npx nx e2e @nextjs-template/web-e2e -- --project=chromium src/example.spec.ts
+pnpm nx test @byteflock/theme -- src/lib/theme.spec.ts                 # Vitest: a file path filters
+pnpm nx test @byteflock/admin-dashboard -- --testPathPatterns=index     # Jest 30: the flag is plural
+pnpm nx e2e @byteflock/widget-playground -- --project=chromium --grep @smoke
+pnpm nx e2e @byteflock/admin-dashboard-e2e -- --project=chromium src/example.spec.ts
 ```
 
-Playwright starts the dev server itself and reuses one already running. Install browsers once with `npx playwright install --with-deps chromium`. The local multi-tenant stack (dashboard, widget origin, playground, Storybooks) is described in `SPECS/validation/local-stack.md` and arrives from P1.1 onwards.
+Playwright starts the server it needs, or reuses a running `pnpm stack`, so e2e works either way. Install browsers once with `pnpm exec playwright install --with-deps chromium`. Details of the local multi-tenant stack: `SPECS/validation/local-stack.md`.
+
+Adding a dependency: `pnpm add <pkg> --filter <project>` (`-w` for the root). pnpm refuses packages younger than 7 days, and install scripts run only for packages set to `true` under `allowBuilds` in `pnpm-workspace.yaml`. Do not use `nx add`: it failed here with a pnpm store error. Use `pnpm add -D -w @nx/<plugin>@24.0.0`, then `pnpm nx g @nx/<plugin>:init`.
 
 ## Definition of done
 
 From `SPECS/00-conventions.md`:
 
 - All tasks done, or deferred in the evidence file with a reason and a target phase.
-- `npm run verify` green locally. While CI is deferred (D-22), its summary table goes in the evidence file in place of a CI link.
+- `pnpm verify` green locally. While CI is deferred (D-22), its summary table goes in the evidence file in place of a CI link.
 - The evidence file is complete: commands run and their results, one sentence per new dependency, every deviation.
 - No TODO or FIXME without an issue reference.
 - If the implementation showed the spec was wrong, the spec is corrected and the correction noted in the evidence.

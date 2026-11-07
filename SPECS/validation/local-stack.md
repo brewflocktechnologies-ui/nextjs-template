@@ -4,13 +4,13 @@ How to run everything on one developer machine (Windows 11 or Linux) so the prod
 
 ## Processes and origins (D-10)
 
-| Process                                      | Nx target                     | Origin                  | Available from                       |
-| -------------------------------------------- | ----------------------------- | ----------------------- | ------------------------------------ |
-| Admin dashboard (Next.js dev)                | `@acme/admin-dashboard:dev`   | `http://localhost:3000` | P1.1 (empty shell), themed from P1.6 |
-| Widget static origin (Vite dev + dev plugin) | `@acme/widget:dev`            | `http://localhost:4400` | PoC-A                                |
-| Widget playground (Vite dev)                 | `@acme/widget-playground:dev` | `http://localhost:4300` | PoC-A                                |
-| ui-react Storybook                           | `@acme/ui-react:storybook`    | `http://localhost:4600` | PoC-B / P1.4                         |
-| chat-widget Storybook                        | `@acme/chat-widget:storybook` | `http://localhost:4700` | P1.5                                 |
+| Process                                      | Nx target                          | Origin                  | Available from                       |
+| -------------------------------------------- | ---------------------------------- | ----------------------- | ------------------------------------ |
+| Admin dashboard (Next.js dev)                | `@byteflock/admin-dashboard:dev`   | `http://localhost:3000` | P1.1 (empty shell), themed from P1.6 |
+| Widget static origin (Vite dev + dev plugin) | `@byteflock/widget:dev`            | `http://localhost:4400` | PoC-A                                |
+| Widget playground (Vite dev)                 | `@byteflock/widget-playground:dev` | `http://localhost:4300` | PoC-A                                |
+| ui-react Storybook                           | `@byteflock/ui-react:storybook`    | `http://localhost:4600` | PoC-B / P1.4                         |
+| chat-widget Storybook                        | `@byteflock/chat-widget:storybook` | `http://localhost:4700` | P1.5                                 |
 
 Playground (4300) and widget (4400) are **different origins on purpose**; never proxy one through the other, or every isolation test becomes meaningless.
 
@@ -21,13 +21,17 @@ Root `package.json` scripts (added in P1.1, extended as processes appear):
 ```bash
 pnpm stack            # dashboard + widget + playground, streaming logs
 pnpm stack:check      # prints OK/FAIL for each origin (tools/scripts/stack-check.mjs)
-pnpm stack:books      # both Storybooks
+pnpm stack:books      # both Storybooks (added in PoC-B / P1.5)
 pnpm stack:reset      # restores apps/widget/public/v1 from validation fixtures (undoes local publishes)
 ```
 
-`pnpm stack` is `nx run-many -t dev -p @acme/admin-dashboard @acme/widget @acme/widget-playground --output-style=stream`. Nx runs continuous `dev` targets side by side; stop with Ctrl+C once.
+`pnpm stack` is `nx run-many -t dev -p @byteflock/admin-dashboard @byteflock/widget @byteflock/widget-playground --output-style=stream`. Nx runs continuous `dev` targets side by side; stop with Ctrl+C once.
 
-`stack:check` must be a Node script (no curl dependency on Windows): it fetches `http://localhost:3000/`, `http://localhost:4400/v1/loader.js`, `http://localhost:4400/v1/config/wk_acme_demo.json`, `http://localhost:4300/` and prints status codes and the frame headers of `http://localhost:4400/v1/frame/`.
+`stack:check` is a Node script, so it needs no curl on Windows. It fetches `http://localhost:3000/`, `http://localhost:4300/` and `http://localhost:4400/v1/frame/`, and compares the frame's response headers with `apps/widget/src/headers.config.ts`. It also probes `http://localhost:4400/v1/loader.js` and `http://localhost:4400/v1/config/wk_acme_demo.json`, reported as "not yet" until PoC-A creates them. Each endpoint must return its expected content type, so an HTML fallback page never passes as JavaScript or JSON. `pnpm stack:check --wait 120` retries while the servers start.
+
+The widget origin uses Vite `appType: 'mpa'`: unknown paths return 404, as they will on the static host, and a request for `/v1/frame/` serves `/v1/frame/index.html`.
+
+End-to-end tests work with or without `pnpm stack` running. Each Playwright config starts Vite or `next dev` directly and reuses a server that is already listening. (Using `nx run …:dev` there would make Nx start a second server, which collides with the stack on the strict ports.)
 
 ## Environment
 

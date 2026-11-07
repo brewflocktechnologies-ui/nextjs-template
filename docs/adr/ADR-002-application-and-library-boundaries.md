@@ -42,7 +42,19 @@ React must never reach widget bundles, Lit must never reach the dashboard, and s
 
 <!-- verification -->
 
-To be filled by P1.1-T11: final tag table and constraint block pasted here.
+Verified at P1.1 on 2026-11-07. Evidence: `SPECS/evidence/P1.1.md`.
+
+Projects and tags, enforced by `tools/scripts/policy/check-tags.mjs` and `check-project-graph.mjs` (expected set and edges in `tools/scripts/policy/expected-graph.json`):
+
+| Project                                                        | Tags                                      |
+| -------------------------------------------------------------- | ----------------------------------------- |
+| `@byteflock/admin-dashboard`, `@byteflock/admin-dashboard-e2e` | `type:app scope:dashboard platform:react` |
+| `@byteflock/widget`, `@byteflock/widget-playground`            | `type:app scope:widget platform:lit`      |
+| `@byteflock/design-tokens`, `@byteflock/theme`                 | `type:lib scope:shared platform:neutral`  |
+| `@byteflock/ui-react`                                          | `type:lib scope:shared platform:react`    |
+| `@byteflock/chat-widget`                                       | `type:lib scope:widget platform:lit`      |
+
+Constraints: the BOUND-02 block in the root `eslint.config.mjs` (`@nx/enforce-module-boundaries`), plus BOUND-03 restricted imports from `tools/eslint/tag-restrictions.mjs`, applied by every project's `eslint.config.mjs`. Negative tests (React in chat-widget, Lit in ui-react, `@radix-ui/*`, ui-react from widget, ui-react from theme) each fail lint; see the evidence.
 
 <!-- /verification -->
 

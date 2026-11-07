@@ -4,13 +4,28 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/web-e2e"
+      "path": "./apps/admin-dashboard"
     },
     {
-      "path": "./apps/web"
+      "path": "./apps/admin-dashboard-e2e"
     },
     {
-      "path": "./packages/ui"
+      "path": "./libs/design-tokens"
+    },
+    {
+      "path": "./libs/theme"
+    },
+    {
+      "path": "./libs/chat-widget"
+    },
+    {
+      "path": "./libs/ui-react"
+    },
+    {
+      "path": "./apps/widget"
+    },
+    {
+      "path": "./apps/widget-playground"
     }
   ]
 }
