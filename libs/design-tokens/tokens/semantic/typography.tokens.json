@@ -1,0 +1,64 @@
+{
+  "semantic": {
+    "font-family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "{primitive.font.family.system}"
+      }
+    },
+    "font-size": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{primitive.font.size.xs}"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{primitive.font.size.sm}"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{primitive.font.size.md}"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{primitive.font.size.lg}"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "{primitive.font.size.xl}"
+      },
+      "2xl": {
+        "$type": "dimension",
+        "$value": "{primitive.font.size.2xl}"
+      }
+    },
+    "line-height": {
+      "tight": {
+        "$type": "number",
+        "$value": "{primitive.font.line-height.tight}"
+      },
+      "normal": {
+        "$type": "number",
+        "$value": "{primitive.font.line-height.normal}"
+      }
+    },
+    "font-weight": {
+      "regular": {
+        "$type": "fontWeight",
+        "$value": "{primitive.font.weight.regular}"
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": "{primitive.font.weight.medium}"
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": "{primitive.font.weight.semibold}"
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": "{primitive.font.weight.bold}"
+      }
+    }
+  }
+}

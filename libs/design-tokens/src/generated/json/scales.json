@@ -1,0 +1,31 @@
+{
+  "radius": {
+    "none": "0px",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "16px",
+    "full": "9999px"
+  },
+  "density": {
+    "compact": 0.85,
+    "comfortable": 1,
+    "spacious": 1.2
+  },
+  "typeScale": {
+    "sm": 0.875,
+    "md": 1,
+    "lg": 1.125
+  },
+  "elevation": {
+    "flat": "0px 0px 0px 0px #00000000",
+    "low": "0px 1px 3px 0px #0f172a26",
+    "medium": "0px 4px 12px 0px #0f172a33"
+  },
+  "fontStacks": {
+    "system": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+    "inter": "Inter, system-ui, sans-serif",
+    "roboto": "Roboto, system-ui, sans-serif",
+    "source-sans": "\"Source Sans 3\", system-ui, sans-serif",
+    "noto-sans": "\"Noto Sans\", system-ui, sans-serif"
+  }
+}

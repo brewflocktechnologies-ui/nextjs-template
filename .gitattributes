@@ -18,6 +18,6 @@
 # Generated files: committed, never hand-edited (D-19 and later phases)
 apps/**/next-env.d.ts linguist-generated
 apps/**/AGENTS.md linguist-generated
-libs/design-tokens/dist/** linguist-generated
+libs/design-tokens/src/generated/** linguist-generated
 libs/theme/schema/*.json linguist-generated
 libs/ui-react/src/shadcn-bridge.css linguist-generated

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design tokens preview</title>
+    <!-- Uses only the generated CSS. Open this file straight from disk (P1.2-AC07). -->
+    <link rel="stylesheet" href="../src/generated/css/semantic.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: calc(var(--sem-space-6) * var(--sem-density-factor));
+        background: var(--sem-color-surface);
+        color: var(--sem-color-on-surface);
+        font-family: var(--sem-font-family-sans);
+        font-size: calc(var(--sem-font-size-md) * var(--sem-type-scale));
+        line-height: var(--sem-line-height-normal);
+      }
+      fieldset {
+        border: 1px solid var(--sem-color-outline-variant);
+        border-radius: var(--sem-radius-md);
+        margin-block-end: var(--sem-space-6);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+        gap: calc(var(--sem-space-3) * var(--sem-density-factor));
+      }
+      .swatch {
+        border: 1px solid var(--sem-color-outline-variant);
+        border-radius: var(--sem-radius-md);
+        overflow: hidden;
+        background: var(--sem-color-surface-container);
+      }
+      .chip {
+        block-size: 3rem;
+      }
+      .swatch code {
+        display: block;
+        padding: var(--sem-space-2);
+        font-size: var(--sem-font-size-xs);
+      }
+      .box {
+        padding: calc(var(--sem-space-4) * var(--sem-density-factor));
+        background: var(--sem-color-surface-variant);
+        color: var(--sem-color-on-surface-variant);
+      }
+      button {
+        padding: calc(var(--sem-space-2) * var(--sem-density-factor))
+          calc(var(--sem-space-4) * var(--sem-density-factor));
+        border: 0;
+        border-radius: var(--sem-radius-md);
+        background: var(--sem-color-primary);
+        color: var(--sem-color-on-primary);
+        font: inherit;
+      }
+      button:focus-visible {
+        outline: 2px solid var(--sem-color-focus-ring);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Design tokens preview</h1>
+    <fieldset>
+      <legend>Settings</legend>
+      <label
+        >Appearance
+        <select data-attr="data-appearance">
+          <option value="light">light</option>
+          <option value="dark">dark</option>
+        </select>
+      </label>
+      <label
+        >Density
+        <select data-attr="data-density">
+          <option value="comfortable">comfortable</option>
+          <option value="compact">compact</option>
+          <option value="spacious">spacious</option>
+        </select>
+      </label>
+      <label
+        >Type scale
+        <select data-attr="data-type-scale">
+          <option value="md">md</option>
+          <option value="sm">sm</option>
+          <option value="lg">lg</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <h2>Colour roles</h2>
+    <div class="grid" id="colors"></div>
+
+    <h2>Radius and elevation</h2>
+    <div class="grid" id="shapes"></div>
+
+    <h2>Sample</h2>
+    <div class="box">
+      <p>Text on surface-variant, with a primary button.</p>
+      <button type="button">Primary action</button>
+    </div>
+
+    <script type="module">
+      const root = document.documentElement;
+      for (const select of document.querySelectorAll('select[data-attr]')) {
+        select.addEventListener('change', () =>
+          root.setAttribute(select.dataset.attr, select.value),
+        );
+      }
+      const roles = [
+        'primary',
+        'on-primary',
+        'surface',
+        'on-surface',
+        'surface-variant',
+        'on-surface-variant',
+        'surface-container',
+        'on-primary-container',
+        'outline',
+        'outline-variant',
+        'accent',
+        'on-accent',
+        'success',
+        'warning',
+        'danger',
+        'focus-ring',
+        'backdrop',
+      ];
+      const make = (style, label) => {
+        const card = document.createElement('div');
+        card.className = 'swatch';
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        Object.assign(chip.style, style);
+        const code = document.createElement('code');
+        code.textContent = label;
+        card.append(chip, code);
+        return card;
+      };
+      const colors = document.getElementById('colors');
+      for (const role of roles)
+        colors.append(
+          make(
+            { background: `var(--sem-color-${role})` },
+            `--sem-color-${role}`,
+          ),
+        );
+      const shapes = document.getElementById('shapes');
+      for (const r of ['none', 'sm', 'md', 'lg', 'full']) {
+        shapes.append(
+          make(
+            {
+              background: 'var(--sem-color-primary)',
+              borderRadius: `var(--sem-radius-${r})`,
+              margin: '0.5rem',
+            },
+            `--sem-radius-${r}`,
+          ),
+        );
+      }
+      for (const e of ['flat', 'low', 'medium']) {
+        shapes.append(
+          make(
+            {
+              background: 'var(--sem-color-surface)',
+              boxShadow: `var(--sem-elevation-${e})`,
+              margin: '0.75rem',
+            },
+            `--sem-elevation-${e}`,
+          ),
+        );
+      }
+    </script>
+  </body>
+</html>

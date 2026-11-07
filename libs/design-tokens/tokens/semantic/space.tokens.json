@@ -1,0 +1,58 @@
+{
+  "semantic": {
+    "space": {
+      "0": {
+        "$type": "dimension",
+        "$value": "{primitive.space.0}"
+      },
+      "1": {
+        "$type": "dimension",
+        "$value": "{primitive.space.1}"
+      },
+      "2": {
+        "$type": "dimension",
+        "$value": "{primitive.space.2}"
+      },
+      "3": {
+        "$type": "dimension",
+        "$value": "{primitive.space.3}"
+      },
+      "4": {
+        "$type": "dimension",
+        "$value": "{primitive.space.4}"
+      },
+      "5": {
+        "$type": "dimension",
+        "$value": "{primitive.space.5}"
+      },
+      "6": {
+        "$type": "dimension",
+        "$value": "{primitive.space.6}"
+      },
+      "7": {
+        "$type": "dimension",
+        "$value": "{primitive.space.7}"
+      },
+      "8": {
+        "$type": "dimension",
+        "$value": "{primitive.space.8}"
+      },
+      "9": {
+        "$type": "dimension",
+        "$value": "{primitive.space.9}"
+      },
+      "10": {
+        "$type": "dimension",
+        "$value": "{primitive.space.10}"
+      },
+      "11": {
+        "$type": "dimension",
+        "$value": "{primitive.space.11}"
+      },
+      "12": {
+        "$type": "dimension",
+        "$value": "{primitive.space.12}"
+      }
+    }
+  }
+}

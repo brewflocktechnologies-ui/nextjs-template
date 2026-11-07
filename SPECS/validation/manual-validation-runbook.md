@@ -34,7 +34,7 @@ Start `pnpm stack` (dashboard may be empty). Open `http://localhost:4300/`.
 
 ## P1.2 — Design tokens
 
-1. Open `libs/design-tokens/dist/css/semantic.css`. **Expect:** `:root { --sem-… }` block and a `[data-appearance="dark"]` block; names follow `--sem-<category>-<role>[-<state>]`; no primitive names (`--blue-500`) appear.
+1. Open `libs/design-tokens/src/generated/css/semantic.css`. **Expect:** `:root { --sem-… }` block and a `[data-appearance="dark"]` block; names follow `--sem-<category>-<role>[-<state>]`; no primitive names (`--blue-500`) appear.
 2. Edit a primitive value in `tokens/`, run `pnpm nx run @byteflock/design-tokens:build`, then `git diff`. **Expect:** only the derived semantic outputs changed. Revert.
 
 ## P1.3 — Theme contract

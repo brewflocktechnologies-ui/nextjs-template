@@ -1,0 +1,18 @@
+{
+  "set": {
+    "density": {
+      "compact": {
+        "$type": "number",
+        "$value": 0.85
+      },
+      "comfortable": {
+        "$type": "number",
+        "$value": 1
+      },
+      "spacious": {
+        "$type": "number",
+        "$value": 1.2
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "semantic": {
+    "dark": {
+      "color": {
+        "primary": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.300}"
+        },
+        "on-primary": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.900}"
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.900}"
+        },
+        "on-surface": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.50}"
+        },
+        "surface-variant": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.800}"
+        },
+        "on-surface-variant": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.300}"
+        },
+        "surface-container": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.950}"
+        },
+        "on-primary-container": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.50}"
+        },
+        "outline": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.400}"
+        },
+        "outline-variant": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.600}"
+        },
+        "accent": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.300}"
+        },
+        "on-accent": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.900}"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{primitive.color.green.400}"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{primitive.color.amber.400}"
+        },
+        "danger": {
+          "$type": "color",
+          "$value": "{primitive.color.red.400}"
+        },
+        "focus-ring": {
+          "$type": "color",
+          "$value": "{primitive.color.blue.400}"
+        },
+        "backdrop": {
+          "$type": "color",
+          "$value": "#02061799"
+        }
+      }
+    }
+  }
+}

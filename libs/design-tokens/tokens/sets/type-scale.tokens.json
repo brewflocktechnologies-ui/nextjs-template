@@ -1,0 +1,18 @@
+{
+  "set": {
+    "type-scale": {
+      "sm": {
+        "$type": "number",
+        "$value": 0.875
+      },
+      "md": {
+        "$type": "number",
+        "$value": 1
+      },
+      "lg": {
+        "$type": "number",
+        "$value": 1.125
+      }
+    }
+  }
+}
