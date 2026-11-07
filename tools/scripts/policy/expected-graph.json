@@ -1,0 +1,27 @@
+{
+  "$comment": "Day-one projects and direct dependency edges (D-16, BOUND-01, runbook P1.1 step 2). Change only with a phase that adds a project or an edge.",
+  "projects": [
+    "@byteflock/admin-dashboard",
+    "@byteflock/admin-dashboard-e2e",
+    "@byteflock/chat-widget",
+    "@byteflock/design-tokens",
+    "@byteflock/theme",
+    "@byteflock/ui-react",
+    "@byteflock/widget",
+    "@byteflock/widget-playground"
+  ],
+  "edges": {
+    "@byteflock/admin-dashboard": [
+      "@byteflock/design-tokens",
+      "@byteflock/theme",
+      "@byteflock/ui-react"
+    ],
+    "@byteflock/admin-dashboard-e2e": ["@byteflock/admin-dashboard"],
+    "@byteflock/chat-widget": ["@byteflock/design-tokens", "@byteflock/theme"],
+    "@byteflock/design-tokens": [],
+    "@byteflock/theme": ["@byteflock/design-tokens"],
+    "@byteflock/ui-react": ["@byteflock/design-tokens", "@byteflock/theme"],
+    "@byteflock/widget": ["@byteflock/chat-widget", "@byteflock/theme"],
+    "@byteflock/widget-playground": []
+  }
+}

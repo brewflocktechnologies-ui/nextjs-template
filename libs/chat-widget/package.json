@@ -21,6 +21,8 @@
     ]
   },
   "dependencies": {
+    "@byteflock/design-tokens": "workspace:*",
+    "@byteflock/theme": "workspace:*",
     "lit": "^3.3.3"
   }
 }

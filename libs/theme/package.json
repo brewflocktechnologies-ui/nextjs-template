@@ -20,5 +20,7 @@
       "platform:neutral"
     ]
   },
-  "dependencies": {}
+  "dependencies": {
+    "@byteflock/design-tokens": "workspace:*"
+  }
 }

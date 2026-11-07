@@ -17,5 +17,9 @@
       "scope:shared",
       "platform:react"
     ]
+  },
+  "dependencies": {
+    "@byteflock/design-tokens": "workspace:*",
+    "@byteflock/theme": "workspace:*"
   }
 }

@@ -1,5 +1,8 @@
 name: CI
 
+# Not running yet: GitHub push and CI are deferred (SPECS/DECISIONS.md D-22). `pnpm verify` runs the
+# same steps locally. Keep this file and tools/scripts/verify.mjs in step.
+
 on:
   push:
     branches:
@@ -21,47 +24,75 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Reads the pnpm version from package.json "packageManager".
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
-          cache: npm
+          cache: pnpm
 
       # Local Nx cache only (no Nx Cloud, D-08). Keys are immutable, so the commit SHA is part
       # of the key and restore-keys pick up the newest cache for this branch, then any branch.
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .nx/cache
-          key: nx-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ github.ref_name }}-${{ github.sha }}
+          key: nx-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            nx-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ github.ref_name }}-
-            nx-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-
+            nx-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.ref_name }}-
+            nx-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
 
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
 
       - name: Policy checks
-        run: npm run policy:check
+        run: pnpm policy:check
 
       - name: Format check (changed files)
         if: github.event_name == 'pull_request'
-        run: npx nx format:check --base=origin/${{ github.base_ref }} --head=HEAD
+        run: pnpm nx format:check --base=origin/${{ github.base_ref }} --head=HEAD
 
       - name: Format check (all files)
         if: github.event_name != 'pull_request'
-        run: npx nx format:check --all
+        run: pnpm nx format:check --all
+
+      - name: TypeScript project references in sync
+        run: pnpm nx sync:check
 
       - name: Lint, test, typecheck, build (affected)
         if: github.event_name == 'pull_request'
-        run: npx nx affected -t lint test typecheck build --base=origin/${{ github.base_ref }} --head=HEAD
+        run: pnpm nx affected -t lint test typecheck build --base=origin/${{ github.base_ref }} --head=HEAD
 
       - name: End-to-end, Chromium (affected)
         if: github.event_name == 'pull_request'
-        run: npx nx affected -t e2e --base=origin/${{ github.base_ref }} --head=HEAD -- --project=chromium
+        run: pnpm nx affected -t e2e --base=origin/${{ github.base_ref }} --head=HEAD -- --project=chromium
 
       - name: Lint, test, typecheck, build (all)
         if: github.event_name != 'pull_request'
-        run: npx nx run-many -t lint test typecheck build
+        run: pnpm nx run-many -t lint test typecheck build
 
       - name: End-to-end, Chromium (all)
         if: github.event_name != 'pull_request'
-        run: npx nx run-many -t e2e -- --project=chromium
+        run: pnpm nx run-many -t e2e -- --project=chromium
+
+  # D-17: Windows is a first-class development environment.
+  widget-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install chromium
+
+      - name: Build the widget
+        run: pnpm nx run @byteflock/widget:build
+
+      - name: Playground smoke test
+        run: pnpm nx run @byteflock/widget-playground:e2e -- --project=chromium --grep @smoke

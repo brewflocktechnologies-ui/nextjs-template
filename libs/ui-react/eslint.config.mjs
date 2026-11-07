@@ -1,5 +1,6 @@
 import nx from '@nx/eslint-plugin';
 import baseConfig from '../../eslint.config.mjs';
+import { tagRestrictions } from '../../tools/eslint/tag-restrictions.mjs';
 
 export default [
   ...nx.configs['flat/react'],
@@ -12,4 +13,5 @@ export default [
   {
     ignores: ['**/out-tsc'],
   },
+  tagRestrictions(import.meta.dirname),
 ];

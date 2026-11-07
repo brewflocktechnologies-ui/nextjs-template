@@ -179,6 +179,15 @@ importers:
 
   apps/admin-dashboard:
     dependencies:
+      '@byteflock/design-tokens':
+        specifier: workspace:*
+        version: link:../../libs/design-tokens
+      '@byteflock/theme':
+        specifier: workspace:*
+        version: link:../../libs/theme
+      '@byteflock/ui-react':
+        specifier: workspace:*
+        version: link:../../libs/ui-react
       next:
         specifier: ~16.4.3
         version: 16.4.3(@babel/core@7.29.7(supports-color@8.1.1))(@playwright/test@1.62.1)(@types/node@24.13.3)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -204,15 +213,32 @@ importers:
 
   libs/chat-widget:
     dependencies:
+      '@byteflock/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
+      '@byteflock/theme':
+        specifier: workspace:*
+        version: link:../theme
       lit:
         specifier: ^3.3.3
         version: 3.3.3
 
   libs/design-tokens: {}
 
-  libs/theme: {}
+  libs/theme:
+    dependencies:
+      '@byteflock/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
 
-  libs/ui-react: {}
+  libs/ui-react:
+    dependencies:
+      '@byteflock/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
+      '@byteflock/theme':
+        specifier: workspace:*
+        version: link:../theme
 
 packages:
   '@acemir/cssom@0.9.32':

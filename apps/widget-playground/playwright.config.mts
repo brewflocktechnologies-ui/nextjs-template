@@ -31,7 +31,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'pnpm nx run @byteflock/widget-playground:dev',
+    // Vite directly, not 'nx run …:dev': Nx would then start its own dev server as a task
+    // dependency and collide with a running 'pnpm stack' on the strict port 4300.
+    command: 'pnpm exec vite --config apps/widget-playground/vite.config.mts',
     url: getReadyUrl('http://localhost:4300'),
     reuseExistingServer: true,
     cwd: workspaceRoot,

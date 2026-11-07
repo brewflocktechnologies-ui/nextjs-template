@@ -5,6 +5,8 @@ import { widgetOriginPlugin } from './src/dev-server-plugin';
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
+  // A static asset origin: unknown paths must 404, never fall back to index.html.
+  appType: 'mpa',
   cacheDir: '../../node_modules/.vite/apps/widget',
   server: {
     port: 4400,

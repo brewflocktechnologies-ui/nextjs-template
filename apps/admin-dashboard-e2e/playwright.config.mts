@@ -31,7 +31,9 @@ export default defineConfig({
   },
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm nx run @byteflock/admin-dashboard:dev',
+    // next dev directly, not 'nx run …:dev': Nx would start a second dev server as a task
+    // dependency, which collides with a running 'pnpm stack' on port 3000.
+    command: 'pnpm exec next dev apps/admin-dashboard --port 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: true,
     cwd: workspaceRoot,

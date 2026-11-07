@@ -45,5 +45,16 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../../libs/ui-react"
+    },
+    {
+      "path": "../../libs/theme"
+    },
+    {
+      "path": "../../libs/design-tokens"
+    }
   ]
 }
