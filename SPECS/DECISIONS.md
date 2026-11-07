@@ -159,6 +159,15 @@ The product owner deferred pushing to GitHub and running CI, to focus on local s
 
 To end the deferral: complete P1.0-T12, open the P1.0 pull request, and record the first green CI run in `SPECS/evidence/P1.0.md`.
 
+### D-23 — Committed generated files live under `src/generated/`, not `dist/` — **Fixed (P1.2, 2026-11-07)**
+
+ARCH-001 §7 and the P1.2 spec placed the committed token outputs under the library's `dist/`. The root `.gitignore` ignores every `dist` folder, and TypeScript only compiles files under `src/` (`rootDir`), so the generated TypeScript could not be imported from there. Generated files therefore live in `<lib>/src/generated/`:
+
+- `libs/design-tokens/src/generated/{css,ts,json}/` (P1.2). Package exports map `@byteflock/design-tokens/css/semantic.css` and `@byteflock/design-tokens/scales` to them.
+- The same convention applies to later generators unless their spec says otherwise. `libs/theme/schema/theme.v1.json` stays where THEME-08 puts it, because it is a contract document, not a build output.
+- Each generator exposes a `build:check` target that builds to a temp folder and compares the result with the committed files. `pnpm verify` and CI run `nx run-many -t build:check`.
+- Generated folders are excluded from Prettier (they have their own stale check) and marked `linguist-generated`.
+
 ## How to change a decision
 
 Add a dated line under the decision ("Overturned on … by …: new text"), update `STATUS.md`, and list the affected spec sections in the same commit. Do not rewrite history.

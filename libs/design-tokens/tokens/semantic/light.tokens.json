@@ -1,0 +1,76 @@
+{
+  "semantic": {
+    "light": {
+      "color": {
+        "primary": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.700}"
+        },
+        "on-primary": {
+          "$type": "color",
+          "$value": "{primitive.color.white}"
+        },
+        "surface": {
+          "$type": "color",
+          "$value": "{primitive.color.white}"
+        },
+        "on-surface": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.900}"
+        },
+        "surface-variant": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.100}"
+        },
+        "on-surface-variant": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.700}"
+        },
+        "surface-container": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.50}"
+        },
+        "on-primary-container": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.900}"
+        },
+        "outline": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.500}"
+        },
+        "outline-variant": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.300}"
+        },
+        "accent": {
+          "$type": "color",
+          "$value": "{primitive.color.neutral.700}"
+        },
+        "on-accent": {
+          "$type": "color",
+          "$value": "{primitive.color.white}"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{primitive.color.green.700}"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{primitive.color.amber.700}"
+        },
+        "danger": {
+          "$type": "color",
+          "$value": "{primitive.color.red.700}"
+        },
+        "focus-ring": {
+          "$type": "color",
+          "$value": "{primitive.color.blue.600}"
+        },
+        "backdrop": {
+          "$type": "color",
+          "$value": "#0f172a80"
+        }
+      }
+    }
+  }
+}

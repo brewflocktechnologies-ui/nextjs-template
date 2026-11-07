@@ -14,6 +14,11 @@ const steps = [
   { name: 'Policy checks', cmd: 'pnpm policy:check' },
   { name: 'Format check (all files)', cmd: 'pnpm nx format:check --all' },
   { name: 'TypeScript project references in sync', cmd: 'pnpm nx sync:check' },
+  // Generated files are committed; every generator exposes build:check (P1.2 onwards).
+  {
+    name: 'Generated files up to date',
+    cmd: 'pnpm nx run-many -t build:check --output-style=static',
+  },
   {
     name: 'Lint, test, typecheck, build',
     cmd: 'pnpm nx run-many -t lint test typecheck build --output-style=static',

@@ -1,2 +1,2 @@
-// Placeholder (P1.1-T03). Token sources and the Style Dictionary build arrive in P1.2.
+// Library identity, kept for the project-graph placeholders until P1.3 imports real tokens.
 export const LIB_NAME = 'design-tokens';

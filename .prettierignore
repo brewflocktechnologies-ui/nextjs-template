@@ -10,3 +10,9 @@ apps/**/AGENTS.md
 
 # Architecture baseline: not edited in place (SPECS/README.md)
 /docs/architecture/ARCHITECTURE-001-*.md
+
+# Generated token outputs (P1.2); checked by design-tokens:build:check instead
+/libs/design-tokens/src/generated
+
+# Lockfile is written by pnpm
+/pnpm-lock.yaml

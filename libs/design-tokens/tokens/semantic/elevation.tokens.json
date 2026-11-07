@@ -1,0 +1,18 @@
+{
+  "semantic": {
+    "elevation": {
+      "flat": {
+        "$type": "shadow",
+        "$value": "{primitive.shadow.flat}"
+      },
+      "low": {
+        "$type": "shadow",
+        "$value": "{primitive.shadow.low}"
+      },
+      "medium": {
+        "$type": "shadow",
+        "$value": "{primitive.shadow.medium}"
+      }
+    }
+  }
+}

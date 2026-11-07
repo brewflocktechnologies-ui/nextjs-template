@@ -42,7 +42,13 @@ The dashboard and the widget frame must render from the same semantic design voc
 
 <!-- verification -->
 
-To be filled by P1.2-T06: Style Dictionary version, DTCG features confirmed, outputs list.
+Verified at P1.2 on 2026-11-07. Evidence: `SPECS/evidence/P1.2.md`.
+
+- Style Dictionary **5.7.1**, pinned exactly as a dev dependency of `@byteflock/design-tokens` (5.8.0 was inside the 7-day cooldown).
+- DTCG 2025.10 features confirmed working with Style Dictionary 5.7.1: `$value`, `$type`, `$description` on groups, alias references `{group.token}`, object-form `dimension` and `duration` values, `shadow`, `fontFamily`, `fontWeight`, `number`, `cubicBezier`, and colours with alpha (`#rrggbbaa`). The Resolver module is not used. Values are serialised by our own formats, so Style Dictionary's transforms are limited to `name/kebab`, which avoids name collisions between the light and dark sets.
+- Outputs, committed under `libs/design-tokens/src/generated/` (D-23, not `dist/`): `css/semantic.css`, `ts/tokens.ts`, `json/semantic.light.json`, `json/semantic.dark.json`, `json/scales.json`.
+- Light and dark are two semantic sets in one CSS file, selected by `data-appearance`; density and type scale are emitted as `--sem-density-factor` and `--sem-type-scale` with `data-density` and `data-type-scale` blocks.
+- `build:check` builds to a temp folder and fails when the committed outputs differ; `pnpm verify` runs it for every project that has one.
 
 <!-- /verification -->
 

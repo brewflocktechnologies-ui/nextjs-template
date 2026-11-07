@@ -1,0 +1,22 @@
+{
+  "semantic": {
+    "motion": {
+      "duration-fast": {
+        "$type": "duration",
+        "$value": "{primitive.duration.fast}"
+      },
+      "duration-normal": {
+        "$type": "duration",
+        "$value": "{primitive.duration.normal}"
+      },
+      "duration-slow": {
+        "$type": "duration",
+        "$value": "{primitive.duration.slow}"
+      },
+      "easing-standard": {
+        "$type": "cubicBezier",
+        "$value": "{primitive.easing.standard}"
+      }
+    }
+  }
+}

@@ -11,6 +11,8 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./css/semantic.css": "./src/generated/css/semantic.css",
+    "./scales": "./src/generated/json/scales.json",
     "./package.json": "./package.json"
   },
   "nx": {
@@ -18,7 +20,45 @@
       "type:lib",
       "scope:shared",
       "platform:neutral"
-    ]
+    ],
+    "targets": {
+      "build": {
+        "command": "node scripts/build.mjs",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/tokens/**/*",
+          "{projectRoot}/style-dictionary.config.mjs",
+          "{projectRoot}/scripts/build.mjs"
+        ],
+        "outputs": [
+          "{projectRoot}/src/generated"
+        ],
+        "cache": true
+      },
+      "build:check": {
+        "command": "node scripts/build.mjs --check",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/tokens/**/*",
+          "{projectRoot}/style-dictionary.config.mjs",
+          "{projectRoot}/scripts/build.mjs",
+          "{projectRoot}/src/generated/**/*"
+        ],
+        "cache": true
+      },
+      "test": {
+        "dependsOn": [
+          "build"
+        ]
+      }
+    }
   },
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "style-dictionary": "5.7.1"
+  }
 }

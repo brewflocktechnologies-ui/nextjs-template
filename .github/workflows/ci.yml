@@ -59,6 +59,10 @@ jobs:
       - name: TypeScript project references in sync
         run: pnpm nx sync:check
 
+      # Generated files are committed; every generator exposes build:check (P1.2 onwards).
+      - name: Generated files up to date
+        run: pnpm nx run-many -t build:check
+
       - name: Lint, test, typecheck, build (affected)
         if: github.event_name == 'pull_request'
         run: pnpm nx affected -t lint test typecheck build --base=origin/${{ github.base_ref }} --head=HEAD
