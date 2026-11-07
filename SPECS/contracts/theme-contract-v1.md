@@ -97,3 +97,12 @@ Draft (dashboard, in-memory/local in Phase 1) → Preview (real frame at `/v1/fr
 ## THEME-10 Versioning
 
 `schemaVersion` bumps only on breaking changes. The frame accepts `N` and `N-1`. Publish migrates stored drafts. The dashboard refuses to publish an unsupported version. Changes to `libs/theme/schema/theme.v1.json` require the `CONTRACT-CHANGE:` PR trailer and a migration note (ARCH-001 §15.3).
+
+## THEME-11 Implementation notes (P1.3, 2026-11-07)
+
+- **Resolved keys.** `RESOLVED_KEYS` holds 18 variables: the 13 colour roles (`--sem-color-<role>`), `--sem-radius-md` (the default component radius, set from `shape.radius`), `--sem-elevation-surface` (the default raised-surface shadow, set from `elevation`; added to the design tokens in P1.3), `--sem-density-factor`, `--sem-type-scale` and `--sem-font-family-sans`. A test checks every key exists in `SEMANTIC_VARIABLE_NAMES`.
+- **Font stacks** come from the design tokens' `SCALES.fontStacks`, so there is no separate `fonts.ts`.
+- **Validator.** `validateTheme` uses TypeBox's `Value` API, which interprets the schema instead of generating code, so it works under a CSP without `unsafe-eval` (the dashboard).
+- **Frame entries.** `@byteflock/theme/guard` (guard and `RESOLVED_KEYS`) and `@byteflock/theme/resolve` (resolver). Both import contract constants from `src/schema/constants.ts`, which has no TypeBox import.
+- **Guard leniencies,** asserted by a test: it accepts documents that break only revision bounds or `additionalProperties` (`extra-colour-key`, `extra-root-key`, `revision-fraction`, `revision-zero`). It always rejects prototype-pollution keys (`__proto__`, `constructor`, `prototype`) at any depth, unsupported versions, invalid colours and unknown enum values.
+- **Contrast rules** are `CONTRAST_RULES` in `src/policy.ts`: the five THEME-06 pairs plus the six D-20 dashboard pairs.

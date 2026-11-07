@@ -49,10 +49,10 @@ The frame and launcher ship a neutral default: `primary #334155`, `accent #33415
 
 ## Where each tenant appears
 
-| Place                  | Files                                                                                                                        |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Theme fixtures         | `libs/theme/fixtures/valid/{acme-light,globex-dark,initech-compact}.json`                                                    |
-| Widget stubs           | `apps/widget/public/v1/config/wk_*.json`, `apps/widget/public/v1/themes/t_*/1.json`                                          |
-| Dashboard dev sessions | `apps/admin-dashboard/src/dev/tenants.ts` (imports `validation/tenants.json`)                                                |
-| Playground index       | generated from `validation/tenants.json` at dev-server start                                                                 |
-| Storybook decorators   | `libs/ui-react/.storybook/themes.ts`, `libs/chat-widget/.storybook/themes.ts` (both import from `@byteflock/theme` fixtures) |
+| Place                  | Files                                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Theme fixtures         | `libs/theme/fixtures/valid/{acme-light,globex-dark,initech-compact}.json` (Initech light `onAccent` is `#020617` for contrast) |
+| Widget stubs           | `apps/widget/public/v1/config/wk_*.json`, `apps/widget/public/v1/themes/t_*/1.json`                                            |
+| Dashboard dev sessions | `apps/admin-dashboard/src/dev/tenants.ts` (imports `validation/tenants.json`)                                                  |
+| Playground index       | generated from `validation/tenants.json` at dev-server start                                                                   |
+| Storybook decorators   | `libs/ui-react/.storybook/themes.ts`, `libs/chat-widget/.storybook/themes.ts` (both import from `@byteflock/theme` fixtures)   |

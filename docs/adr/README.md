@@ -7,7 +7,7 @@ MADR format (`SPECS/templates/adr-template.md`). An ADR with status Accepted may
 | [ADR-001](ADR-001-nx-pnpm-workspace-and-toolchain.md)            | Nx + pnpm workspace and toolchain                          | Accepted |
 | [ADR-002](ADR-002-application-and-library-boundaries.md)         | Application and library boundaries                         | Accepted |
 | [ADR-003](ADR-003-token-source-and-build.md)                     | Token source and build                                     | Accepted |
-| [ADR-004](ADR-004-theme-contract-grammar-lifecycle.md)           | Theme contract, grammar and lifecycle                      | Proposed |
+| [ADR-004](ADR-004-theme-contract-grammar-lifecycle.md)           | Theme contract, grammar and lifecycle                      | Accepted |
 | [ADR-005](ADR-005-tenant-context-authorization-ssr-cache.md)     | Tenant context, authorization boundary and SSR cache rules | Proposed |
 | [ADR-006](ADR-006-primitive-and-react-styling.md)                | Primitive library and React styling                        | Accepted |
 | [ADR-007](ADR-007-widget-isolation-loader-bridge.md)             | Widget conversation isolation, loader and bridge           | Accepted |

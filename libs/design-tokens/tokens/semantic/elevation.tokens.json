@@ -12,6 +12,11 @@
       "medium": {
         "$type": "shadow",
         "$value": "{primitive.shadow.medium}"
+      },
+      "surface": {
+        "$type": "shadow",
+        "$value": "{primitive.shadow.low}",
+        "$description": "Default raised-surface shadow. The tenant theme sets it from its elevation choice (THEME-03)."
       }
     }
   }

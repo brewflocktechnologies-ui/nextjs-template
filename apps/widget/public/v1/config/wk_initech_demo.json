@@ -4,7 +4,9 @@
   "themeRevision": 1,
   "locale": {
     "default": "en-AU",
-    "supported": ["en-AU"]
+    "supported": [
+      "en-AU"
+    ]
   },
   "features": {
     "proactive": true,

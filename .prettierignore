@@ -23,3 +23,9 @@ apps/**/AGENTS.md
 
 # Storybook static builds
 **/storybook-static
+
+# Generated documents with their own stale checks (D-23): theme schema, widget fixtures
+/libs/theme/schema
+/validation/widget-fixtures
+/apps/widget/public/v1/config
+/apps/widget/public/v1/themes
