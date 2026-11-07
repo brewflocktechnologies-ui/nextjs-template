@@ -1,11 +1,11 @@
 # ADR-004: Theme contract, grammar and lifecycle
 
-|          |                                                                                 |
-| -------- | ------------------------------------------------------------------------------- |
-| Status   | Proposed (PoC-C passed with TypeBox; awaiting product-owner acceptance of P1.3) |
-| Date     | 2026-11-07                                                                      |
-| Deciders | Madhusudan C P (product owner, architecture owner, security reviewer)           |
-| Source   | ARCH-001 §8, Appendix B; SPECS/contracts/theme-contract-v1.md; D-20             |
+|          |                                                                       |
+| -------- | --------------------------------------------------------------------- |
+| Status   | Accepted (P1.3, 2026-11-07, Madhusudan C P): TypeBox 0.34.52          |
+| Date     | 2026-11-07                                                            |
+| Deciders | Madhusudan C P (product owner, architecture owner, security reviewer) |
+| Source   | ARCH-001 §8, Appendix B; SPECS/contracts/theme-contract-v1.md; D-20   |
 
 ## Context and problem statement
 
@@ -42,7 +42,7 @@ Tenants customise the widget and the dashboard. Their input crosses into SSR sty
 
 <!-- verification -->
 
-P1.3 on 2026-11-07, branch `p1.3-theme-contract`. Evidence: `SPECS/evidence/P1.3.md`. Status stays **Proposed** until the product owner accepts P1.3.
+P1.3 on 2026-11-07, branch `p1.3-theme-contract`. Evidence: `SPECS/evidence/P1.3.md`. Accepted by the product owner with P1.3 on 2026-11-07.
 
 **PoC-C result: TypeBox 0.34.52 is chosen.** Zod 4 was not tried, because the friction threshold (more than two non-trivial workarounds, or an emitted schema that differs from Appendix B) was not reached.
 
