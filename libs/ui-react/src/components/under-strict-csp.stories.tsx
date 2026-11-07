@@ -1,7 +1,7 @@
 import { CSPProvider } from '@base-ui/react/csp-provider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { Button } from '../components/ui/button';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,14 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../components/ui/dialog';
+} from './ui/dialog';
 import {
   Popover,
   PopoverContent,
   PopoverDescription,
   PopoverTitle,
   PopoverTrigger,
-} from '../components/ui/popover';
+} from './ui/popover';
 
 /**
  * PoC-B item 5: Base UI under a nonce-only style CSP. The play function installs
@@ -27,7 +27,12 @@ import {
  */
 const NONCE = 'poc';
 
-const meta: Meta = { title: 'PoC/Under strict CSP' };
+const meta: Meta = {
+  title: 'Foundations/Under strict CSP',
+  tags: ['a11y'],
+  // The platform default theme: no tenant <style> is inserted after the CSP is installed.
+  globals: { tenant: 'default' },
+};
 export default meta;
 
 export const Default: StoryObj = {

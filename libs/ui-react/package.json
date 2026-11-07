@@ -9,10 +9,7 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./lib/*": "./src/lib/*.ts",
-    "./components/ui/*": "./src/components/ui/*.tsx",
-    "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts",
+    "./shadcn-bridge.css": "./src/generated/shadcn-bridge.css",
     "./package.json": "./package.json"
   },
   "nx": {
@@ -22,6 +19,34 @@
       "platform:react"
     ],
     "targets": {
+      "build": {
+        "command": "node scripts/generate-bridge.mjs",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/src/theme/shadcn-map.json",
+          "{projectRoot}/scripts/generate-bridge.mjs",
+          "{workspaceRoot}/libs/design-tokens/src/generated/ts/tokens.ts"
+        ],
+        "outputs": [
+          "{projectRoot}/src/generated"
+        ],
+        "cache": true
+      },
+      "build:check": {
+        "command": "node scripts/generate-bridge.mjs --check",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/src/theme/shadcn-map.json",
+          "{projectRoot}/scripts/generate-bridge.mjs",
+          "{workspaceRoot}/libs/design-tokens/src/generated/ts/tokens.ts",
+          "{projectRoot}/src/generated/**/*"
+        ],
+        "cache": true
+      },
       "storybook": {
         "command": "storybook dev -p 4600 --config-dir .storybook --no-open",
         "options": {

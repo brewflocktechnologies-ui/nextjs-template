@@ -1,0 +1,28 @@
+{
+  "$comment": "shadcn variable -> semantic variable (P1.4-T01). generate-bridge.mjs turns this into src/generated/shadcn-bridge.css. Every target must exist in SEMANTIC_VARIABLE_NAMES.",
+  "colors": {
+    "background": "--sem-color-surface",
+    "foreground": "--sem-color-on-surface",
+    "card": "--sem-color-surface",
+    "card-foreground": "--sem-color-on-surface",
+    "popover": "--sem-color-surface",
+    "popover-foreground": "--sem-color-on-surface",
+    "primary": "--sem-color-primary",
+    "primary-foreground": "--sem-color-on-primary",
+    "secondary": "--sem-color-surface-variant",
+    "secondary-foreground": "--sem-color-on-surface-variant",
+    "muted": "--sem-color-surface-variant",
+    "muted-foreground": "--sem-color-on-surface-variant",
+    "accent": "--sem-color-accent",
+    "accent-foreground": "--sem-color-on-accent",
+    "destructive": "--sem-color-danger",
+    "border": "--sem-color-outline",
+    "input": "--sem-color-outline",
+    "ring": "--sem-color-focus-ring"
+  },
+  "radius": "--sem-radius-md",
+  "fontSans": "--sem-font-family-sans",
+  "shadow": "--sem-elevation-surface",
+  "densityFactor": "--sem-density-factor",
+  "typeScale": "--sem-type-scale"
+}

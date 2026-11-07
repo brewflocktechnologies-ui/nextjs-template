@@ -55,7 +55,7 @@ Open `http://localhost:4600` (ui-react Storybook).
 
 ## P1.4 — React UI foundation
 
-1. Storybook → "Themes" toolbar: switch between Acme, Globex, Initech for the `Composite/FilterDialog` story. **Expect:** colours, radius, density change together; dark Globex is dark; text remains readable.
+1. Storybook (`pnpm nx run @byteflock/ui-react:storybook`, http://localhost:4600) → "Tenant" toolbar: switch between Acme, Globex, Initech for the `Composites/FilterDialog` story (open the dialog). **Expect:** colours, radius, density change together; dark Globex is dark; text remains readable.
 2. A11y panel across all stories (use the "Run all" in the addon or `pnpm nx run @byteflock/ui-react:test-storybook`). **Expect:** zero serious/critical.
 
 ## P1.5 — Frame app foundation

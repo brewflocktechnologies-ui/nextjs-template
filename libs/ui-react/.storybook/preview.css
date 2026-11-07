@@ -1,0 +1,6 @@
+/* The CSS entry convention for every React app (P1.4 §4). The dashboard copies these four lines in
+   P1.6, with the @source path adjusted to its own location. */
+@import 'tailwindcss';
+@import '@byteflock/design-tokens/css/semantic.css';
+@import '@byteflock/ui-react/shadcn-bridge.css';
+@source '../src';

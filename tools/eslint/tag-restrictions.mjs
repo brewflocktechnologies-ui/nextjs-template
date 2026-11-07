@@ -56,7 +56,12 @@ const RULES = [
   },
 ];
 
-export function tagRestrictions(projectDir) {
+/**
+ * @param {string} projectDir the calling project's directory
+ * @param {{ paths?: object[], patterns?: object[] }} [extra] project-specific restrictions, merged
+ *   into the same rule (a second no-restricted-imports entry would replace this one)
+ */
+export function tagRestrictions(projectDir, extra = {}) {
   const pkg = JSON.parse(
     fs.readFileSync(path.join(projectDir, 'package.json'), 'utf8'),
   );
@@ -75,6 +80,14 @@ export function tagRestrictions(projectDir) {
       '**/*.mjs',
       '**/*.cjs',
     ],
-    rules: { 'no-restricted-imports': ['error', { patterns }] },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: extra.paths ?? [],
+          patterns: [...patterns, ...(extra.patterns ?? [])],
+        },
+      ],
+    },
   };
 }

@@ -13,7 +13,8 @@
     "paths": {
       "@byteflock/ui-react/*": ["./src/*"]
     },
-    "lib": ["es2022", "dom", "dom.iterable"]
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "resolveJsonModule": true
   },
   "exclude": [
     "out-tsc",

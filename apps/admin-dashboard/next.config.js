@@ -7,6 +7,8 @@ const nextConfig = {
   turbopack: {
     root: path.join(__dirname, '../..'),
   },
+  // TanStack Table ships ESM only; listing it here also makes next/jest transform it (P1.4).
+  transpilePackages: ['@tanstack/react-table', '@tanstack/table-core'],
   // See: https://nextjs.org/docs/app/api-reference/config/next-config-js
 };
 
