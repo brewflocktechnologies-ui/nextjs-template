@@ -2,7 +2,7 @@
 
 |          |                                                                       |
 | -------- | --------------------------------------------------------------------- |
-| Status   | Proposed (P1.6 verified; awaiting product-owner acceptance)           |
+| Status   | Accepted (P1.6, 2026-11-07, Madhusudan C P)                           |
 | Date     | 2026-11-07                                                            |
 | Deciders | Madhusudan C P (product owner, architecture owner, security reviewer) |
 | Source   | ARCH-001 §9; D-12, D-20                                               |
@@ -41,7 +41,7 @@ The dashboard renders tenant-specific themes during SSR in a shared Node process
 
 <!-- verification -->
 
-P1.6 on 2026-11-07, branch `p1.6-themed-vertical-slice`. Evidence: `SPECS/evidence/P1.6.md`. Status stays **Proposed** until the product owner accepts P1.6.
+P1.6 on 2026-11-07, branch `p1.6-themed-vertical-slice`. Evidence: `SPECS/evidence/P1.6.md`. Accepted by the product owner with P1.6 on 2026-11-07.
 
 **Tenant context.** `getRequestContext()` (`src/server/request-context.ts`, `server-only`) derives `{ tenantId, userId, roles, locale }` from the session on every request; pages redirect to `/dev/session` without one, route handlers answer 401. No module-level state holds tenant data. In development the session is the signed `dev-session` cookie (HMAC-SHA256, D-12); the dev adapter throws if it is ever loaded in production and is only loaded with `await import()` behind `isDevOnly()`. The production adapter is a placeholder: no sessions, so authenticated pages fail closed.
 
