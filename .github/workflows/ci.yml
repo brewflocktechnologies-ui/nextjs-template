@@ -73,7 +73,7 @@ jobs:
 
       - name: End-to-end, Chromium (affected)
         if: github.event_name == 'pull_request'
-        run: pnpm nx affected -t e2e --base=origin/${{ github.base_ref }} --head=HEAD -- --project=chromium
+        run: pnpm nx affected -t e2e --parallel=1 --base=origin/${{ github.base_ref }} --head=HEAD -- --project=chromium
 
       - name: Lint, test, typecheck, build (all)
         if: github.event_name != 'pull_request'
@@ -85,7 +85,7 @@ jobs:
 
       - name: End-to-end, Chromium (all)
         if: github.event_name != 'pull_request'
-        run: pnpm nx run-many -t e2e -- --project=chromium
+        run: pnpm nx run-many -t e2e --parallel=1 -- --project=chromium
 
   # D-17: Windows is a first-class development environment.
   widget-windows:
@@ -108,3 +108,21 @@ jobs:
 
       - name: Playground smoke test
         run: pnpm nx run @byteflock/widget-playground:e2e -- --project=chromium --grep @smoke
+
+  # P1.7-T03: visual regression in the pinned Linux Playwright image, the same one `pnpm visual`
+  # uses locally (tools/scripts/visual.mjs). Snapshots are *-linux.png; blocking.
+  visual:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble@sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e
+      options: --ipc=host
+    env:
+      VISUAL: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - run: pnpm install --frozen-lockfile
+      - name: Playground snapshots
+        run: pnpm exec playwright test -c apps/widget-playground/playwright.config.mts --project=chromium --grep @visual
+      - name: Dashboard snapshots
+        run: pnpm exec playwright test -c apps/admin-dashboard-e2e/playwright.config.mts --project=chromium --grep @visual

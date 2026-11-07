@@ -14,7 +14,8 @@
     "stack:check": "node tools/scripts/stack-check.mjs",
     "stack:reset": "node tools/scripts/stack-reset.mjs",
     "policy:check": "node tools/scripts/policy/run-all.mjs",
-    "verify": "node tools/scripts/verify.mjs"
+    "verify": "node tools/scripts/verify.mjs",
+    "visual": "node tools/scripts/visual.mjs"
   },
   "private": true,
   "packageManager": "pnpm@11.28.10",

@@ -1,34 +1,19 @@
-// Policy (ARCH-001 §15.3, P1.3 gate): a pull request that changes a contract file must say so with a
-// `CONTRACT-CHANGE:` line in its body and add a note under docs/contract-changes/.
+// Policy (ARCH-001 §15.3, P1.3 and P1.7-T04): a change to a contract file must be announced with a
+// `CONTRACT-CHANGE:` trailer and a note under docs/contract-changes/.
 //
-// Contract files: libs/theme/schema/** (P1.3), apps/widget/src/bridge/protocol.ts (P1.5 onwards).
-// Needs a pull request: reads GITHUB_EVENT_PATH and GITHUB_BASE_REF. Locally (no CI, D-22) it skips
-// with a notice, because there is no PR body to read.
-import { execFileSync } from 'node:child_process';
-import fs from 'node:fs';
+// Contract files: libs/theme/schema/** and apps/widget/src/bridge/protocol.ts. Creating a contract
+// file is its first version, not a change; modifying or deleting one is a change.
+// Pull request: the trailer comes from the PR body. Locally (D-22): from the commit messages since
+// main, or POLICY_TRAILERS for a check before committing.
+import { changedFiles, hasTrailer, prContext } from './lib.mjs';
 
 const CONTRACT = [
   /^libs\/theme\/schema\//,
   /^apps\/widget\/src\/bridge\/protocol\.ts$/,
 ];
 
-const eventPath = process.env.GITHUB_EVENT_PATH;
-const base = process.env.GITHUB_BASE_REF;
-if (!eventPath || !base || !fs.existsSync(eventPath)) {
-  console.log('check-contract-change: not a pull request; skipped (D-22)');
-  process.exit(0);
-}
-
-const event = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
-const body = event.pull_request?.body ?? '';
-const changed = execFileSync(
-  'git',
-  ['diff', '--name-only', `origin/${base}...HEAD`],
-  { encoding: 'utf8' },
-)
-  .split('\n')
-  .filter(Boolean);
-const contractChanges = changed.filter((f) =>
+const changed = changedFiles('ACMRD');
+const contractChanges = changedFiles('MD').filter((f) =>
   CONTRACT.some((re) => re.test(f)),
 );
 
@@ -36,16 +21,18 @@ if (contractChanges.length === 0) {
   console.log('check-contract-change: no contract files changed');
   process.exit(0);
 }
+const where = prContext()
+  ? 'the PR body'
+  : 'a commit message (or POLICY_TRAILERS)';
 const problems = [];
+if (!hasTrailer('CONTRACT-CHANGE'))
+  problems.push(`${where} needs a "CONTRACT-CHANGE: <description>" line`);
 if (
-  !/^CONTRACT-CHANGE:\s*\S+/m.test(body) ||
-  /^CONTRACT-CHANGE:\s*none\s*$/im.test(body)
-) {
-  problems.push('the PR body needs a "CONTRACT-CHANGE: <description>" line');
-}
-if (!changed.some((f) => f.startsWith('docs/contract-changes/'))) {
+  !changed.some(
+    (f) => f.startsWith('docs/contract-changes/') && !f.endsWith('README.md'),
+  )
+)
   problems.push('add a migration note under docs/contract-changes/');
-}
 if (problems.length) {
   console.error(
     `check-contract-change: contract files changed (${contractChanges.join(', ')}):\n  ${problems.join('\n  ')}`,

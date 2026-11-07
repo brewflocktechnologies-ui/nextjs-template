@@ -25,19 +25,25 @@ export default defineConfig({
   },
   webServer: [
     // First: the production build must finish before the dev server starts (they share the app
-    // folder; a build running beside a cold dev server broke hydration in the dev pages).
-    {
-      command:
-        'pnpm exec next build && git checkout -- next-env.d.ts && pnpm exec next start --port 3005',
-      // Built from the app folder, like the Nx build target; `next build <dir>` from the workspace
-      // root fails to prerender. A separate distDir keeps a running dev server intact; the build
-      // rewrites the committed next-env.d.ts for that distDir, so it is restored before starting.
-      env: { NEXT_DIST_DIR: '.next-e2e-prod' },
-      url: 'http://localhost:3005/healthz',
-      reuseExistingServer: true,
-      cwd: `${workspaceRoot}/apps/admin-dashboard`,
-      timeout: 300_000,
-    },
+    // folder; a build running beside a cold dev server broke hydration in the dev pages). Visual
+    // runs need only the dev servers.
+    ...(process.env.VISUAL
+      ? []
+      : [
+          {
+            command:
+              'pnpm exec next build && git checkout -- next-env.d.ts && pnpm exec next start --port 3005',
+            // Built from the app folder, like the Nx build target; `next build <dir>` from the
+            // workspace root fails to prerender. A separate distDir keeps a running dev server
+            // intact; the build rewrites the committed next-env.d.ts for that distDir, so it is
+            // restored before starting.
+            env: { NEXT_DIST_DIR: '.next-e2e-prod' },
+            url: 'http://localhost:3005/healthz',
+            reuseExistingServer: true,
+            cwd: `${workspaceRoot}/apps/admin-dashboard`,
+            timeout: 300_000,
+          },
+        ]),
     {
       command: 'pnpm exec next dev apps/admin-dashboard --port 3000',
       url: 'http://localhost:3000/healthz',

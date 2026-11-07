@@ -35,14 +35,19 @@ export default defineConfig({
       reuseExistingServer: true,
       cwd: workspaceRoot,
     },
-    {
-      command:
-        'pnpm nx run @byteflock/widget:build --output-style=static && pnpm exec vite preview --config apps/widget/vite.config.mts --port 4401',
-      url: 'http://localhost:4401/v1/loader.js',
-      reuseExistingServer: true,
-      cwd: workspaceRoot,
-      timeout: 180_000,
-    },
+    // The production-header server (T-12) is not needed for visual runs.
+    ...(process.env.VISUAL
+      ? []
+      : [
+          {
+            command:
+              'pnpm nx run @byteflock/widget:build --output-style=static && pnpm exec vite preview --config apps/widget/vite.config.mts --port 4401',
+            url: 'http://localhost:4401/v1/loader.js',
+            reuseExistingServer: true,
+            cwd: workspaceRoot,
+            timeout: 180_000,
+          },
+        ]),
   ],
   projects: [
     {
