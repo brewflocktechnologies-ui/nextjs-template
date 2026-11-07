@@ -1,15 +1,60 @@
-/* Minimal base styles. Theming arrives in P1.6 through the design tokens and the
-   tenant theme contract; do not add colours or fonts here. */
-html {
-  -webkit-text-size-adjust: 100%;
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
-}
+/* The CSS entry convention for React apps (P1.4 §4). The tenant theme arrives as resolved --sem-*
+   variables in the layout's nonce'd <style>; never add colours or fonts here. */
+@import 'tailwindcss';
+@import '@byteflock/design-tokens/css/semantic.css';
+@import '@byteflock/ui-react/shadcn-bridge.css';
+@source '../../../../libs/ui-react/src';
+@source '../';
 
-body {
-  margin: 0;
+/* The curated tenant fonts (THEME-02). Browsers download a face only when the tenant's font stack
+   uses it. Files: scripts/vendor-fonts.mjs. */
+@font-face {
+  font-family: 'Inter';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter/inter-latin-400-normal.woff2') format('woff2');
 }
-
-main {
-  padding: 2rem;
+@font-face {
+  font-family: 'Inter';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/roboto/roboto-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/roboto/roboto-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-sans/source-sans-3-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/source-sans/source-sans-3-latin-600-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-sans/noto-sans-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/noto-sans/noto-sans-latin-600-normal.woff2') format('woff2');
 }

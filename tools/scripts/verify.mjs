@@ -30,7 +30,9 @@ const steps = [
   },
   {
     name: 'End-to-end, Chromium',
-    cmd: 'pnpm nx run-many -t e2e --output-style=static -- --project=chromium',
+    // One suite at a time: the dashboard suite edits the widget's static files that the
+    // playground suite reads (P1.6 publish and allowlist flows).
+    cmd: 'pnpm nx run-many -t e2e --parallel=1 --output-style=static -- --project=chromium',
     skip: quick,
   },
 ];

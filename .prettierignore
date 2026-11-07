@@ -30,3 +30,4 @@ apps/**/AGENTS.md
 /apps/widget/public/v1/config
 /apps/widget/public/v1/themes
 libs/ui-react/src/generated
+apps/admin-dashboard/.next-e2e-prod

@@ -6,9 +6,11 @@
     "@byteflock/design-tokens": "workspace:*",
     "@byteflock/theme": "workspace:*",
     "@byteflock/ui-react": "workspace:*",
+    "@tanstack/react-query": "5.105.0",
     "next": "~16.4.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "server-only": "0.0.1"
   },
   "nx": {
     "tags": [

@@ -76,3 +76,19 @@ describe('theme adapter (P1.4-T03)', () => {
     });
   });
 });
+
+describe('system appearance (P1.6, D-20)', () => {
+  it('emits the dark variables under prefers-color-scheme for data-appearance="system"', () => {
+    const dark = resolveTheme(acme as Theme, { appearance: 'dark' });
+    const html = renderToStaticMarkup(
+      <ThemeStyleTag vars={vars} darkVars={dark} nonce="n" />,
+    );
+    expect(html).toContain(
+      '@media (prefers-color-scheme: dark){:root:root[data-appearance="system"]{',
+    );
+    expect(html).toContain(
+      `--sem-color-primary:${dark['--sem-color-primary']}`,
+    );
+    expect(html.match(/<style/g)).toHaveLength(1);
+  });
+});

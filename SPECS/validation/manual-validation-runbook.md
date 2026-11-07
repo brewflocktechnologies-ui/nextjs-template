@@ -71,9 +71,9 @@ Open `http://localhost:4600` (ui-react Storybook).
 
 Start `pnpm stack`. Follow `local-stack.md` → "Observing the publish loop", then additionally:
 
-1. `/dev/session` → `t_acme`, open `/`. **Expect:** the whole dashboard chrome in Acme's theme (blue primary, Inter font, medium radius), because Q-013 = full theme; page source contains one nonce'd `<style>` with the full `--sem-*` map.
-2. Switch to `t_globex` in a **second browser profile or private window**, open `/`. **Expect:** teal accent; first window still blue after reload (no cross-tenant bleed).
-3. DevTools → Network → document request on `/`. **Expect:** `Cache-Control: private, no-store`.
+1. `/dev/session` → `t_acme`, open `/`. **Expect:** the whole dashboard chrome in Acme's theme (blue primary header, violet accent, Inter font, medium radius), because Q-013 = full theme; page source contains one nonce'd `<style>` with the full `--sem-*` map.
+2. Switch to `t_globex` in a **second browser profile or private window**, open `/`. **Expect:** dark chrome with a teal primary, Roboto, spacious density; the first window is still blue after reload (no cross-tenant bleed).
+3. DevTools → Network → document request on `/`. **Expect:** `Cache-Control` contains `no-store` (`next dev` sends `no-store`; a production build sends `private, no-cache, no-store, …`).
 4. `/settings/theme` as `t_initech`: set `onPrimary` to the same value as `primary`. **Expect:** live contrast violation shown; **Publish** disabled with the reason.
 5. Fix the colour, change the radius to `none`, watch the preview. **Expect:** preview frame (served from 4400) updates live without reload; the playground tab for `wk_initech_demo` does **not** change until Publish.
 6. **Publish**, reload the playground tab. **Expect:** new radius visible; `apps/widget/public/v1/config/wk_initech_demo.json` shows `themeRevision: 2`; `themes/t_initech/2.json` exists; `1.json` unchanged.

@@ -55,7 +55,10 @@ export const Default: StoryObj = {
     await waitFor(() =>
       expect((input as HTMLInputElement).value).toMatch(/ Smith$/),
     );
-    await expect(body.queryByRole('listbox')).not.toBeInTheDocument();
+    // The list closes with a transition; wait for it to leave the document.
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };
 

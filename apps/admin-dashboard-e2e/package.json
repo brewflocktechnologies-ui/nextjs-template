@@ -12,5 +12,8 @@
       "platform:react"
     ],
     "name": "@byteflock/admin-dashboard-e2e"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0"
   }
 }
