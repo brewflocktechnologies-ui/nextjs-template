@@ -29,7 +29,9 @@ Prerequisites: Node 24, pnpm (version from `package.json`), and once: `pnpm inst
 
 **Windows PowerShell note.** If `pnpm` fails with "running scripts is disabled on this system", type `pnpm.cmd` instead of `pnpm` in every command below. That runs pnpm without the PowerShell script shim and needs no change to your execution policy.
 
-Open three terminals in the repository folder:
+**Quick start on Windows:** double-click `startfe.bat` (or run `.\startfe.bat` in PowerShell). It opens a window or tab per server, waits until the stack answers, and prints the URLs. `startfe.bat stack` skips the two Storybooks. Stop everything with `stopfe.bat`.
+
+Or start the servers by hand. Open three terminals in the repository folder:
 
 ```bash
 pnpm stack
@@ -200,7 +202,7 @@ git status
 
 - [ ] **Expect:** nothing listed under `apps/widget/public/v1/`. If `apps/admin-dashboard/next-env.d.ts` shows as modified, that is `next dev` rewriting it; restore it with `git checkout -- apps/admin-dashboard/next-env.d.ts`.
 
-Stop the servers with Ctrl+C in each terminal. If one survives (for example after closing a window), find it with `netstat -ano | findstr :3000` (or `:4300`, `:4400`, `:4600`, `:4700`) and end the process in Task Manager.
+Stop the servers with `stopfe.bat`: it ends every server on the local ports and restores `next-env.d.ts`. Or press Ctrl+C in each terminal. If one survives (for example after closing a window), find it with `netstat -ano | findstr :3000` (or `:4300`, `:4400`, `:4600`, `:4700`) and end the process in Task Manager.
 
 ## Sign-off
 
@@ -215,4 +217,4 @@ Stop the servers with Ctrl+C in each terminal. If one survives (for example afte
 | 9. Automated gates       |                       |       |      |
 | 10. Visual regression    |                       |       |      |
 
-Signed by: ********\_\_\_\_********
+Signed by: **\*\*\*\***\_\_\_\_**\*\*\*\***

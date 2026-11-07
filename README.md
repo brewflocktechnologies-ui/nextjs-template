@@ -26,6 +26,7 @@ Requires Node 24 (see `.node-version`) and pnpm, whose exact version comes from 
 ```bash
 pnpm install --frozen-lockfile
 pnpm stack          # dashboard :3000, widget origin :4400, playground :4300
+# Windows: startfe.bat starts the stack and both Storybooks; stopfe.bat stops them
 pnpm stack:check    # confirm all three are up
 pnpm verify         # all CI gates locally
 pnpm visual         # visual regression in the pinned Linux container (needs Docker)
