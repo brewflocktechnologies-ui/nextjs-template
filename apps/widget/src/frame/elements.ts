@@ -18,10 +18,20 @@ export class ByteflockFrameApp extends LitElement {
     locale: { type: String },
   };
 
-  brandName = 'Chat';
-  messages: ChatMessage[] = [];
-  available = true;
-  locale = 'en';
+  // Declared, not initialised as class fields: with modern class-field semantics an initialiser
+  // would shadow Lit's reactive accessors (https://lit.dev/msg/class-field-shadowing).
+  declare brandName: string;
+  declare messages: ChatMessage[];
+  declare available: boolean;
+  declare locale: string;
+
+  constructor() {
+    super();
+    this.brandName = 'Chat';
+    this.messages = [];
+    this.available = true;
+    this.locale = 'en';
+  }
 
   static override styles = css`
     :host {
@@ -131,7 +141,9 @@ export class ByteflockFrameApp extends LitElement {
   }
 
   private close() {
-    this.dispatchEvent(new CustomEvent('frame-close', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent('frame-close', { bubbles: true, composed: true }),
+    );
   }
 
   private send(event: Event) {
@@ -139,7 +151,10 @@ export class ByteflockFrameApp extends LitElement {
     const box = this.composer;
     const text = box?.value.trim();
     if (!box || !text) return;
-    this.messages = [...this.messages, { id: Date.now(), from: 'visitor', text, at: new Date() }];
+    this.messages = [
+      ...this.messages,
+      { id: Date.now(), from: 'visitor', text, at: new Date() },
+    ];
     box.value = '';
     this.updateComplete.then(() => {
       const list = this.renderRoot.querySelector('ol');
@@ -152,17 +167,30 @@ export class ByteflockFrameApp extends LitElement {
   }
 
   override render() {
-    const time = new Intl.DateTimeFormat(this.locale, { hour: 'numeric', minute: '2-digit' });
+    const time = new Intl.DateTimeFormat(this.locale, {
+      hour: 'numeric',
+      minute: '2-digit',
+    });
     return html`
       <header>
         <h1>${this.brandName}</h1>
-        <button class="close" type="button" aria-label="Close chat" @click=${this.close}>✕</button>
+        <button
+          class="close"
+          type="button"
+          aria-label="Close chat"
+          @click=${this.close}
+        >
+          ✕
+        </button>
       </header>
       ${this.available
         ? html`
             <ol aria-live="polite" aria-label="Messages">
               ${this.messages.map(
-                (m) => html`<li class=${m.from}>${m.text}<time>${time.format(m.at)}</time></li>`,
+                (m) =>
+                  html`<li class=${m.from}>
+                    ${m.text}<time>${time.format(m.at)}</time>
+                  </li>`,
               )}
             </ol>
             <form @submit=${this.send}>

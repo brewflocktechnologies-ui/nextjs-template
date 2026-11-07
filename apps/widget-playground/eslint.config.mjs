@@ -7,7 +7,8 @@ export default [
   { ...playwright.configs['flat/recommended'], files: ['src/tests/**/*.ts'] },
   ...baseConfig,
   {
-    ignores: ['**/out-tsc'],
+    // public/ holds static host-page fixtures written like customer pages (and vendored rrweb).
+    ignores: ['**/out-tsc', 'public/**'],
   },
   {
     files: ['**/*.ts', '**/*.js'],

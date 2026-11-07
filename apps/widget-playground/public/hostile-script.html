@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hostile script host page</title>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+  </head>
+  <body>
+    <h1>Hostile script (T-01)</h1>
+    <p>
+      This page listens to every key press, watches the whole DOM, and on
+      <strong>Attack</strong> tries every way to read what the visitor typed in
+      the chat. Key: <code id="fixture-key"></code>
+    </p>
+    <p><button id="attack" type="button">Attack</button></p>
+    <pre id="attack-log">(not run yet)</pre>
+    <script src="/fixtures/attack.js"></script>
+    <script src="/fixtures/embed.js"></script>
+  </body>
+</html>

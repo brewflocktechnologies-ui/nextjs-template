@@ -1,0 +1,39 @@
+/* Deliberately hostile host styles (PoC-A fixture). None of this may reach the launcher or the frame. */
+* {
+  all: unset !important;
+}
+html {
+  display: block !important;
+  font-size: 30px !important;
+  direction: rtl !important;
+  font-family: 'Comic Sans MS', fantasy !important;
+  color: #ff00ff !important;
+  background: #00ff00 !important;
+  line-height: 3 !important;
+}
+body,
+div,
+h1,
+p {
+  display: block !important;
+}
+button,
+[role='button'],
+iframe,
+svg {
+  background: #ff0 !important;
+  color: #f00 !important;
+  border: 10px dashed #00f !important;
+  font-size: 40px !important;
+  transform: rotate(5deg) !important;
+  width: 300px !important;
+  height: 120px !important;
+}
+.banner {
+  position: fixed !important;
+  inset: 0 0 auto 0 !important;
+  z-index: 2147483647 !important;
+  background: #000 !important;
+  color: #fff !important;
+  padding: 10px !important;
+}

@@ -32,14 +32,25 @@ export interface MountOptions {
 type Status = 'loading' | 'ready' | 'unavailable';
 const READY_TIMEOUT_MS = 5000;
 const MOBILE_MAX_WIDTH = 640;
-const DEFAULT_LABELS: Record<string, string> = { en: 'Chat', de: 'Chat', fr: 'Discussion', es: 'Chat' };
+const DEFAULT_LABELS: Record<string, string> = {
+  en: 'Chat',
+  de: 'Chat',
+  fr: 'Discussion',
+  es: 'Chat',
+};
 
 const ICONS: Record<LauncherTheme['icon'], string> = {
   chat: 'M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z',
   message: 'M3 5h18v12H7l-4 4z',
   help: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 16h-2v-2h2zm2.1-7.8-.9.9c-.7.7-1.2 1.3-1.2 2.9h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.2a1.9 1.9 0 0 0-1.4-3.3 2 2 0 0 0-2 2H8a4 4 0 1 1 7.1 2z',
 };
-const RADIUS_PX: Record<LauncherTheme['radius'], string> = { none: '0px', sm: '4px', md: '8px', lg: '16px', full: '9999px' };
+const RADIUS_PX: Record<LauncherTheme['radius'], string> = {
+  none: '0px',
+  sm: '4px',
+  md: '8px',
+  lg: '16px',
+  full: '9999px',
+};
 
 /**
  * Mounts one launcher per loader script. Several on one page stay independent: each owns its
@@ -57,8 +68,13 @@ class Launcher {
   private readonly button = document.createElement('button');
   private readonly badge = document.createElement('span');
   private readonly label = document.createElement('span');
-  private readonly icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  private readonly icon = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'svg',
+  );
   private readonly panel = document.createElement('div');
+  /** Layout wrapper inside the shadow root; page CSS can reach the host element but not this. */
+  private readonly wrapper = document.createElement('div');
   private iframe: HTMLIFrameElement | null = null;
   private readonly limiter = new RateLimiter();
   private readonly name: string;
@@ -82,7 +98,9 @@ class Launcher {
     this.watchRemoval();
     this.installApi();
     window.addEventListener('message', this.onMessage);
-    document.addEventListener('visibilitychange', () => this.send({ type: 'visibility', payload: { hidden: document.hidden } }));
+    document.addEventListener('visibilitychange', () =>
+      this.send({ type: 'visibility', payload: { hidden: document.hidden } }),
+    );
     if ((this.opts.frameStrategy ?? 'idle') === 'idle') this.scheduleFrame();
     this.setStatus('loading');
   }
@@ -93,7 +111,8 @@ class Launcher {
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(LAUNCHER_CSS);
     this.root.adoptedStyleSheets = [sheet];
-    this.container.dataset.position = this.opts.position ?? 'bottom-right';
+    this.wrapper.className = 'root';
+    this.wrapper.dataset.position = this.opts.position ?? 'bottom-right';
     this.container.setAttribute('data-byteflock-launcher', '');
 
     this.button.type = 'button';
@@ -115,7 +134,8 @@ class Launcher {
 
     this.panel.className = 'panel';
     this.panel.dataset.state = 'hidden';
-    this.root.append(this.panel, this.button);
+    this.wrapper.append(this.panel, this.button);
+    this.root.append(this.wrapper);
   }
 
   private setIcon(icon: LauncherTheme['icon']) {
@@ -125,7 +145,10 @@ class Launcher {
   }
 
   private updateName() {
-    const unread = this.unread > 0 ? `, ${this.unread} unread message${this.unread === 1 ? '' : 's'}` : '';
+    const unread =
+      this.unread > 0
+        ? `, ${this.unread} unread message${this.unread === 1 ? '' : 's'}`
+        : '';
     const state = this.status === 'unavailable' ? ' (unavailable)' : '';
     this.button.setAttribute('aria-label', `${this.name}${unread}${state}`);
   }
@@ -144,7 +167,8 @@ class Launcher {
     this.status = status;
     this.opts.script?.setAttribute('data-byteflock-chat', status);
     this.button.toggleAttribute('aria-disabled', status === 'unavailable');
-    if (status === 'unavailable') this.button.setAttribute('aria-disabled', 'true');
+    if (status === 'unavailable')
+      this.button.setAttribute('aria-disabled', 'true');
     this.button.title = status === 'unavailable' ? 'Chat unavailable' : '';
     this.updateName();
   }
@@ -154,7 +178,9 @@ class Launcher {
   private scheduleFrame() {
     const create = () => this.createFrame();
     const whenIdle = () =>
-      'requestIdleCallback' in window ? window.requestIdleCallback(create, { timeout: 2000 }) : setTimeout(create, 1);
+      'requestIdleCallback' in window
+        ? window.requestIdleCallback(create, { timeout: 2000 })
+        : setTimeout(create, 1);
     if (document.readyState === 'complete') whenIdle();
     else window.addEventListener('load', whenIdle, { once: true });
   }
@@ -169,7 +195,10 @@ class Launcher {
     if (this.opts.testMode) url.searchParams.set('mode', 'test');
 
     const iframe = document.createElement('iframe');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
+    iframe.setAttribute(
+      'sandbox',
+      'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox',
+    );
     iframe.setAttribute('allow', 'clipboard-write');
     iframe.setAttribute('referrerpolicy', 'strict-origin');
     iframe.setAttribute('loading', 'eager');
@@ -185,7 +214,9 @@ class Launcher {
     this.setStatus('unavailable');
     if (!this.warned) {
       this.warned = true;
-      console.warn('[byteflock] Chat is unavailable: the chat frame did not load. Check frame-src in your Content-Security-Policy.');
+      console.warn(
+        '[byteflock] Chat is unavailable: the chat frame did not load. Check frame-src in your Content-Security-Policy.',
+      );
     }
   }
 
@@ -198,7 +229,8 @@ class Launcher {
   private show() {
     if (!this.iframe) this.createFrame();
     this.open = true;
-    this.panel.dataset.layout = window.innerWidth < MOBILE_MAX_WIDTH ? 'fullscreen' : 'panel';
+    this.panel.dataset.layout =
+      window.innerWidth < MOBILE_MAX_WIDTH ? 'fullscreen' : 'panel';
     this.panel.dataset.state = 'open';
     this.button.setAttribute('aria-expanded', 'true');
     this.trackViewport();
@@ -218,7 +250,8 @@ class Launcher {
     // Keeps the full-screen frame above the on-screen keyboard on mobile (ARCH-001 §17.1 item 6).
     const vv = window.visualViewport;
     if (!vv) return;
-    const update = () => this.panel.style.setProperty('--bf-viewport-height', `${vv.height}px`);
+    const update = () =>
+      this.panel.style.setProperty('--bf-viewport-height', `${vv.height}px`);
     update();
     vv.addEventListener('resize', update);
   }
@@ -231,7 +264,10 @@ class Launcher {
       return;
     }
     // Always an exact target origin, derived from the loader's own src (BRIDGE-04 rule 1).
-    this.iframe.contentWindow.postMessage(makeEnvelope(message), this.opts.widgetOrigin);
+    this.iframe.contentWindow.postMessage(
+      makeEnvelope(message),
+      this.opts.widgetOrigin,
+    );
   }
 
   private onMessage = (event: MessageEvent) => {
@@ -240,7 +276,8 @@ class Launcher {
     const env = parseEnvelope(event.data);
     if (!env.ok) return;
     const msg = validateFrameToHost(env.value);
-    if (!msg.ok || !this.limiter.take(msg.value.type, performance.now())) return;
+    if (!msg.ok || !this.limiter.take(msg.value.type, performance.now()))
+      return;
 
     switch (msg.value.type) {
       case 'ready':
@@ -273,10 +310,10 @@ class Launcher {
 
   private applyTheme(theme: LauncherTheme) {
     if (!isLauncherTheme(theme)) return; // validated again, field by field (BRIDGE-02)
-    this.container.style.setProperty('--bf-bg', theme.bg);
-    this.container.style.setProperty('--bf-fg', theme.fg);
-    this.container.style.setProperty('--bf-radius', RADIUS_PX[theme.radius]);
-    this.container.dataset.position = this.opts.position ?? theme.position;
+    this.wrapper.style.setProperty('--bf-bg', theme.bg);
+    this.wrapper.style.setProperty('--bf-fg', theme.fg);
+    this.wrapper.style.setProperty('--bf-radius', RADIUS_PX[theme.radius]);
+    this.wrapper.dataset.position = this.opts.position ?? theme.position;
     this.button.dataset.shape = theme.shape;
     this.setIcon(theme.icon);
   }
@@ -284,7 +321,8 @@ class Launcher {
   // --- public API (ENDP-05) ----------------------------------------------------------------
 
   private installApi() {
-    const api = (command: unknown, payload?: unknown) => this.command(command, payload);
+    const api = (command: unknown, payload?: unknown) =>
+      this.command(command, payload);
     for (const args of this.opts.queue ?? []) api(args[0], args[1]);
     (window as unknown as { ByteflockChat: typeof api }).ByteflockChat = api;
   }
@@ -299,14 +337,19 @@ class Launcher {
         if (this.open) this.close();
         break;
       case 'consent':
-        if (typeof p.granted === 'boolean') this.send({ type: 'consent', payload: { granted: p.granted } });
+        if (typeof p.granted === 'boolean')
+          this.send({ type: 'consent', payload: { granted: p.granted } });
         break;
       case 'locale':
-        if (typeof p.tag === 'string') this.send({ type: 'locale', payload: { tag: p.tag } });
+        if (typeof p.tag === 'string')
+          this.send({ type: 'locale', payload: { tag: p.tag } });
         break;
       case 'identify':
         if (p.traits && typeof p.traits === 'object') {
-          this.send({ type: 'identify', payload: { traits: p.traits as Record<string, string> } });
+          this.send({
+            type: 'identify',
+            payload: { traits: p.traits as Record<string, string> },
+          });
         }
         break;
     }

@@ -1,77 +1,50 @@
 import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
-import { getReadyUrl, workspaceRoot } from '@nx/devkit';
-
-// For CI, you may want to set BASE_URL to the deployed application.
-// getReadyUrl moves the address to the port the dev server task reported.
-const baseURL = process.env['BASE_URL'] || getReadyUrl('http://localhost:4300');
+import { workspaceRoot } from '@nx/devkit';
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import 'dotenv/config';
-
-/**
- * See https://playwright.dev/docs/test-configuration.
+ * Playground scenarios for the widget (PoC-A). Two origins are required and must differ:
+ * the playground (host pages, 4300) and the widget (loader, launcher, frame, 4400).
  *
- * Generated as a .mts file so Node forces ESM regardless of workspace
- * `type`. Playwright routes `.mts` through its ESM loader (dynamic import,
- * bypassing the pirates CJS-compile path), and Nx's native TS strip loads
- * `.mts` directly. Playwright's configLoader auto-discovers
- * `playwright.config.mts` via its extension list
- * (.ts/.js/.mts/.mjs/.cts/.cjs).
+ * Both servers start with Vite directly rather than 'nx run …:dev': Nx would otherwise start them
+ * as task dependencies and collide with a running 'pnpm stack' on the strict ports. With
+ * reuseExistingServer, a running stack is reused.
+ *
+ * Tests tagged @measure only run with MEASURE=1 (PoC-A-T11), against a built widget.
  */
 export default defineConfig({
   ...nxE2EPreset(import.meta.dirname, { testDir: './src/tests' }),
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  grepInvert: process.env['MEASURE'] ? undefined : /@measure/,
   use: {
-    baseURL,
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: process.env['BASE_URL'] || 'http://localhost:4300',
     trace: 'on-first-retry',
   },
-  webServer: {
-    // Vite directly, not 'nx run …:dev': Nx would then start its own dev server as a task
-    // dependency and collide with a running 'pnpm stack' on the strict port 4300.
-    command: 'pnpm exec vite --config apps/widget-playground/vite.config.mts',
-    url: getReadyUrl('http://localhost:4300'),
-    reuseExistingServer: true,
-    cwd: workspaceRoot,
-  },
+  webServer: [
+    {
+      command: 'pnpm exec vite --config apps/widget-playground/vite.config.mts',
+      url: 'http://localhost:4300',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+    {
+      command: 'pnpm exec vite --config apps/widget/vite.config.mts',
+      url: 'http://localhost:4400/v1/loader.js',
+      reuseExistingServer: true,
+      cwd: workspaceRoot,
+    },
+  ],
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
-    // Uncomment for mobile browsers support
-    /* {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    }, */
-
-    // Uncomment for branded browsers
-    /* {
-      name: 'Microsoft Edge',
-      use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    },
-    {
-      name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    } */
   ],
 });

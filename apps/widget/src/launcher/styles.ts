@@ -1,42 +1,51 @@
 // Launcher styles, applied through adoptedStyleSheets inside a Shadow DOM (ARCH-001 §10.2).
-// Constructable stylesheets are not subject to the host page's style-src, and nothing is inherited
-// from the host page because of the `all: initial` reset. Colours come from launcherTheme at runtime
-// as custom properties set through CSSOM.
+//
+// The host element is reachable by the customer's CSS (e.g. `* { all: unset !important }` beats any
+// :host rule), so the host carries nothing that matters. All layout lives on `.root`, inside the
+// shadow tree, where page selectors cannot reach, and nothing inherits from the page: every element
+// that shows text sets its own font. Constructable stylesheets are not subject to the page's style-src.
+// Colours come from launcherTheme at runtime as custom properties set through CSSOM on `.root`.
 
 export const LAUNCHER_CSS = `
 :host {
   all: initial;
+}
+.root {
+  all: initial;
   position: fixed;
-  z-index: 2147483000;
+  /* Maximum value: a host element with the same z-index loses because the launcher is appended last. */
+  z-index: 2147483647;
   inset-block-end: 20px;
   inset-inline-end: 20px;
   inset-inline-start: auto;
-  font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color-scheme: light;
   direction: ltr;
+  color-scheme: light;
   --bf-bg: #334155;
   --bf-fg: #ffffff;
   --bf-radius: 9999px;
+  --bf-font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
-:host([data-position="bottom-left"]) {
+.root[data-position="bottom-left"] {
   inset-inline-start: 20px;
   inset-inline-end: auto;
 }
 .launcher {
   all: initial;
   box-sizing: border-box;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   min-inline-size: 56px;
   block-size: 56px;
-  padding-inline: 16px;
+  padding-inline: 18px;
   border-radius: var(--bf-radius);
   background: var(--bf-bg);
   color: var(--bf-fg);
-  font: inherit;
+  font: var(--bf-font);
   font-weight: 600;
+  direction: ltr;
   cursor: pointer;
   box-shadow: 0 4px 12px rgb(15 23 42 / 0.25);
   transition: transform 120ms ease;
@@ -49,16 +58,25 @@ export const LAUNCHER_CSS = `
 .launcher[data-shape="circle"] .label {
   display: none;
 }
+.launcher[data-shape="pill"] {
+  border-radius: 9999px;
+}
 .launcher:hover {
   transform: translateY(-1px);
 }
 .launcher:focus-visible {
-  outline: 3px solid var(--bf-fg);
+  outline: 3px solid var(--bf-bg);
   outline-offset: 3px;
 }
 .launcher[aria-disabled="true"] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+.label {
+  all: initial;
+  font: var(--bf-font);
+  font-weight: 600;
+  color: inherit;
 }
 .launcher svg {
   inline-size: 24px;
@@ -84,6 +102,7 @@ export const LAUNCHER_CSS = `
   display: none;
 }
 .panel {
+  all: initial;
   position: fixed;
   inset-block-end: 88px;
   inset-inline-end: 20px;
@@ -94,7 +113,7 @@ export const LAUNCHER_CSS = `
   box-shadow: 0 12px 32px rgb(15 23 42 / 0.3);
   background: #ffffff;
 }
-:host([data-position="bottom-left"]) .panel {
+.root[data-position="bottom-left"] .panel {
   inset-inline-start: 20px;
   inset-inline-end: auto;
 }
@@ -113,6 +132,7 @@ export const LAUNCHER_CSS = `
   border-radius: 0;
 }
 iframe {
+  all: initial;
   display: block;
   inline-size: 100%;
   block-size: 100%;

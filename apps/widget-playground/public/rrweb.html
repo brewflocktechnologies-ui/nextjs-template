@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Session recording host page</title>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+  </head>
+  <body>
+    <h1>Session recording (rrweb, T-01)</h1>
+    <p>
+      This page records itself with rrweb, like a session-replay tool would. The
+      recording must contain no frame content. Screenshot-based tools still
+      capture pixels. Key: <code id="fixture-key"></code>
+    </p>
+    <p><button id="dump" type="button">Dump snapshot</button></p>
+    <pre id="snapshot">(not dumped yet)</pre>
+    <script src="/vendor/rrweb.umd.min.js"></script>
+    <script src="/fixtures/rrweb-record.js"></script>
+    <script src="/fixtures/embed.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Slow or broken config</title>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+  </head>
+  <body>
+    <h1>Slow or broken config (ENDP-07)</h1>
+    <p>
+      Choose a case: <a href="?case=timeout">timeout</a> ·
+      <a href="?case=json">invalid theme JSON</a> ·
+      <a href="?case=version">unsupported theme version</a> ·
+      <a href="?case=missing">missing config</a>. Each time the frame must open
+      with the grey embedded defaults. Key: <code id="fixture-key"></code>
+    </p>
+    <script src="/fixtures/embed.js"></script>
+  </body>
+</html>

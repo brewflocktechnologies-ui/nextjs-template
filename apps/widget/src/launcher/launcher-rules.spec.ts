@@ -42,7 +42,9 @@ describe('host-page code rules (loader and launcher)', () => {
         .readFileSync(file, 'utf8')
         .replace(/\/\/.*$/gm, '')
         .replace(/\/\*[\s\S]*?\*\//g, '');
-      const hits = FORBIDDEN.filter(([, re]) => re.test(code)).map(([name]) => name);
+      const hits = FORBIDDEN.filter(([, re]) => re.test(code)).map(
+        ([name]) => name,
+      );
       expect(hits).toEqual([]);
     });
   }

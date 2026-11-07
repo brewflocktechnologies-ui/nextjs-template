@@ -14,7 +14,9 @@
 
   const script =
     (document.currentScript as HTMLScriptElement | null) ??
-    document.querySelector<HTMLScriptElement>('script[data-widget-key][src*="/v1/loader.js"]');
+    document.querySelector<HTMLScriptElement>(
+      'script[data-widget-key][src*="/v1/loader.js"]',
+    );
 
   const supported =
     typeof Element !== 'undefined' &&
@@ -39,7 +41,10 @@
   stub.q = queue;
   if (!w.ByteflockChat) w.ByteflockChat = stub;
 
-  function boot(source: HTMLElement | null, attrs: (name: string) => string | null) {
+  function boot(
+    source: HTMLElement | null,
+    attrs: (name: string) => string | null,
+  ) {
     const widgetKey = attrs('widget-key') ?? '';
     if (!KEY.test(widgetKey)) {
       source?.setAttribute(STATUS, 'unsupported');
@@ -62,7 +67,10 @@
           widgetOrigin,
           widgetKey,
           locale: attrs('locale') ?? undefined,
-          position: position === 'bottom-left' || position === 'bottom-right' ? position : undefined,
+          position:
+            position === 'bottom-left' || position === 'bottom-right'
+              ? position
+              : undefined,
           label: attrs('launcher-label') ?? undefined,
           frameStrategy: attrs('frame') === 'open' ? 'open' : 'idle',
           testMode: attrs('mode') === 'test',

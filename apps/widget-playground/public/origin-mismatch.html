@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Origin mismatch</title>
+    <link rel="stylesheet" href="/fixtures/page.css" />
+  </head>
+  <body>
+    <h1>Origin mismatch (BRIDGE-04)</h1>
+    <p>
+      The frame is embedded directly with a <code>parent</code> parameter that
+      claims another origin. Where the browser exposes
+      <code>location.ancestorOrigins</code>, the frame must refuse to open and
+      only send an <code>ORIGIN_MISMATCH</code> beacon.
+    </p>
+    <iframe
+      id="frame"
+      title="Chat"
+      src="http://localhost:4400/v1/frame/?key=wk_acme_demo&parent=https%3A%2F%2Fevil.example&v=1&mode=test"
+      width="380"
+      height="300"
+    ></iframe>
+  </body>
+</html>

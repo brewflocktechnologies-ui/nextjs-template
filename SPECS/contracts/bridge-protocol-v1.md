@@ -14,14 +14,14 @@ type Envelope = { v: 1; type: string; id: string; payload: Record<string, unknow
 
 ## BRIDGE-02 Frame → host messages
 
-| `type`            | Payload                                              | Validation on the launcher side (re-validated, never trusted)       |
-| ----------------- | ---------------------------------------------------- | ------------------------------------------------------------------- |
-| `ready`           | `{ launcherTheme: LauncherTheme }`                   | Every field validated again by the launcher; unknown fields dropped |
-| `state`           | `{ open: boolean }`                                  | boolean                                                             |
-| `unread`          | `{ count: number }`                                  | integer 0–99, clamped                                               |
-| `layout`          | `{ mode: 'panel' \| 'fullscreen', height?: number }` | enum; `height` integer 0–2000                                       |
-| `error`           | `{ code: ErrorCode }`                                | enum only, no free text                                             |
-| `consent.request` | `{}`                                                 | —                                                                   |
+| `type`                                                                                                                              | Payload                                              | Validation on the launcher side (re-validated, never trusted)       |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------- |
+| `ready`                                                                                                                             | `{ launcherTheme: LauncherTheme }`                   | Every field validated again by the launcher; unknown fields dropped |
+| `state`                                                                                                                             | `{ open: boolean }`                                  | boolean                                                             |
+| `unread`                                                                                                                            | `{ count: number }`                                  | integer 0–99, clamped                                               |
+| `layout` (defined, not sent in Phase 1: the launcher picks panel or full screen from the host viewport, which the frame cannot see) | `{ mode: 'panel' \| 'fullscreen', height?: number }` | enum; `height` integer 0–2000                                       |
+| `error`                                                                                                                             | `{ code: ErrorCode }`                                | enum only, no free text                                             |
+| `consent.request`                                                                                                                   | `{}`                                                 | —                                                                   |
 
 ```ts
 type LauncherTheme = {
