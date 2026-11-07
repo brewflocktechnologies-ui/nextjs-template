@@ -7,12 +7,12 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from '../components/ui/combobox';
-import { Label } from '../components/ui/label';
-import { ASSIGNEES } from './data';
+} from './ui/combobox';
+import { Label } from './ui/label';
+import { ASSIGNEES } from '../sample-data';
 
 /** PoC-B item 2: a searchable combobox over 50 agents and teams, fully keyboard operable. */
-const meta: Meta = { title: 'PoC/Searchable combobox' };
+const meta: Meta = { title: 'Components/Combobox', tags: ['a11y'] };
 export default meta;
 
 export const Default: StoryObj = {

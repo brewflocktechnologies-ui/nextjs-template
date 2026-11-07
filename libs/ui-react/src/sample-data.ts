@@ -1,4 +1,4 @@
-// Sample data for the PoC-B stories (agents and teams of a support desk).
+// Sample data for the stories (agents and teams of a support desk).
 
 export interface Agent {
   id: string;

@@ -8,7 +8,8 @@
     "paths": {
       "@byteflock/ui-react/*": ["./src/*"]
     },
-    "lib": ["es2022", "dom", "dom.iterable"]
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "resolveJsonModule": true
   },
   "exclude": [
     "src/**/*.spec.ts",
@@ -27,7 +28,8 @@
     "src/**/*.stories.tsx",
     "src/**/*.stories.mdx",
     ".storybook/*.js",
-    ".storybook/*.ts"
+    ".storybook/*.ts",
+    ".storybook/*.tsx"
   ],
   "references": [
     {

@@ -29,3 +29,4 @@ apps/**/AGENTS.md
 /validation/widget-fixtures
 /apps/widget/public/v1/config
 /apps/widget/public/v1/themes
+libs/ui-react/src/generated

@@ -42,7 +42,15 @@ React and Lit components need living documentation that also serves as their int
 
 <!-- verification -->
 
-To be filled by P1.4-T11 and P1.5-T06 add notes.
+**React half, P1.4** (2026-11-07, branch `p1.4-ui-react-foundation`, evidence `SPECS/evidence/P1.4.md`):
+
+- **Versions.** Storybook 10.6.5 with `@storybook/react-vite`, `@storybook/addon-a11y` and `@storybook/addon-vitest` 10.6.5; Vitest 5 browser mode on Playwright Chromium. The ui-react Storybook runs on port 4600.
+- **Stories are tests.** `test-storybook` runs every story in Chromium through the Vitest addon: it renders the story, runs its `play()` interaction test and runs axe. Each component story file has a default story, its states, a keyboard `play()` and `tags: ['a11y']`.
+- **Accessibility gate.** `parameters.a11y.test = 'error'`: any axe violation fails the run. The addon has no severity threshold, so moderate and minor violations block too, which is stricter than the P1.4 spec. The `Checks/A11y negative` story (tag `!test`) proves the gate: `A11Y_NEGATIVE=1` runs it alone and it fails.
+- **Tenant themes.** A global toolbar resolves the P1.3 fixtures with `resolveTheme` and renders `ThemeStyleTag`; a story can pin a tenant with story-level `globals`.
+- **Jest exception.** The dashboard keeps Jest through `next/jest` (P1.1). Its `transpilePackages` lists TanStack Table, which ships ESM only, so Jest transforms it too.
+
+**Lit half:** added by P1.5-T06.
 
 <!-- /verification -->
 

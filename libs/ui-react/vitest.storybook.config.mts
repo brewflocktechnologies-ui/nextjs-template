@@ -9,7 +9,17 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/ui-react-storybook',
-  plugins: [react(), tailwindcss(), storybookTest({ configDir: '.storybook' })],
+  plugins: [
+    react(),
+    tailwindcss(),
+    storybookTest({
+      configDir: '.storybook',
+      // A11Y_NEGATIVE=1 runs only the deliberately inaccessible story, which must fail (P1.4-T07).
+      ...(process.env.A11Y_NEGATIVE
+        ? { tags: { include: ['a11y-negative'], exclude: [] } }
+        : {}),
+    }),
+  ],
   // Pre-bundle every dependency the stories import. Otherwise Vite discovers one mid-run on a cold
   // cache, re-optimises and reloads the test page, failing every story (seen in the PoC-B dry run).
   optimizeDeps: {
