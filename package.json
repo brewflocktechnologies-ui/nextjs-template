@@ -10,7 +10,8 @@
     "lint:affected": "nx affected -t lint",
     "graph": "nx graph",
     "e2e": "nx run @nextjs-template/web-e2e:e2e",
-    "policy:check": "node tools/scripts/policy/run-all.mjs"
+    "policy:check": "node tools/scripts/policy/run-all.mjs",
+    "verify": "node tools/scripts/verify.mjs"
   },
   "private": true,
   "engines": {

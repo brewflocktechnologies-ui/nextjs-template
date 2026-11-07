@@ -24,6 +24,7 @@ npm ci
 npx nx run @nextjs-template/web:dev
 npx nx run-many -t lint test typecheck build
 npm run policy:check
+npm run verify   # all CI gates locally
 ```
 
 Built with [Nx](https://nx.dev) and [Next.js](https://nextjs.org).

@@ -146,6 +146,19 @@ Overturns the Q-014 default (no allowlist). The config document gains a required
 - T-05 moves from documented residual to mitigated with an automated test.
 - Remaining residual: the check relies on the browser-supplied `event.origin` and `location.ancestorOrigins`; a listed customer page that is itself compromised is out of scope.
 
+### D-22 — GitHub push and CI deferred; local verification is the gate — **Fixed (product owner, 2026-11-07)**
+
+The product owner deferred pushing to GitHub and running CI, to focus on local setup and verification. Until this decision is overturned:
+
+- **`npm run verify`** (from P1.1: `pnpm verify`) is the gate. It runs locally, in order, the same steps as `.github/workflows/ci.yml` on `main`: policy checks, `nx format:check --all`, `nx run-many -t lint test typecheck build`, and Chromium e2e. `npm run verify -- --quick` skips e2e. Phases add their new gates to `tools/scripts/verify.mjs` at the same time as they add them to CI, so the two never drift.
+- **Every `[auto]` criterion is satisfied by a passing `verify` run.** The evidence file records the command, the date, the commit and the summary table the script prints, in place of a CI link.
+- **The Windows CI job (D-17) is replaced by running `verify` on the product owner's Windows 11 machine.** The Linux side is unverified until CI returns; evidence says so.
+- **The workflow file is still maintained.** Each phase updates `ci.yml` so CI is ready to turn on, and `check-workflows-pinned` keeps checking it.
+- **Deferred until CI returns:** branch protection and required checks (P1.0-AC06, P1.0-AC08, P1.0-T12), the CI cache-hit check, the PR template in use, Renovate, and the PR-body trailer checks that read `GITHUB_EVENT_PATH` (they skip locally with a notice). The independent verifier runs `verify` on a fresh clone instead.
+- **CODEOWNERS:** the `@OWNER` placeholder is a warning locally and an error only when `CI` is set, because CODEOWNERS has no effect without GitHub.
+
+To end the deferral: complete P1.0-T12, open the P1.0 pull request, and record the first green CI run in `SPECS/evidence/P1.0.md`.
+
 ## How to change a decision
 
 Add a dated line under the decision ("Overturned on … by …: new text"), update `STATUS.md`, and list the affected spec sections in the same commit. Do not rewrite history.

@@ -4,20 +4,20 @@ States: `Not started` → `Approved` → `In progress` → `Implemented` → `Ve
 
 **Rule:** a phase moves to `Approved` only by the product owner writing their name and the date in the Approval column. Agents never set `Approved` or `Accepted`.
 
-| Spec    | State       | Approval (name, date)      | Started    | Evidence                             | Accepted (name, date)      | Notes                                                                                 |
-| ------- | ----------- | -------------------------- | ---------- | ------------------------------------ | -------------------------- | ------------------------------------------------------------------------------------- |
-| P0      | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P0.md](evidence/P0.md)     | Madhusudan C P, 2026-11-07 | D-02 migrate, D-06 byteflock, Q-013 full theme, Q-014 allowlist, Q-015 idle           |
-| P1.0    | Implemented | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.0.md](evidence/P1.0.md) |                            | Blocked on manual T12 (remote, branch protection, Renovate) and the CODEOWNERS handle |
-| P1.1    | Not started |                            |            |                                      |                            |                                                                                       |
-| PoC-A   | Not started |                            |            |                                      |                            | Can run parallel to P1.2/P1.3                                                         |
-| P1.2    | Not started |                            |            |                                      |                            |                                                                                       |
-| P1.3    | Not started |                            |            |                                      |                            | Includes PoC-C (day 1)                                                                |
-| PoC-B   | Not started |                            |            |                                      |                            | Can run parallel to PoC-A/P1.2                                                        |
-| P1.4    | Not started |                            |            |                                      |                            |                                                                                       |
-| P1.5    | Not started |                            |            |                                      |                            | Adds the domain allowlist (D-21)                                                      |
-| P1.6    | Not started |                            |            |                                      |                            | Full tenant theme (D-20); widget domain settings (D-21)                               |
-| P1.7    | Not started |                            |            |                                      |                            |                                                                                       |
-| P1 exit | Not started |                            |            |                                      |                            | ARCH-001 v1.0 Accepted                                                                |
+| Spec    | State       | Approval (name, date)      | Started    | Evidence                             | Accepted (name, date)      | Notes                                                                       |
+| ------- | ----------- | -------------------------- | ---------- | ------------------------------------ | -------------------------- | --------------------------------------------------------------------------- |
+| P0      | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P0.md](evidence/P0.md)     | Madhusudan C P, 2026-11-07 | D-02 migrate, D-06 byteflock, Q-013 full theme, Q-014 allowlist, Q-015 idle |
+| P1.0    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.0.md](evidence/P1.0.md) | Madhusudan C P, 2026-11-07 | GitHub items deferred (D-22)                                                |
+| P1.1    | In progress | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.1.md](evidence/P1.1.md) |                            | CI-only parts per D-22                                                      |
+| PoC-A   | Not started |                            |            |                                      |                            | Can run parallel to P1.2/P1.3                                               |
+| P1.2    | Not started |                            |            |                                      |                            |                                                                             |
+| P1.3    | Not started |                            |            |                                      |                            | Includes PoC-C (day 1)                                                      |
+| PoC-B   | Not started |                            |            |                                      |                            | Can run parallel to PoC-A/P1.2                                              |
+| P1.4    | Not started |                            |            |                                      |                            |                                                                             |
+| P1.5    | Not started |                            |            |                                      |                            | Adds the domain allowlist (D-21)                                            |
+| P1.6    | Not started |                            |            |                                      |                            | Full tenant theme (D-20); widget domain settings (D-21)                     |
+| P1.7    | Not started |                            |            |                                      |                            |                                                                             |
+| P1 exit | Not started |                            |            |                                      |                            | ARCH-001 v1.0 Accepted                                                      |
 
 ## Product-owner answers to open questions
 

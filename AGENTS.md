@@ -66,6 +66,7 @@ npx nx run-many -t lint test typecheck build e2e   # what CI runs on main
 npx nx affected -t lint test typecheck build e2e   # what CI runs on a pull request
 npx nx format:check                                # Prettier, enforced in CI
 npm run policy:check                               # governance checks: pinned actions, ADRs, CODEOWNERS
+npm run verify                                     # every CI gate locally, with a summary for the evidence file (D-22)
 ```
 
 Single tests:
@@ -82,7 +83,7 @@ Playwright starts the dev server itself and reuses one already running. Install 
 From `SPECS/00-conventions.md`:
 
 - All tasks done, or deferred in the evidence file with a reason and a target phase.
-- `nx affected -t lint test typecheck build` and `nx format:check` green locally and in CI.
+- `npm run verify` green locally. While CI is deferred (D-22), its summary table goes in the evidence file in place of a CI link.
 - The evidence file is complete: commands run and their results, one sentence per new dependency, every deviation.
 - No TODO or FIXME without an issue reference.
 - If the implementation showed the spec was wrong, the spec is corrected and the correction noted in the evidence.

@@ -3,11 +3,11 @@
 ## First run
 
 1. Install Node 24. The repository's `.node-version` says `24`; `nvm`, `fnm` or Volta pick it up.
-2. Clone the repository. On Windows, first run `git config --global core.autocrlf false`, because the repository is LF-only.
+2. Clone the repository. The repository is LF-only; `.gitattributes` enforces this on checkout even when Windows sets `core.autocrlf=true`.
 3. Install dependencies with `npm ci`. From P1.1 this becomes `corepack enable` and `pnpm install --frozen-lockfile`.
 4. Install the Playwright browser once with `npx playwright install --with-deps chromium`.
 5. Start the dashboard with `npx nx run @nextjs-template/web:dev` and open `http://localhost:3000`.
-6. Check everything CI checks with `npx nx run-many -t lint test typecheck build` and `npm run policy:check`.
+6. Check everything CI checks with `npm run verify` (add `-- --quick` to skip end-to-end tests).
 
 From P1.1 the full local stack runs with `pnpm stack`; see `SPECS/validation/local-stack.md`.
 

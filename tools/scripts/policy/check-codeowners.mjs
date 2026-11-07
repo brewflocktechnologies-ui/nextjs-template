@@ -30,10 +30,13 @@ for (const p of required) {
   if (!rule || rule.length < 2)
     problems.push(`.github/CODEOWNERS: no owner for ${p}`);
 }
+// D-22: CODEOWNERS has no effect until the repository is on GitHub with CI, so the
+// placeholder only fails when CI is set; locally it is a warning.
 if (rules.some((r) => r.slice(1).includes('@OWNER'))) {
-  problems.push(
-    ".github/CODEOWNERS: replace the @OWNER placeholder with the architecture owner's GitHub handle",
-  );
+  const message =
+    ".github/CODEOWNERS: replace the @OWNER placeholder with the architecture owner's GitHub handle";
+  if (process.env.CI) problems.push(message);
+  else console.warn(`warning: ${message} (an error when CI is set, D-22)`);
 }
 
 if (problems.length) {
