@@ -2,7 +2,7 @@
 
 |          |                                                                       |
 | -------- | --------------------------------------------------------------------- |
-| Status   | Proposed                                                              |
+| Status   | Proposed (P1.6 verified; awaiting product-owner acceptance)           |
 | Date     | 2026-11-07                                                            |
 | Deciders | Madhusudan C P (product owner, architecture owner, security reviewer) |
 | Source   | ARCH-001 §9; D-12, D-20                                               |
@@ -41,7 +41,19 @@ The dashboard renders tenant-specific themes during SSR in a shared Node process
 
 <!-- verification -->
 
-To be filled by P1.6-T10.
+P1.6 on 2026-11-07, branch `p1.6-themed-vertical-slice`. Evidence: `SPECS/evidence/P1.6.md`. Status stays **Proposed** until the product owner accepts P1.6.
+
+**Tenant context.** `getRequestContext()` (`src/server/request-context.ts`, `server-only`) derives `{ tenantId, userId, roles, locale }` from the session on every request; pages redirect to `/dev/session` without one, route handlers answer 401. No module-level state holds tenant data. In development the session is the signed `dev-session` cookie (HMAC-SHA256, D-12); the dev adapter throws if it is ever loaded in production and is only loaded with `await import()` behind `isDevOnly()`. The production adapter is a placeholder: no sessions, so authenticated pages fail closed.
+
+**Authorization boundary.** The backend authorizes (Phase 1 has none; the data-access stub stands in). `proxy.ts` only routes: it checks that a session cookie is present, adds a per-request nonce header and `Cache-Control: private, no-store`, and imports nothing but `next/server` and `src/server/proxy-allowlist.ts` (lint rule `byteflock/proxy-allowlist`). It never verifies the cookie or reads data. Every data-access function in `src/data/**` takes `tenantId` first (rule `byteflock/data-access-tenant-first`).
+
+**SSR theme (D-20).** The root layout resolves the tenant's published theme after full validation and emits one nonce'd `<style>` with all 18 resolved variables; `system` tenants also get the dark block under `prefers-color-scheme: dark`. A theme that fails validation falls back to the platform defaults at the data layer, with a development-only banner (T-03).
+
+**Caching posture.** `cacheComponents: false`; every authenticated segment exports `dynamic = 'force-dynamic'`; route handlers send `private, no-store`; `/healthz` sends `no-store`. Rule `byteflock/no-request-apis-in-cached-scope` forbids `cookies()`, `headers()` and `next/headers` in any file with a `"use cache"` directive. `next dev` always sends `no-store` for pages; production sends Next's `private, no-cache, no-store, max-age=0, must-revalidate` for dynamic pages.
+
+**State ownership.** TanStack Query 5: one `QueryClient` per server request (`React.cache`) and one per browser session; the editor prefetches on the server and hydrates with `HydrationBoundary`. Keys come only from `qk(tenantId, …)` (rule `byteflock/qk-only`), so cached data always carries its tenant.
+
+**Verified by:** T-04 (two tenants rendered in sequence in one process, the third render equals the first), T-03 (malicious stored theme renders the defaults), header tests, the production-build test (no `/dev/session`), the publish and rollback unit tests, and the four rule tests (`tools/eslint-byteflock`).
 
 <!-- /verification -->
 

@@ -1,0 +1,28 @@
+import { AppShell } from '../../../components/AppShell';
+import { getWidgetSettings } from '../../../data/widget-config';
+import { getRequestContext } from '../../../server/request-context';
+import { WidgetSettingsForm } from './WidgetSettingsForm';
+
+export const dynamic = 'force-dynamic';
+
+export default async function WidgetSettingsPage() {
+  const ctx = await getRequestContext();
+  const settings = await getWidgetSettings(ctx.tenantId);
+  return (
+    <AppShell ctx={ctx} current="/settings/widget">
+      <h1 className="mb-2 text-2xl font-semibold">Widget</h1>
+      {settings ? (
+        <>
+          <p className="mb-6 text-muted-foreground">
+            Widget key <code>{settings.widgetKey}</code> works only on the
+            origins listed here (D-21). On any other site the chat stays
+            unavailable.
+          </p>
+          <WidgetSettingsForm initial={settings.allowedOrigins} />
+        </>
+      ) : (
+        <p className="text-muted-foreground">This tenant has no widget.</p>
+      )}
+    </AppShell>
+  );
+}

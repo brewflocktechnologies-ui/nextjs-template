@@ -62,3 +62,5 @@ vitest.config.*.timestamp*
 
 
 storybook-static
+# Dashboard production build used by the e2e suite (P1.6)
+.next-e2e-prod

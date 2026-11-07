@@ -1,15 +1,37 @@
-import { LIB_NAME as designTokens } from '@byteflock/design-tokens';
-import { LIB_NAME as theme } from '@byteflock/theme';
-import { LIB_NAME as uiReact } from '@byteflock/ui-react';
+import Link from 'next/link';
+import { AppShell } from '../components/AppShell';
+import { AgentFilterDemo } from '../components/AgentFilterDemo';
+import { getRequestContext } from '../server/request-context';
 
-// The library list is a placeholder until P1.6 renders the themed dashboard (P1.1-T05).
-const linkedLibraries = [uiReact, theme, designTokens].join(', ');
+export const dynamic = 'force-dynamic';
 
-export default function Page() {
+export default async function Page() {
+  const ctx = await getRequestContext();
   return (
-    <main>
-      <h1>Admin dashboard</h1>
-      <p>Foundation libraries linked: {linkedLibraries}.</p>
-    </main>
+    <AppShell ctx={ctx} current="/">
+      <h1 className="mb-2 text-2xl font-semibold">Admin dashboard</h1>
+      <p className="mb-6 text-muted-foreground">
+        Your dashboard uses your published theme. Change it under{' '}
+        <Link
+          href="/settings/theme"
+          className="text-primary underline underline-offset-4"
+        >
+          Theme
+        </Link>
+        .
+      </p>
+      <section
+        aria-labelledby="sample-heading"
+        className="grid gap-3 rounded-lg border bg-card p-4 shadow-md"
+      >
+        <h2 id="sample-heading" className="text-lg font-medium">
+          Conversations
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          A sample of the shared components under your theme.
+        </p>
+        <AgentFilterDemo />
+      </section>
+    </AppShell>
   );
 }
