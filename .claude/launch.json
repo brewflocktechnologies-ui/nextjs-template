@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ui-react-storybook",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nx", "run", "@byteflock/ui-react:storybook"],
+      "port": 4600
+    },
+    {
+      "name": "widget-playground",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "vite",
+        "--config",
+        "apps/widget-playground/vite.config.mts"
+      ],
+      "port": 4300
+    },
+    {
+      "name": "widget-origin",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "vite",
+        "--config",
+        "apps/widget/vite.config.mts"
+      ],
+      "port": 4400
+    }
+  ]
+}
