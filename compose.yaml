@@ -1,0 +1,29 @@
+# Local data backend (P2.1-T02, ADR-012, D-24). Development only: credentials here are local
+# defaults and never production values. Start with `pnpm db:up`, not `docker compose` directly,
+# so the scripts can wait for health and report a stopped Docker clearly.
+name: byteflock
+
+services:
+  db:
+    # Pinned by tag and digest (P2.1-AC14, check-compose-pinned). Update both together.
+    image: postgres:17.11-alpine@sha256:3540c0362c809df084ffac0ae69fe794515f9de92692f02178bcdce0ef0302ac
+    environment:
+      POSTGRES_USER: byteflock
+      POSTGRES_PASSWORD: byteflock
+      POSTGRES_DB: byteflock
+    ports:
+      # Host port 5440 (D-24) avoids clashing with other local Postgres instances on 5432/5433.
+      - '127.0.0.1:5440:5432'
+    volumes:
+      - byteflock-pg:/var/lib/postgresql/data
+      # Runs once, on an empty volume: creates the application role and the test database.
+      - ./apps/admin-dashboard/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U byteflock -d byteflock']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+      start_period: 5s
+
+volumes:
+  byteflock-pg:
