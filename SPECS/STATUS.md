@@ -18,7 +18,7 @@ States: `Not started` → `Approved` → `In progress` → `Implemented` → `Ve
 | P1.6    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.6.md](evidence/P1.6.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
 | P1.7    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.7.md](evidence/P1.7.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); CI, nightly and ARCH v1.0 still open for P1 exit                               |
 | P1 exit | In progress |                            |            |                                        |                            | Open: CI green on Linux and Windows (D-22), nightly run, ARCH-001 v1.0 (owner); see evidence/P1-exit.md |
-| P2.1    | Not started |                            |            |                                        |                            | Draft spec 2026-11-11; awaiting product-owner approval; D-24, D-25                                      |
+| P2.1    | In progress | Madhusudan C P, 2026-11-11 | 2026-11-11 | [evidence/P2.1.md](evidence/P2.1.md)   |                            | D-24, D-25; open questions take the spec defaults                                                       |
 
 ## Product-owner answers to open questions
 
@@ -34,16 +34,18 @@ Record here when answered; otherwise the defaults in `DECISIONS.md` apply.
 
 ## ADR status tracker
 
-| ADR     | Title                                                   | Status                                         | Set by phase               |
-| ------- | ------------------------------------------------------- | ---------------------------------------------- | -------------------------- |
-| ADR-001 | Nx + pnpm workspace and toolchain                       | Accepted (P0, 2026-11-07)                      | P0 accepts, P1.1 verifies  |
-| ADR-002 | Application and library boundaries                      | Accepted (P0, 2026-11-07)                      | P0 accepts, P1.1 verifies  |
-| ADR-003 | Token source and build                                  | Accepted (P0, 2026-11-07); verified at P1.2    | P1.2 verified              |
-| ADR-004 | Theme contract, grammar, lifecycle                      | Accepted (P1.3, 2026-11-07): TypeBox           | P1.3 accepts (after PoC-C) |
-| ADR-005 | Tenant context, authorization boundary, SSR cache rules | Accepted (P1.6, 2026-11-07)                    | P1.6 accepts               |
-| ADR-006 | Primitive and React styling                             | Accepted (PoC-B, 2026-11-07): Base UI          | PoC-B                      |
-| ADR-007 | Widget conversation isolation, loader and bridge        | Accepted (PoC-A, 2026-11-07); hardened in P1.5 | PoC-A; P1.5 hardens        |
-| ADR-008 | Storybook and component testing                         | Accepted (P0, 2026-11-07)                      | P1.4 / P1.5 add notes      |
-| ADR-009 | Quality gates, browser support, budgets, accessibility  | Accepted (P0, 2026-11-07)                      | P1.5 budgets, P1.7 reviews |
-| ADR-010 | AI-DLC and specification governance                     | Accepted (P0, 2026-11-07)                      | P1.7 reviews               |
-| ADR-011 | Dependency and supply-chain policy                      | Accepted (P0, 2026-11-07)                      | P1.1 verifies              |
+| ADR     | Title                                                   | Status                                                            | Set by phase               |
+| ------- | ------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------- |
+| ADR-001 | Nx + pnpm workspace and toolchain                       | Accepted (P0, 2026-11-07)                                         | P0 accepts, P1.1 verifies  |
+| ADR-002 | Application and library boundaries                      | Accepted (P0, 2026-11-07)                                         | P0 accepts, P1.1 verifies  |
+| ADR-003 | Token source and build                                  | Accepted (P0, 2026-11-07); verified at P1.2                       | P1.2 verified              |
+| ADR-004 | Theme contract, grammar, lifecycle                      | Accepted (P1.3, 2026-11-07): TypeBox                              | P1.3 accepts (after PoC-C) |
+| ADR-005 | Tenant context, authorization boundary, SSR cache rules | Accepted (P1.6, 2026-11-07)                                       | P1.6 accepts               |
+| ADR-006 | Primitive and React styling                             | Accepted (PoC-B, 2026-11-07): Base UI                             | PoC-B                      |
+| ADR-007 | Widget conversation isolation, loader and bridge        | Accepted (PoC-A, 2026-11-07); hardened in P1.5                    | PoC-A; P1.5 hardens        |
+| ADR-008 | Storybook and component testing                         | Accepted (P0, 2026-11-07)                                         | P1.4 / P1.5 add notes      |
+| ADR-009 | Quality gates, browser support, budgets, accessibility  | Accepted (P0, 2026-11-07)                                         | P1.5 budgets, P1.7 reviews |
+| ADR-010 | AI-DLC and specification governance                     | Accepted (P0, 2026-11-07)                                         | P1.7 reviews               |
+| ADR-011 | Dependency and supply-chain policy                      | Accepted (P0, 2026-11-07)                                         | P1.1 verifies              |
+| ADR-012 | Local data backend (Postgres in Docker)                 | Proposed (P2.1-T01, 2026-11-11)                                   | P2.1 accepts               |
+| ADR-013 | Request scope, authorization helper, default chrome     | Proposed (P2.1-T01, 2026-11-11); supersedes ADR-005 on acceptance | P2.1 accepts               |
