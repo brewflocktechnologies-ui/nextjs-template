@@ -17,6 +17,7 @@
     "db:down": "node tools/scripts/db/down.mjs",
     "db:migrate": "node tools/scripts/db/migrate.mjs",
     "db:seed": "node tools/scripts/db/seed.mjs",
+    "db:materialise": "node tools/scripts/db/materialise.mjs",
     "db:recreate": "node tools/scripts/db/recreate.mjs",
     "db:reset": "node tools/scripts/db/reset.mjs",
     "storybook:ui": "nx run @byteflock/ui-react:storybook",

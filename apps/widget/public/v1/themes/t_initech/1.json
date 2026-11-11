@@ -1,56 +1,56 @@
 {
-  "schemaVersion": 1,
-  "revision": 1,
   "appearance": {
     "mode": "light"
   },
+  "brand": {
+    "name": "Initech"
+  },
   "color": {
-    "light": {
-      "primary": "#b45309",
-      "onPrimary": "#ffffff",
-      "surface": "#fffbeb",
-      "onSurface": "#1c1917",
-      "surfaceVariant": "#fef3c7",
-      "onSurfaceVariant": "#78350f",
-      "outline": "#78716c",
-      "accent": "#0891b2",
-      "onAccent": "#020617",
-      "success": "#15803d",
-      "warning": "#b45309",
-      "danger": "#b91c1c",
-      "focusRing": "#0e7490"
-    },
     "dark": {
-      "primary": "#fcd34d",
+      "accent": "#67e8f9",
+      "danger": "#f87171",
+      "focusRing": "#22d3ee",
+      "onAccent": "#1c1917",
       "onPrimary": "#1c1917",
-      "surface": "#1c1917",
       "onSurface": "#fafaf9",
-      "surfaceVariant": "#292524",
       "onSurfaceVariant": "#d6d3d1",
       "outline": "#a8a29e",
-      "accent": "#67e8f9",
-      "onAccent": "#1c1917",
+      "primary": "#fcd34d",
       "success": "#4ade80",
-      "warning": "#fcd34d",
-      "danger": "#f87171",
-      "focusRing": "#22d3ee"
+      "surface": "#1c1917",
+      "surfaceVariant": "#292524",
+      "warning": "#fcd34d"
+    },
+    "light": {
+      "accent": "#0891b2",
+      "danger": "#b91c1c",
+      "focusRing": "#0e7490",
+      "onAccent": "#020617",
+      "onPrimary": "#ffffff",
+      "onSurface": "#1c1917",
+      "onSurfaceVariant": "#78350f",
+      "outline": "#78716c",
+      "primary": "#b45309",
+      "success": "#15803d",
+      "surface": "#fffbeb",
+      "surfaceVariant": "#fef3c7",
+      "warning": "#b45309"
     }
+  },
+  "density": "compact",
+  "elevation": "flat",
+  "launcher": {
+    "icon": "help",
+    "position": "bottom-right",
+    "shape": "pill"
+  },
+  "revision": 1,
+  "schemaVersion": 1,
+  "shape": {
+    "radius": "full"
   },
   "typography": {
     "fontFamily": "source-sans",
     "scale": "sm"
-  },
-  "shape": {
-    "radius": "full"
-  },
-  "elevation": "flat",
-  "density": "compact",
-  "brand": {
-    "name": "Initech"
-  },
-  "launcher": {
-    "position": "bottom-right",
-    "shape": "pill",
-    "icon": "help"
   }
 }

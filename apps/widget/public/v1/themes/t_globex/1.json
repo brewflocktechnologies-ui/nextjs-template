@@ -1,56 +1,56 @@
 {
-  "schemaVersion": 1,
-  "revision": 1,
   "appearance": {
     "mode": "dark"
   },
+  "brand": {
+    "name": "Globex"
+  },
   "color": {
-    "light": {
-      "primary": "#0f766e",
-      "onPrimary": "#ffffff",
-      "surface": "#f8fafc",
-      "onSurface": "#0f172a",
-      "surfaceVariant": "#f0fdfa",
-      "onSurfaceVariant": "#134e4a",
-      "outline": "#64748b",
-      "accent": "#f59e0b",
-      "onAccent": "#111827",
-      "success": "#15803d",
-      "warning": "#b45309",
-      "danger": "#b91c1c",
-      "focusRing": "#0d9488"
-    },
     "dark": {
-      "primary": "#5eead4",
+      "accent": "#fbbf24",
+      "danger": "#f87171",
+      "focusRing": "#2dd4bf",
+      "onAccent": "#111827",
       "onPrimary": "#111827",
-      "surface": "#111827",
       "onSurface": "#f9fafb",
-      "surfaceVariant": "#1f2937",
       "onSurfaceVariant": "#d1d5db",
       "outline": "#9ca3af",
-      "accent": "#fbbf24",
-      "onAccent": "#111827",
+      "primary": "#5eead4",
       "success": "#4ade80",
-      "warning": "#fbbf24",
-      "danger": "#f87171",
-      "focusRing": "#2dd4bf"
+      "surface": "#111827",
+      "surfaceVariant": "#1f2937",
+      "warning": "#fbbf24"
+    },
+    "light": {
+      "accent": "#f59e0b",
+      "danger": "#b91c1c",
+      "focusRing": "#0d9488",
+      "onAccent": "#111827",
+      "onPrimary": "#ffffff",
+      "onSurface": "#0f172a",
+      "onSurfaceVariant": "#134e4a",
+      "outline": "#64748b",
+      "primary": "#0f766e",
+      "success": "#15803d",
+      "surface": "#f8fafc",
+      "surfaceVariant": "#f0fdfa",
+      "warning": "#b45309"
     }
+  },
+  "density": "spacious",
+  "elevation": "medium",
+  "launcher": {
+    "icon": "message",
+    "position": "bottom-left",
+    "shape": "pill"
+  },
+  "revision": 1,
+  "schemaVersion": 1,
+  "shape": {
+    "radius": "sm"
   },
   "typography": {
     "fontFamily": "roboto",
     "scale": "md"
-  },
-  "shape": {
-    "radius": "sm"
-  },
-  "elevation": "medium",
-  "density": "spacious",
-  "brand": {
-    "name": "Globex"
-  },
-  "launcher": {
-    "position": "bottom-left",
-    "shape": "pill",
-    "icon": "message"
   }
 }

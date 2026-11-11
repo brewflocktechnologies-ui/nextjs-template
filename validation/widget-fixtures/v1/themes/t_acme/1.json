@@ -1,56 +1,56 @@
 {
-  "schemaVersion": 1,
-  "revision": 1,
   "appearance": {
     "mode": "light"
   },
+  "brand": {
+    "name": "Acme Corp"
+  },
   "color": {
-    "light": {
-      "primary": "#1d4ed8",
-      "onPrimary": "#ffffff",
-      "surface": "#ffffff",
-      "onSurface": "#0f172a",
-      "surfaceVariant": "#eff6ff",
-      "onSurfaceVariant": "#1e3a8a",
-      "outline": "#64748b",
-      "accent": "#7c3aed",
-      "onAccent": "#ffffff",
-      "success": "#15803d",
-      "warning": "#b45309",
-      "danger": "#b91c1c",
-      "focusRing": "#2563eb"
-    },
     "dark": {
-      "primary": "#93c5fd",
+      "accent": "#c4b5fd",
+      "danger": "#f87171",
+      "focusRing": "#60a5fa",
+      "onAccent": "#0b1220",
       "onPrimary": "#0b1220",
-      "surface": "#0b1220",
       "onSurface": "#f8fafc",
-      "surfaceVariant": "#1e293b",
       "onSurfaceVariant": "#cbd5e1",
       "outline": "#94a3b8",
-      "accent": "#c4b5fd",
-      "onAccent": "#0b1220",
+      "primary": "#93c5fd",
       "success": "#4ade80",
-      "warning": "#fbbf24",
-      "danger": "#f87171",
-      "focusRing": "#60a5fa"
+      "surface": "#0b1220",
+      "surfaceVariant": "#1e293b",
+      "warning": "#fbbf24"
+    },
+    "light": {
+      "accent": "#7c3aed",
+      "danger": "#b91c1c",
+      "focusRing": "#2563eb",
+      "onAccent": "#ffffff",
+      "onPrimary": "#ffffff",
+      "onSurface": "#0f172a",
+      "onSurfaceVariant": "#1e3a8a",
+      "outline": "#64748b",
+      "primary": "#1d4ed8",
+      "success": "#15803d",
+      "surface": "#ffffff",
+      "surfaceVariant": "#eff6ff",
+      "warning": "#b45309"
     }
+  },
+  "density": "comfortable",
+  "elevation": "low",
+  "launcher": {
+    "icon": "chat",
+    "position": "bottom-right",
+    "shape": "circle"
+  },
+  "revision": 1,
+  "schemaVersion": 1,
+  "shape": {
+    "radius": "md"
   },
   "typography": {
     "fontFamily": "inter",
     "scale": "md"
-  },
-  "shape": {
-    "radius": "md"
-  },
-  "elevation": "low",
-  "density": "comfortable",
-  "brand": {
-    "name": "Acme Corp"
-  },
-  "launcher": {
-    "position": "bottom-right",
-    "shape": "circle",
-    "icon": "chat"
   }
 }
