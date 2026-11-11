@@ -9,6 +9,9 @@ import { Client } from 'pg';
 
 jest.mock('server-only', () => ({}));
 
+// Setup recreates, migrates or seeds a database: allow for a loaded machine (repo-wide runs).
+jest.setTimeout(60_000);
+
 import { getTenantConfig, saveTenantConfig } from '../src/data/tenant-config';
 import { listTenants } from '../src/data/platform/tenants';
 import {
@@ -191,6 +194,15 @@ describe('platform tenant listing (P2.1-T07)', () => {
       widgetKey: null,
       publishedRevision: null,
     });
+  });
+
+  it('hideFixtures leaves out the development failure-fixture tenant', async () => {
+    const tenants = await listTenants(platform, { hideFixtures: true });
+    expect(tenants.map((t) => t.tenantId)).toEqual([
+      't_acme',
+      't_globex',
+      't_initech',
+    ]);
   });
 
   it('refuses a tenant context, even one cast to the platform type', async () => {

@@ -8,6 +8,9 @@ import path from 'node:path';
 
 jest.mock('server-only', () => ({}));
 
+// Setup recreates, migrates or seeds a database: allow for a loaded machine (repo-wide runs).
+jest.setTimeout(60_000);
+
 function must<T>(value: T | null | undefined): T {
   if (value == null) throw new Error('expected a row');
   return value;

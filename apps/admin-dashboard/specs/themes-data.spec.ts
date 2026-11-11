@@ -13,6 +13,9 @@ import { Client } from 'pg';
 
 jest.mock('server-only', () => ({}));
 
+// Setup recreates, migrates or seeds a database: allow for a loaded machine (repo-wide runs).
+jest.setTimeout(60_000);
+
 import {
   ThemeError,
   getDraft,

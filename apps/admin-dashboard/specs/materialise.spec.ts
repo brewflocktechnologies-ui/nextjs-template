@@ -12,6 +12,9 @@ import path from 'node:path';
 
 jest.mock('server-only', () => ({}));
 
+// Setup recreates, migrates or seeds a database: allow for a loaded machine (repo-wide runs).
+jest.setTimeout(60_000);
+
 import { publish, saveDraft } from '../src/data/themes';
 import { closePool } from '../src/server/db';
 

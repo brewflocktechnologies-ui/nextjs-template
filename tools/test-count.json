@@ -1,6 +1,6 @@
 {
   "$comment": "Written by check-test-count.mjs --write. Never lower without a TESTS-REMOVED: trailer.",
-  "total": 396,
+  "total": 408,
   "counts": {
     "vitest:libs/design-tokens": 8,
     "vitest:libs/theme": 76,
@@ -8,10 +8,10 @@
     "vitest:libs/ui-react": 10,
     "vitest:apps/widget": 91,
     "vitest:apps/widget-playground": 1,
-    "jest:apps/admin-dashboard": 84,
+    "jest:apps/admin-dashboard": 85,
     "storybook:libs/ui-react/src": 27,
     "storybook:libs/chat-widget/src": 18,
     "playwright:apps/widget-playground": 40,
-    "playwright:apps/admin-dashboard-e2e": 29
+    "playwright:apps/admin-dashboard-e2e": 40
   }
 }

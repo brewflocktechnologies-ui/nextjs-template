@@ -51,3 +51,14 @@ export async function listDevTenants(): Promise<DevTenant[]> {
 export async function devTenant(tenantId: string): Promise<DevTenant | null> {
   return (await listDevTenants()).find((t) => t.tenantId === tenantId) ?? null;
 }
+
+/** The first super admin's user id, or null. For the development switcher (P2.1-T10). */
+export async function devPlatformUser(): Promise<string | null> {
+  if (!isDevOnly()) return null;
+  const row = await withScope({ scope: 'platform' }, (db) =>
+    db.maybeOne<{ user_id: string }>(
+      "SELECT user_id FROM users WHERE platform_role = 'super_admin' ORDER BY user_id LIMIT 1",
+    ),
+  );
+  return row?.user_id ?? null;
+}

@@ -20,6 +20,23 @@ export default async function DevSessionPage() {
       </p>
       <form method="post" action="/dev/session/select">
         <ul className="grid gap-3">
+          <li className="flex items-center justify-between gap-4 rounded-lg border bg-card p-4">
+            <div>
+              <p className="font-medium">Super admin</p>
+              <p className="text-sm text-muted-foreground">
+                Platform scope · every tenant
+              </p>
+            </div>
+            <Button
+              type="submit"
+              name="platform"
+              value="1"
+              variant={current?.scope === 'platform' ? 'default' : 'outline'}
+              aria-label="Sign in as Super admin"
+            >
+              {current?.scope === 'platform' ? 'Signed in' : 'Sign in'}
+            </Button>
+          </li>
           {tenants.map((t) => (
             <li
               key={t.tenantId}

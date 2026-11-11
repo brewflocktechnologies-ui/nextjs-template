@@ -11,7 +11,13 @@ const parse = (text: string) =>
     .map((l) => l.trim())
     .filter(Boolean);
 
-export function WidgetSettingsForm({ initial }: { initial: string[] }) {
+export function WidgetSettingsForm({
+  initial,
+  apiQuery = '',
+}: {
+  initial: string[];
+  apiQuery?: string;
+}) {
   const [text, setText] = useState(initial.join('\n'));
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
@@ -22,7 +28,7 @@ export function WidgetSettingsForm({ initial }: { initial: string[] }) {
 
   async function save() {
     setBusy(true);
-    const res = await fetch('/api/widget/origins', {
+    const res = await fetch(`/api/widget/origins${apiQuery}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ origins: parse(text) }),

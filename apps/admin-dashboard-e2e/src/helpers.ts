@@ -22,6 +22,20 @@ export async function signIn(
   return cookie;
 }
 
+/** Signs in as the super admin (platform scope) through /dev/session. */
+export async function signInPlatform(
+  target: APIRequestContext | BrowserContext,
+): Promise<string> {
+  const request = 'request' in target ? target.request : target;
+  const res = await request.post(`${DASHBOARD}/dev/session/select`, {
+    form: { platform: '1' },
+    maxRedirects: 0,
+  });
+  const cookie = res.headers()['set-cookie']?.split(';')[0];
+  if (!cookie) throw new Error('no session cookie for the super admin');
+  return cookie;
+}
+
 /** The theme <style> in a page's HTML. */
 export function themeStyle(html: string): string {
   const all = [

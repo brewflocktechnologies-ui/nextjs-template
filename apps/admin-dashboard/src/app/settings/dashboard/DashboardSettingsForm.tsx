@@ -14,9 +14,11 @@ import { EnumField } from '../theme/fields';
 export function DashboardSettingsForm({
   initial,
   locales,
+  apiQuery = '',
 }: {
   initial: TenantConfig;
   locales: string[];
+  apiQuery?: string;
 }) {
   const [config, setConfig] = useState<TenantConfig>(initial);
   const [status, setStatus] = useState('');
@@ -29,7 +31,7 @@ export function DashboardSettingsForm({
 
   async function save() {
     setBusy(true);
-    const res = await fetch('/api/tenant-config', {
+    const res = await fetch(`/api/tenant-config${apiQuery}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ config }),
@@ -63,6 +65,7 @@ export function DashboardSettingsForm({
         <div className="flex items-center gap-2">
           <Checkbox
             id="module-theme"
+            aria-label="Theme editor"
             checked={config.modules.themeEditor}
             onCheckedChange={(v) => setModule('themeEditor', v === true)}
           />
@@ -71,6 +74,7 @@ export function DashboardSettingsForm({
         <div className="flex items-center gap-2">
           <Checkbox
             id="module-widget"
+            aria-label="Widget settings"
             checked={config.modules.widgetSettings}
             onCheckedChange={(v) => setModule('widgetSettings', v === true)}
           />

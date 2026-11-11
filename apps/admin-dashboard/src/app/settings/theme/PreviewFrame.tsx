@@ -21,12 +21,14 @@ export function PreviewFrame({
   widgetKey,
   widgetOrigin,
   dashboardOrigin,
+  apiQuery = '',
 }: {
   theme: Theme | null;
   appearance: 'light' | 'dark';
   widgetKey: string;
   widgetOrigin: string;
   dashboardOrigin: string;
+  apiQuery?: string;
 }) {
   const frame = useRef<HTMLIFrameElement>(null);
   const [ready, setReady] = useState(false);
@@ -54,7 +56,7 @@ export function PreviewFrame({
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch('/api/theme/resolve', {
+        const res = await fetch(`/api/theme/resolve${apiQuery}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ theme, appearance }),

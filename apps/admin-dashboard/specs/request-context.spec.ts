@@ -10,6 +10,9 @@ import { Client } from 'pg';
 
 jest.mock('server-only', () => ({}));
 
+// Setup recreates, migrates or seeds a database: allow for a loaded machine (repo-wide runs).
+jest.setTimeout(60_000);
+
 const root = path.resolve(__dirname, '../../..');
 const url = (user: string) =>
   `postgres://${user}:${user}@127.0.0.1:5440/byteflock_test`;

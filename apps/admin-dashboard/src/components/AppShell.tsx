@@ -19,11 +19,7 @@ interface NavItem {
  */
 async function navFor(ctx: RequestContext): Promise<NavItem[]> {
   if (ctx.scope === 'platform') {
-    return [
-      { href: '/platform', label: 'Tenants' },
-      { href: '/settings/theme', label: 'Theme' },
-      { href: '/settings/widget', label: 'Widget' },
-    ];
+    return [{ href: '/platform', label: 'Tenants' }];
   }
   const { modules } = await getTenantConfig(ctx.tenantId);
   return [

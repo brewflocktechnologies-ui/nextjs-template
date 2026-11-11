@@ -2,11 +2,15 @@
 // database on every request. No module-level state holds tenant data.
 import 'server-only';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { isDevOnly } from './dev-only';
 import { SESSION_COOKIE } from './proxy-allowlist';
 import { loadContext } from './session/load-context';
-import type { RequestContext, TenantContext } from './session/types';
+import type {
+  PlatformContext,
+  RequestContext,
+  TenantContext,
+} from './session/types';
 
 /** The context, or null without a valid session or when the user or membership is gone. */
 export async function getOptionalRequestContext(): Promise<RequestContext | null> {
@@ -33,5 +37,15 @@ export async function getRequestContext(): Promise<RequestContext> {
 export async function getTenantContext(): Promise<TenantContext> {
   const ctx = await getRequestContext();
   if (ctx.scope === 'platform') redirect('/platform');
+  return ctx;
+}
+
+/**
+ * The context for a platform page (`/platform/**`). A tenant user gets a 404, not a 403, so the
+ * route's existence is not revealed (ADR-013 routing); no session redirects to the switcher.
+ */
+export async function getPlatformContext(): Promise<PlatformContext> {
+  const ctx = await getRequestContext();
+  if (ctx.scope !== 'platform') notFound();
   return ctx;
 }

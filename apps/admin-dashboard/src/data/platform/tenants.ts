@@ -13,9 +13,20 @@ export interface TenantSummary {
   publishedRevision: number | null;
 }
 
-/** Every tenant, ordered by id. Platform scope only (action `tenants.list`). */
+/**
+ * Tenants that exist only as development failure fixtures (the seed's `t_broken`, whose stored
+ * theme is a deliberately bad document). The platform tenant list hides them so it shows the real
+ * tenants; their pages stay reachable by URL.
+ */
+const FAILURE_FIXTURE_TENANTS: readonly string[] = ['t_broken'];
+
+/**
+ * Every tenant, ordered by id. Platform scope only (action `tenants.list`). With
+ * `hideFixtures`, the development failure-fixture tenants are left out (the `/platform` list).
+ */
 export async function listTenants(
   ctx: PlatformContext,
+  options: { hideFixtures?: boolean } = {},
 ): Promise<TenantSummary[]> {
   authorize(ctx, null, 'tenants.list');
   const rows = await withScope({ scope: 'platform' }, (db) =>
@@ -32,10 +43,23 @@ export async function listTenants(
         ORDER BY t.tenant_id`,
     ),
   );
-  return rows.map((r) => ({
-    tenantId: r.tenant_id,
-    name: r.name,
-    widgetKey: r.widget_key,
-    publishedRevision: r.published_revision,
-  }));
+  return rows
+    .filter(
+      (r) =>
+        !options.hideFixtures || !FAILURE_FIXTURE_TENANTS.includes(r.tenant_id),
+    )
+    .map((r) => ({
+      tenantId: r.tenant_id,
+      name: r.name,
+      widgetKey: r.widget_key,
+      publishedRevision: r.published_revision,
+    }));
+}
+
+/** One tenant, or null when it does not exist. Platform scope only. */
+export async function getTenant(
+  ctx: PlatformContext,
+  tenantId: string,
+): Promise<TenantSummary | null> {
+  return (await listTenants(ctx)).find((t) => t.tenantId === tenantId) ?? null;
 }

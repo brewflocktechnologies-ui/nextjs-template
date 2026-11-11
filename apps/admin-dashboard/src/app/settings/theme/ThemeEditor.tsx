@@ -47,12 +47,15 @@ export function ThemeEditor({
   widgetKey,
   widgetOrigin,
   dashboardOrigin,
+  apiQuery = '',
 }: {
   tenantId: string;
   initial: Theme;
   widgetKey: string | null;
   widgetOrigin: string;
   dashboardOrigin: string;
+  /** Appended to every API URL: '' for a tenant user, '?tenantId=t_x' for a super admin (P2.1-T10). */
+  apiQuery?: string;
 }) {
   const [theme, setTheme] = useState<Theme>(initial);
   const [colourSet, setColourSet] = useState<'light' | 'dark'>(
@@ -67,7 +70,8 @@ export function ThemeEditor({
   const revisionsKey = qk(tenantId, 'theme', 'revisions');
   const revisions = useQuery<Revisions>({
     queryKey: revisionsKey,
-    queryFn: async () => (await fetch('/api/theme/revisions')).json(),
+    queryFn: async () =>
+      (await fetch(`/api/theme/revisions${apiQuery}`)).json(),
     enabled: widgetKey !== null,
   });
 
@@ -103,7 +107,7 @@ export function ThemeEditor({
   ];
 
   async function saveDraft(): Promise<boolean> {
-    const r = await post('/api/theme/draft', { theme });
+    const r = await post(`/api/theme/draft${apiQuery}`, { theme });
     setStatus(
       r.ok ? 'Draft saved.' : `Draft not saved: ${String(r.data.error)}`,
     );
@@ -119,7 +123,7 @@ export function ThemeEditor({
   async function onPublish() {
     setBusy(true);
     if (await saveDraft()) {
-      const r = await post('/api/theme/publish');
+      const r = await post(`/api/theme/publish${apiQuery}`);
       setStatus(
         r.ok
           ? `Published revision ${String(r.data.revision)}.`
@@ -132,7 +136,7 @@ export function ThemeEditor({
 
   async function onRollback(revision: number) {
     setBusy(true);
-    const r = await post('/api/theme/rollback', { revision });
+    const r = await post(`/api/theme/rollback${apiQuery}`, { revision });
     setStatus(
       r.ok
         ? `The widget now uses revision ${revision}.`
@@ -328,6 +332,7 @@ export function ThemeEditor({
               widgetKey={widgetKey}
               widgetOrigin={widgetOrigin}
               dashboardOrigin={dashboardOrigin}
+              apiQuery={apiQuery}
             />
           ) : (
             <p className="text-sm text-muted-foreground">
