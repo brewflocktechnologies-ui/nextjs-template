@@ -28,5 +28,8 @@
       }
     },
     "name": "@byteflock/admin-dashboard"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1"
   }
 }

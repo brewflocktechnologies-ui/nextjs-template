@@ -12,7 +12,22 @@ export default [
   {
     ignores: ['.next/**/*', '.next-e2e-prod/**/*', '**/out-tsc'],
   },
-  tagRestrictions(import.meta.dirname),
+  // P2.1-T05: `pg` is imported only inside src/server/db (ADR-012). Everything else goes through
+  // withScope. Merged into the tag restrictions: a second no-restricted-imports entry would replace them.
+  tagRestrictions(import.meta.dirname, {
+    paths: [
+      {
+        name: 'pg',
+        message:
+          'import pg only inside src/server/db; use withScope from @/server/db (ADR-012).',
+      },
+    ],
+  }),
+  // ...except inside the database layer itself, which keeps the tag restrictions and may use pg.
+  {
+    ...tagRestrictions(import.meta.dirname),
+    files: ['src/server/db/**/*.ts'],
+  },
   // P1.6 rules (AC08): caching safety, tenant-scoped query keys, proxy imports, data access.
   {
     files: ['src/**/*.ts', 'src/**/*.tsx'],
