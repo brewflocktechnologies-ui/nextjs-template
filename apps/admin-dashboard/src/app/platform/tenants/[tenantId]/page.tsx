@@ -3,6 +3,7 @@ import { AppShell } from '../../../../components/AppShell';
 import { getTenant } from '../../../../data/platform/tenants';
 import { getTenantConfig } from '../../../../data/tenant-config';
 import { getWidgetSettings } from '../../../../data/widget-config';
+import { TenantPreview } from '../../../../components/TenantPreview';
 import { getPlatformContext } from '../../../../server/request-context';
 import { TENANT_ID } from '../../../../server/session/types';
 import { TenantTabs } from '../../TenantTabs';
@@ -28,6 +29,7 @@ export default async function TenantOverviewPage({
       <h1 className="mb-1 text-2xl font-semibold">{tenant.name}</h1>
       <p className="mb-4 text-muted-foreground">{tenant.tenantId}</p>
       <TenantTabs tenantId={tenantId} current="" />
+      <TenantPreview tenantId={tenantId} tenantName={tenant.name} />
       <dl className="grid max-w-xl grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-sm">
         <dt className="font-medium">Widget key</dt>
         <dd>{tenant.widgetKey ? <code>{tenant.widgetKey}</code> : 'none'}</dd>

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { AppShell } from '../../../../../components/AppShell';
 import { getTenant } from '../../../../../data/platform/tenants';
+import { TenantPreview } from '../../../../../components/TenantPreview';
 import { getPlatformContext } from '../../../../../server/request-context';
 import { TENANT_ID } from '../../../../../server/session/types';
 import { ThemeEditorSection } from '../../../../settings/theme/ThemeEditorSection';
@@ -29,6 +30,7 @@ export default async function PlatformTenantThemePage({
       <h1 className="mb-1 text-2xl font-semibold">{tenant.name}</h1>
       <p className="mb-4 text-muted-foreground">{tenant.tenantId}</p>
       <TenantTabs tenantId={tenantId} current="/theme" />
+      <TenantPreview tenantId={tenantId} tenantName={tenant.name} />
       <ThemeEditorSection
         tenantId={tenantId}
         apiQuery={`?tenantId=${tenantId}`}

@@ -50,12 +50,27 @@ const defaults = (invalid: boolean): TenantThemeView => ({
 const logoUrlOf = (theme: Theme) =>
   theme.brand.logoAssetId ? `/brand/${theme.brand.logoAssetId}.svg` : undefined;
 
+/**
+ * The design for the page chrome, chosen by scope (D-25, ADR-013): a tenant user sees their
+ * tenant's published theme; platform scope and signed-out pages always see the platform defaults,
+ * whatever tenant a platform page is about.
+ */
 export async function tenantThemeView(
   ctx: RequestContext | null,
 ): Promise<TenantThemeView> {
-  // Platform scope always shows the platform default design on the chrome (D-25, ADR-013).
   if (!ctx || ctx.scope === 'platform') return defaults(false);
-  const published = await getPublishedTheme(ctx.tenantId);
+  return publishedThemeView(ctx.tenantId);
+}
+
+/**
+ * A tenant's published design as a view, validated like any stored theme (invalid or missing falls
+ * back to the defaults here, never at render). Used for the chrome of that tenant's own users and
+ * for the super admin's scoped preview (P2.1-T11). The caller has already authorized the tenant.
+ */
+export async function publishedThemeView(
+  tenantId: string,
+): Promise<TenantThemeView> {
+  const published = await getPublishedTheme(tenantId);
   if (!published) return defaults(false);
   const result = validateTheme(published.doc);
   if (!result.ok) return defaults(true);

@@ -36,14 +36,46 @@ export async function signInPlatform(
   return cookie;
 }
 
-/** The theme <style> in a page's HTML. */
+/** Every theme <style> in a page's HTML: [attributes, css]. */
+function themeStyles(
+  html: string,
+): { nonce: string | undefined; css: string }[] {
+  return [
+    ...html.matchAll(
+      /<style([^>]*)data-byteflock-theme[^>]*>([^<]*)<\/style>/g,
+    ),
+  ].map((m) => ({
+    nonce: /nonce="([^"]*)"/.exec(m[0])?.[1],
+    css: m[2],
+  }));
+}
+
+/** The page's theme <style> on :root (the chrome). A page has exactly one. */
 export function themeStyle(html: string): string {
-  const all = [
-    ...html.matchAll(/<style[^>]*data-byteflock-theme[^>]*>([^<]*)<\/style>/g),
-  ];
-  if (all.length !== 1)
-    throw new Error(`expected one theme <style>, found ${all.length}`);
-  return all[0][1];
+  const root = themeStyles(html).filter((s) => s.css.startsWith(':root:root'));
+  if (root.length !== 1)
+    throw new Error(`expected one :root theme <style>, found ${root.length}`);
+  return root[0].css;
+}
+
+/** The scoped preview <style> for one tenant (P2.1-T11), with its nonce. */
+export function previewStyle(
+  html: string,
+  tenantId: string,
+): { nonce: string | undefined; css: string } {
+  const own = themeStyles(html).filter((s) =>
+    s.css.startsWith(`[data-tenant-preview="${tenantId}"]`),
+  );
+  if (own.length !== 1)
+    throw new Error(
+      `expected one preview <style> for ${tenantId}, found ${own.length}`,
+    );
+  return own[0];
+}
+
+/** The nonce of the page's :root theme <style>. */
+export function rootNonce(html: string): string | undefined {
+  return themeStyles(html).find((s) => s.css.startsWith(':root:root'))?.nonce;
 }
 
 export const cssVar = (css: string, name: string) =>
