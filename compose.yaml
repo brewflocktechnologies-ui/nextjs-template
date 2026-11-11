@@ -19,7 +19,9 @@ services:
       # Runs once, on an empty volume: creates the application role and the test database.
       - ./apps/admin-dashboard/db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U byteflock -d byteflock']
+      # TCP probe (-h): the image's temporary init-time server listens on its socket only, so a socket
+      # probe can report healthy before the real server, and the init scripts, are ready.
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U byteflock -d byteflock']
       interval: 2s
       timeout: 3s
       retries: 30

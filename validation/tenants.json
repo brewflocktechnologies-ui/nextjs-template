@@ -12,7 +12,14 @@
       "consent": "required",
       "proactive": true,
       "allowedOrigins": ["http://localhost:4300"],
-      "theme": "libs/theme/fixtures/valid/acme-light.json"
+      "theme": "libs/theme/fixtures/valid/acme-light.json",
+      "extraUsers": [
+        {
+          "user": "u_acme_agent",
+          "roles": ["agent"],
+          "displayName": "Acme Agent"
+        }
+      ]
     },
     {
       "tenantId": "t_globex",
@@ -41,6 +48,12 @@
       "theme": "libs/theme/fixtures/valid/initech-compact.json"
     }
   ],
+  "platformAdmin": {
+    "user": "u_platform_admin",
+    "displayName": "Platform Admin",
+    "locale": "en-AU",
+    "platformRole": "super_admin"
+  },
   "failureFixtures": [
     {
       "widgetKey": "wk_broken_version",
