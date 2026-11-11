@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { Button } from '@byteflock/ui-react';
 import { isDevOnly } from '../../../server/dev-only';
 import { getOptionalRequestContext } from '../../../server/request-context';
-import { listLocalTenants } from '../../../server/tenants';
+import { listDevTenants } from '../../../server/dev-tenants';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export default async function DevSessionPage() {
   if (!isDevOnly()) notFound();
   const current = await getOptionalRequestContext();
-  const tenants = listLocalTenants();
+  const tenants = await listDevTenants();
   return (
     <main className="mx-auto max-w-2xl p-6">
       <h1 className="mb-2 text-2xl font-semibold">Choose a tenant</h1>

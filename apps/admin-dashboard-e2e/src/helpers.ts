@@ -38,14 +38,17 @@ export const cssVar = (css: string, name: string) =>
 export const readJson = (file: string) =>
   JSON.parse(fs.readFileSync(file, 'utf8'));
 
-/** Undoes local publishes and drafts: widget fixtures back to validation/, drafts removed. */
+/**
+ * Undoes local publishes and drafts (P2.1): the dashboard's database is dropped, recreated,
+ * migrated and seeded (published revisions are immutable, so they cannot be deleted), then the
+ * widget fixtures are copied back to apps/widget/public/v1.
+ */
 export function resetLocalState() {
-  execFileSync(process.execPath, ['tools/scripts/stack-reset.mjs'], {
+  execFileSync(process.execPath, ['tools/scripts/db/recreate.mjs'], {
     cwd: ROOT,
   });
-  fs.rmSync(path.join(ROOT, '.local', 'drafts'), {
-    recursive: true,
-    force: true,
+  execFileSync(process.execPath, ['tools/scripts/stack-reset.mjs'], {
+    cwd: ROOT,
   });
 }
 

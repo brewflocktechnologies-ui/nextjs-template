@@ -111,16 +111,26 @@ const dataAccessTenantFirst = {
     },
     messages: {
       first:
-        'Data-access function "{{name}}" must take tenantId as its first parameter.',
+        'Data-access function "{{name}}" must take tenantId as its first parameter (src/data/platform: ctx: PlatformContext).',
     },
     schema: [],
   },
   create(context) {
-    if (!/(^|\/)src\/data\//.test(norm(context.filename))) return {};
+    const file = norm(context.filename);
+    if (!/(^|\/)src\/data\//.test(file)) return {};
+    // Platform-only functions (src/data/platform/**, ADR-013) take `ctx: PlatformContext` first.
+    const platform = /(^|\/)src\/data\/platform\//.test(file);
+    const isPlatformCtx = (p) =>
+      p?.type === 'Identifier' &&
+      p.name === 'ctx' &&
+      p.typeAnnotation?.typeAnnotation?.type === 'TSTypeReference' &&
+      p.typeAnnotation.typeAnnotation.typeName?.name === 'PlatformContext';
     const check = (fn, name, node) => {
       const first = fn.params[0];
-      if (!first || first.type !== 'Identifier' || first.name !== 'tenantId')
-        context.report({ node, messageId: 'first', data: { name } });
+      const ok = platform
+        ? isPlatformCtx(first)
+        : first?.type === 'Identifier' && first.name === 'tenantId';
+      if (!ok) context.report({ node, messageId: 'first', data: { name } });
     };
     return {
       ExportNamedDeclaration(node) {

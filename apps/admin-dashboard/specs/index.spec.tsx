@@ -7,6 +7,9 @@ import Page from '../src/app/page';
 jest.mock('../src/server/request-context', () => ({
   getTenantContext: jest.fn(),
 }));
+jest.mock('../src/server/tenant-theme', () => ({
+  tenantThemeView: jest.fn(),
+}));
 
 describe('Page', () => {
   it('should render successfully', () => {

@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   if (ctx instanceof Response) return ctx;
   const body = (await readBody(request)) as { theme?: unknown } | null;
   try {
-    await saveDraft(ctx.tenantId, body?.theme);
+    await saveDraft(ctx.tenantId, body?.theme, ctx.userId);
     return json({ ok: true });
   } catch (e) {
     if (e instanceof ThemeError) return json({ error: e.message }, 422);

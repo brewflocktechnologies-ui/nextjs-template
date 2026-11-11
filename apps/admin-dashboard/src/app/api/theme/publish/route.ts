@@ -8,7 +8,7 @@ export async function POST() {
   const ctx = await requireTenantAction('theme.publish');
   if (ctx instanceof Response) return ctx;
   try {
-    return json(await publish(ctx.tenantId));
+    return json(await publish(ctx.tenantId, ctx.userId));
   } catch (e) {
     if (e instanceof ThemeError)
       return json(

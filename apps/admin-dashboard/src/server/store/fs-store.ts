@@ -1,5 +1,6 @@
-// File helpers for the development publish stub (D-13) and drafts. Not tenant-aware on purpose:
-// the data-access functions in src/data/** take tenantId and call these.
+// File helpers for materialising the widget's static documents (D-13, amended by D-24). Postgres is
+// the source of truth; these write its projection into THEME_PUBLISH_DIR. Not tenant-aware on
+// purpose: src/server/store/materialise.ts decides what to write.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -34,16 +35,27 @@ export function publishDir(): string {
   return dir;
 }
 
-/** Drafts: .local/drafts at the workspace root (gitignored); THEME_DRAFT_DIR overrides. */
-export function draftDir(): string {
-  return process.env.THEME_DRAFT_DIR
-    ? path.resolve(process.env.THEME_DRAFT_DIR)
-    : path.join(workspaceRoot(), '.local', 'drafts');
-}
-
 export function readJson(file: string): unknown {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
+
+/**
+ * The same value with object keys sorted, recursively. Postgres `jsonb` does not keep key order, so
+ * materialised documents use one canonical order and are reproducible byte for byte.
+ */
+export function sortKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortKeys);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([k, v]) => [k, sortKeys(v)]),
+    );
+  }
+  return value;
+}
+
+const text = (doc: unknown) => JSON.stringify(sortKeys(doc), null, 2) + '\n';
 
 const temp = (file: string) =>
   `${file}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`;
@@ -52,17 +64,24 @@ const temp = (file: string) =>
 export function writeAtomic(file: string, doc: unknown): void {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const tmp = temp(file);
-  fs.writeFileSync(tmp, JSON.stringify(doc, null, 2) + '\n');
+  fs.writeFileSync(tmp, text(doc));
   fs.renameSync(tmp, file);
 }
 
-/** Like writeAtomic, but refuses to replace an existing file (immutable theme documents). */
-export function writeNew(file: string, doc: unknown): void {
+/**
+ * Like writeAtomic, but never replaces an existing file (published theme documents are immutable).
+ * Returns false when the file already existed.
+ */
+export function writeNew(file: string, doc: unknown): boolean {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const tmp = temp(file);
-  fs.writeFileSync(tmp, JSON.stringify(doc, null, 2) + '\n');
+  fs.writeFileSync(tmp, text(doc));
   try {
     fs.linkSync(tmp, file); // fails with EEXIST instead of overwriting
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'EEXIST') return false;
+    throw error;
   } finally {
     fs.unlinkSync(tmp);
   }
