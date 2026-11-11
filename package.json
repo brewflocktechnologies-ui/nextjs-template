@@ -15,6 +15,7 @@
     "stack:reset": "node tools/scripts/stack-reset.mjs",
     "db:up": "node tools/scripts/db/up.mjs",
     "db:down": "node tools/scripts/db/down.mjs",
+    "db:migrate": "node tools/scripts/db/migrate.mjs",
     "db:reset": "node tools/scripts/db/reset.mjs",
     "storybook:ui": "nx run @byteflock/ui-react:storybook",
     "storybook:widget": "nx run @byteflock/chat-widget:storybook",
