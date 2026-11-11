@@ -31,6 +31,16 @@ const FACTS = `SELECT t.name, w.locale_default, w.locales_supported
                 WHERE t.tenant_id = $1
                 ORDER BY w.widget_key LIMIT 1`;
 
+/** The locales the tenant supports (its widget key's), or an empty list without a widget. */
+export async function listSupportedLocales(
+  tenantId: string,
+): Promise<string[]> {
+  const facts = await withScope({ scope: 'tenant', tenantId }, (db) =>
+    db.maybeOne<TenantFacts>(FACTS, [tenantId]),
+  );
+  return facts?.locales_supported ?? [];
+}
+
 /** The tenant's config, or the defaults when it has none or the stored one is invalid. */
 export async function getTenantConfig(tenantId: string): Promise<TenantConfig> {
   const { stored, facts } = await withScope(

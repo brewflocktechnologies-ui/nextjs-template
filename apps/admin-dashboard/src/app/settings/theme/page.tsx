@@ -11,12 +11,14 @@ import { DEFAULT_THEME } from '../../../lib/default-theme';
 import { qk } from '../../../lib/query/qk';
 import { getServerQueryClient } from '../../../lib/query/server-query-client';
 import { getTenantContext } from '../../../server/request-context';
+import { requireModule } from '../../../server/tenant-config/modules';
 import { ThemeEditor } from './ThemeEditor';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ThemeSettingsPage() {
   const ctx = await getTenantContext();
+  await requireModule(ctx, 'themeEditor');
   const widgetKey = (await getWidgetSettings(ctx.tenantId))?.widgetKey ?? null;
   const draft = await getDraft(ctx.tenantId);
   const published = await getPublishedTheme(ctx.tenantId);

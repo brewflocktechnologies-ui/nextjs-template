@@ -2,6 +2,7 @@
 import 'server-only';
 import { ForbiddenError, authorize, type Action } from './authorize';
 import { getOptionalRequestContext } from './request-context';
+import { isModuleEnabled, moduleOfAction } from './tenant-config/modules';
 import type { RequestContext, TenantContext } from './session/types';
 
 export function json(body: unknown, status = 200): Response {
@@ -35,6 +36,10 @@ export async function requireTenantAction(
     if (error instanceof ForbiddenError) return forbidden(error);
     throw error;
   }
+  // A disabled module's routes do not exist for the tenant (CONFIG-01).
+  const module = moduleOfAction(action);
+  if (module && !(await isModuleEnabled(ctx, module)))
+    return json({ error: 'not found' }, 404);
   return ctx;
 }
 

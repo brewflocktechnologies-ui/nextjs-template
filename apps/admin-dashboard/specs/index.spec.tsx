@@ -7,6 +7,12 @@ import Page from '../src/app/page';
 jest.mock('../src/server/request-context', () => ({
   getTenantContext: jest.fn(),
 }));
+jest.mock('../src/data/tenant-config', () => ({
+  getTenantConfig: jest.fn(),
+}));
+jest.mock('../src/server/tenant-config/modules', () => ({
+  isModuleEnabled: jest.fn(),
+}));
 jest.mock('../src/server/tenant-theme', () => ({
   tenantThemeView: jest.fn(),
 }));

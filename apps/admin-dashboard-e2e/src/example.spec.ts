@@ -8,7 +8,7 @@ test('@smoke renders the admin dashboard shell for a tenant', async ({
   await signIn(context, 't_acme');
   await page.goto('/');
   await expect(
-    page.getByRole('heading', { level: 1, name: 'Admin dashboard' }),
+    page.getByRole('heading', { level: 1, name: 'Acme Corp support' }),
   ).toBeVisible();
   await expect(page.getByTestId('brand-name')).toHaveText('Acme Corp');
   await expect(page.getByTestId('dev-badge')).toContainText(

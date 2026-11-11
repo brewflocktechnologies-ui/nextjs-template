@@ -1,15 +1,44 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { getTenantConfig } from '../data/tenant-config';
+import { can } from '../server/authorize';
 import { isDevOnly } from '../server/dev-only';
 import type { RequestContext } from '../server/session/types';
 import { tenantThemeView } from '../server/tenant-theme';
 import { DevBadge } from './DevBadge';
 
-const NAV = [
-  { href: '/', label: 'Home' },
-  { href: '/settings/theme', label: 'Theme' },
-  { href: '/settings/widget', label: 'Widget' },
-];
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+/**
+ * The navigation for a context (P2.1-T09, CONFIG-01): a tenant's disabled modules are hidden, and
+ * the Dashboard entry appears only for users who may change the config. Platform scope sees every
+ * module. Hiding a link is not access control: the routes check too.
+ */
+async function navFor(ctx: RequestContext): Promise<NavItem[]> {
+  if (ctx.scope === 'platform') {
+    return [
+      { href: '/platform', label: 'Tenants' },
+      { href: '/settings/theme', label: 'Theme' },
+      { href: '/settings/widget', label: 'Widget' },
+    ];
+  }
+  const { modules } = await getTenantConfig(ctx.tenantId);
+  return [
+    { href: '/', label: 'Home' },
+    ...(modules.themeEditor
+      ? [{ href: '/settings/theme', label: 'Theme' }]
+      : []),
+    ...(modules.widgetSettings
+      ? [{ href: '/settings/widget', label: 'Widget' }]
+      : []),
+    ...(can(ctx, ctx.tenantId, 'config.write')
+      ? [{ href: '/settings/dashboard', label: 'Dashboard' }]
+      : []),
+  ];
+}
 
 /** Dashboard chrome: tenant brand, navigation and, in development, the session badge. */
 export async function AppShell({
@@ -22,6 +51,7 @@ export async function AppShell({
   children: ReactNode;
 }) {
   const theme = await tenantThemeView(ctx);
+  const nav = await navFor(ctx);
   return (
     <div className="flex min-h-screen flex-col">
       <header className="flex flex-wrap items-center justify-between gap-4 bg-primary px-6 py-3 text-primary-foreground shadow-md">
@@ -35,7 +65,7 @@ export async function AppShell({
         </div>
         <nav aria-label="Main">
           <ul className="flex gap-1">
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
