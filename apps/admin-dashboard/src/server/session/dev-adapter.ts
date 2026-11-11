@@ -2,7 +2,7 @@
 // statically; callers load it with `await import()` behind isDevOnly().
 import { isDevOnly } from '../dev-only';
 import { decodeSession, encodeSession } from './cookie';
-import type { RequestContext } from './types';
+import type { SessionClaims } from './types';
 
 if (!isDevOnly())
   throw new Error(
@@ -15,6 +15,6 @@ export const DEV_SESSION_SECRET_DEFAULT = 'dev-only-secret-change-me';
 const secret = () =>
   process.env.DEV_SESSION_SECRET || DEV_SESSION_SECRET_DEFAULT;
 
-export const signSession = (ctx: RequestContext) =>
-  encodeSession(ctx, secret());
+export const signSession = (claims: SessionClaims) =>
+  encodeSession(claims, secret());
 export const readSession = (value: string) => decodeSession(value, secret());

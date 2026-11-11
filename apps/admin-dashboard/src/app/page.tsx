@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { AppShell } from '../components/AppShell';
 import { AgentFilterDemo } from '../components/AgentFilterDemo';
-import { getRequestContext } from '../server/request-context';
+import { getTenantContext } from '../server/request-context';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  const ctx = await getRequestContext();
+  const ctx = await getTenantContext();
   return (
     <AppShell ctx={ctx} current="/">
       <h1 className="mb-2 text-2xl font-semibold">Admin dashboard</h1>

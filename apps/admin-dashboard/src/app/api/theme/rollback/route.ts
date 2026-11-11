@@ -1,11 +1,11 @@
 import { ThemeError, rollback } from '../../../../data/themes';
-import { json, readBody, requireContext } from '../../../../server/api';
+import { json, readBody, requireTenantAction } from '../../../../server/api';
 
 export const dynamic = 'force-dynamic';
 
 /** Points the widget at an earlier published revision (THEME-09). */
 export async function POST(request: Request) {
-  const ctx = await requireContext();
+  const ctx = await requireTenantAction('theme.publish');
   if (ctx instanceof Response) return ctx;
   const body = (await readBody(request)) as { revision?: unknown } | null;
   try {

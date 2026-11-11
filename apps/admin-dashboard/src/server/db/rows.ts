@@ -2,6 +2,9 @@
 // (camelCase, ISO strings). One mapper per table, so no other file reads a raw row. JSON columns
 // stay loosely typed here; the data layer validates them with the theme and tenant-config guards.
 import 'server-only';
+import type { TenantRole } from '../session/types';
+
+export type { TenantRole };
 
 type Json = Record<string, unknown>;
 const iso = (d: Date | string): string =>
@@ -48,7 +51,6 @@ export const mapTenant = (r: TenantRow): Tenant => ({
   createdAt: iso(r.created_at),
 });
 
-export type TenantRole = 'tenant_admin' | 'agent';
 export interface MembershipRow {
   user_id: string;
   tenant_id: string;

@@ -26,7 +26,8 @@ export default [
   // ...except inside the database layer itself, which keeps the tag restrictions and may use pg.
   {
     ...tagRestrictions(import.meta.dirname),
-    files: ['src/server/db/**/*.ts'],
+    // Specs may use pg to arrange and clean up test data as the owner role.
+    files: ['src/server/db/**/*.ts', 'specs/**/*.ts'],
   },
   // P1.6 rules (AC08): caching safety, tenant-scoped query keys, proxy imports, data access.
   {

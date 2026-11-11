@@ -9,14 +9,14 @@ import {
 import { DEFAULT_THEME } from '../../../lib/default-theme';
 import { qk } from '../../../lib/query/qk';
 import { getServerQueryClient } from '../../../lib/query/server-query-client';
-import { getRequestContext } from '../../../server/request-context';
+import { getTenantContext } from '../../../server/request-context';
 import { localTenant } from '../../../server/tenants';
 import { ThemeEditor } from './ThemeEditor';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ThemeSettingsPage() {
-  const ctx = await getRequestContext();
+  const ctx = await getTenantContext();
   const widgetKey = localTenant(ctx.tenantId)?.widgetKey ?? null;
   const draft = await getDraft(ctx.tenantId);
   const published = await getPublishedTheme(ctx.tenantId);

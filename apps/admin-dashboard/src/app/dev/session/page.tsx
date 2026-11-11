@@ -37,11 +37,17 @@ export default async function DevSessionPage() {
                 name="tenantId"
                 value={t.tenantId}
                 variant={
-                  current?.tenantId === t.tenantId ? 'default' : 'outline'
+                  (current?.scope === 'tenant' ? current.tenantId : null) ===
+                  t.tenantId
+                    ? 'default'
+                    : 'outline'
                 }
                 aria-label={`Sign in as ${t.name}`}
               >
-                {current?.tenantId === t.tenantId ? 'Signed in' : 'Sign in'}
+                {(current?.scope === 'tenant' ? current.tenantId : null) ===
+                t.tenantId
+                  ? 'Signed in'
+                  : 'Sign in'}
               </Button>
             </li>
           ))}

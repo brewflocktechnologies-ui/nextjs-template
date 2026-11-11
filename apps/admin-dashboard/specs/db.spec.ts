@@ -75,6 +75,7 @@ describe('withScope (P2.1-T05)', () => {
     );
     expect(rows.map((r) => r.tenant_id)).toEqual([
       't_acme',
+      't_broken',
       't_globex',
       't_initech',
     ]);

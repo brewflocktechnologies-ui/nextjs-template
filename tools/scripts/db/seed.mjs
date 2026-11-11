@@ -6,8 +6,8 @@
 // Creates the three local tenants with their admins, widget keys, theme draft, published theme
 // revision 1 and a default tenant config, plus `u_platform_admin` (super_admin) and `u_acme_agent`.
 // Idempotent: every row is inserted only when missing, so re-running keeps local edits. Development
-// only: refuses to run when NODE_ENV=production. The failure fixtures (t_broken, wk_broken_*) stay
-// static files and are not seeded.
+// only: refuses to run when NODE_ENV=production. The failure fixtures keep their static widget files;
+// only the broken tenant and its admin are seeded, so the dev session can sign in as it (P2.1-T06).
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -133,6 +133,25 @@ export async function seed({ databaseUrl = ownerUrl(), log = () => {} } = {}) {
       );
       log(`seeded ${t.tenantId}`);
     }
+    // The failure-fixture tenant (validation/tenants.json brokenUser): a tenant and its admin only,
+    // so the dev session can sign in as it. Its widget keys and themes stay static files.
+    const broken = file.brokenUser;
+    rows += await insert(
+      `INSERT INTO users (user_id, display_name, locale) VALUES ($1, 'Broken Tenant Admin', 'en')
+       ON CONFLICT (user_id) DO NOTHING`,
+      [broken.user],
+    );
+    rows += await insert(
+      `INSERT INTO tenants (tenant_id, name) VALUES ($1, 'Broken tenant (failure fixtures)')
+       ON CONFLICT (tenant_id) DO NOTHING`,
+      [broken.tenantId],
+    );
+    rows += await insert(
+      `INSERT INTO tenant_memberships (user_id, tenant_id, role) VALUES ($1, $2, 'tenant_admin')
+       ON CONFLICT DO NOTHING`,
+      [broken.user, broken.tenantId],
+    );
+    log(`seeded ${broken.tenantId}`);
     await client.query('COMMIT');
     return { rows };
   } catch (error) {

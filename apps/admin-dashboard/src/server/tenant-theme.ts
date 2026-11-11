@@ -53,7 +53,8 @@ const logoUrlOf = (theme: Theme) =>
 export async function tenantThemeView(
   ctx: RequestContext | null,
 ): Promise<TenantThemeView> {
-  if (!ctx) return defaults(false);
+  // Platform scope always shows the platform default design on the chrome (D-25, ADR-013).
+  if (!ctx || ctx.scope === 'platform') return defaults(false);
   const published = await getPublishedTheme(ctx.tenantId);
   if (!published) return defaults(false);
   const result = validateTheme(published.doc);

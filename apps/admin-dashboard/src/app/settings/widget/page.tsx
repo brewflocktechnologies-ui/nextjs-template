@@ -1,12 +1,12 @@
 import { AppShell } from '../../../components/AppShell';
 import { getWidgetSettings } from '../../../data/widget-config';
-import { getRequestContext } from '../../../server/request-context';
+import { getTenantContext } from '../../../server/request-context';
 import { WidgetSettingsForm } from './WidgetSettingsForm';
 
 export const dynamic = 'force-dynamic';
 
 export default async function WidgetSettingsPage() {
-  const ctx = await getRequestContext();
+  const ctx = await getTenantContext();
   const settings = await getWidgetSettings(ctx.tenantId);
   return (
     <AppShell ctx={ctx} current="/settings/widget">

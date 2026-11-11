@@ -17,12 +17,7 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.redirect(new URL('/', request.url), 303);
   response.cookies.set(
     SESSION_COOKIE,
-    signSession({
-      tenantId: tenant.tenantId,
-      userId: tenant.user,
-      roles: tenant.roles,
-      locale: tenant.locale,
-    }),
+    signSession({ userId: tenant.user, tenantId: tenant.tenantId }),
     { httpOnly: true, sameSite: 'lax', path: '/' },
   );
   response.headers.set('Cache-Control', 'no-store');

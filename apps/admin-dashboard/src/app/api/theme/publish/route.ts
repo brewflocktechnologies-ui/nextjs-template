@@ -1,11 +1,11 @@
 import { ThemeError, publish } from '../../../../data/themes';
-import { json, requireContext } from '../../../../server/api';
+import { json, requireTenantAction } from '../../../../server/api';
 
 export const dynamic = 'force-dynamic';
 
 /** Publishes the saved draft. The server re-checks schema and contrast (P1.6-AC06). */
 export async function POST() {
-  const ctx = await requireContext();
+  const ctx = await requireTenantAction('theme.publish');
   if (ctx instanceof Response) return ctx;
   try {
     return json(await publish(ctx.tenantId));

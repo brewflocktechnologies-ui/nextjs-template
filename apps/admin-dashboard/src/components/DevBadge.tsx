@@ -9,7 +9,7 @@ export function DevBadge({ ctx }: { ctx: RequestContext }) {
       data-testid="dev-badge"
     >
       <span>
-        {ctx.tenantId} · {ctx.userId}
+        {ctx.scope === 'platform' ? 'platform' : ctx.tenantId} · {ctx.userId}
       </span>
       <Link
         href="/dev/session"
