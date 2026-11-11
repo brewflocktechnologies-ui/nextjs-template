@@ -75,9 +75,13 @@ Four tenants, three valid and one failure fixture, defined once in `validation/t
 
 Signed `dev-session` cookie (HMAC-SHA256 over `{tenantId,userId,roles,locale}`), secret from `DEV_SESSION_SECRET` with a documented dev default, module refuses to load when `NODE_ENV === 'production'`. A dev-only route `/dev/session` lists the tenants and sets the cookie, so the product owner can switch tenants in one click. Specified in P1.6; the route and adapter are the only "dev-only" code allowed in `admin-dashboard`, guarded by one `isDevOnly()` helper.
 
+Amended on 2026-11-11 by the product owner (D-25, from P2.1): the cookie carries only `{userId, tenantId | null, iat}`; roles and membership are loaded from Postgres on every request, and `/dev/session` also offers the super admin.
+
 ### D-13 — Theme publish stub writes into the widget's static folder in development — **Default**
 
 P1.6's publish stub writes `/v1/themes/<tenantId>/<rev>.json` and updates `/v1/config/<widgetKey>.json` under `apps/widget/public/v1/` (path from `THEME_PUBLISH_DIR`, dev only). This makes the Draft → Preview → Publish → widget loop fully observable on the local stack without a backend. Production publish is the Java backend's job (later).
+
+Amended on 2026-11-11 by the product owner (D-24, from P2.1): Postgres becomes the source of truth for drafts and revisions; the static files stay in the same place but are materialised from the database after each publish commits.
 
 ### D-14 — Widget dev server provides the failure-mode fixtures — **Default**
 
@@ -136,6 +140,8 @@ Overturns the Q-013 default (brand layer only). The dashboard root layout emits 
 - Runbook P1.6 step 1 expects the whole chrome themed.
 - Risk accepted: a tenant palette can make the agent inbox less comfortable to use; the contrast policy is the guard, and per-agent overrides are a later feature.
 
+Amended on 2026-11-11 by the product owner (D-25, from P2.1): applies to tenant-scoped requests only. Platform-scoped requests (super admin) always render the chrome with the platform default design.
+
 ### D-21 — Per-widgetKey domain allowlist in Phase 1 — **Fixed (Q-014 answered)**
 
 Overturns the Q-014 default (no allowlist). The config document gains a required `allowedOrigins` list (ENDP-02a). The frame refuses to bootstrap when the parent origin is not listed: no `ready`, no content, an `ORIGIN_NOT_ALLOWED` beacon only. The `frame-ancestors *` header stays, because one static frame document serves every widget key; enforcement is in the frame. In `mode=preview` the build-time dashboard origin is always allowed. Consequences:
@@ -167,6 +173,25 @@ ARCH-001 §7 and the P1.2 spec placed the committed token outputs under the libr
 - The same convention applies to later generators unless their spec says otherwise. `libs/theme/schema/theme.v1.json` stays where THEME-08 puts it, because it is a contract document, not a build output.
 - Each generator exposes a `build:check` target that builds to a temp folder and compares the result with the committed files. `pnpm verify` and CI run `nx run-many -t build:check`.
 - Generated folders are excluded from Prettier (they have their own stale check) and marked `linguist-generated`.
+
+## Product-owner decisions for Phase 2 (2026-11-11)
+
+### D-24 — Local data backend: Postgres in Docker, Next.js server as the data layer — **Fixed (product owner, 2026-11-11), applies from P2.1**
+
+Phase 1 had no backend; file stubs stood in for one (D-13, `validation/tenants.json`). From P2.1:
+
+- Postgres 17 runs in Docker Compose (`compose.yaml`, host port 5440). Started, migrated, seeded and reset by Node scripts (`pnpm db:*`), so Windows needs only Docker Desktop.
+- The dashboard's Next.js server is the data layer: route handlers and server-only modules query Postgres through `pg`, with SQL migrations and no ORM. No separate backend service in this phase.
+- Every tenant table has row-level security, and every query runs through one scoped transaction helper.
+- Postgres is the source of truth for tenants, users, roles, theme drafts and revisions, widget settings and tenant config. The widget's static documents under `apps/widget/public/v1` become a projection materialised on publish (D-13 keeps the location).
+- Alternatives considered: a separate Node or Java service (reusing chatplatform), an ORM, SQLite. Recorded in ADR-012.
+
+### D-25 — Platform scope for super admins; the chrome stays on the default design — **Fixed (product owner, 2026-11-11), applies from P2.1**
+
+- A request is either tenant-scoped (a tenant user) or platform-scoped (a super admin with access to every tenant).
+- Platform scope always renders the dashboard chrome with the platform default design, including on pages about a specific tenant. A tenant's design appears only inside a labelled, scoped preview area and in the widget preview frame.
+- Tenant scope keeps D-20: the whole chrome uses the tenant's published theme.
+- Recorded in ADR-013, which supersedes ADR-005's request-context shape.
 
 ## How to change a decision
 

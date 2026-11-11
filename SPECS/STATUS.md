@@ -18,6 +18,7 @@ States: `Not started` → `Approved` → `In progress` → `Implemented` → `Ve
 | P1.6    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.6.md](evidence/P1.6.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); manual step results not recorded                                               |
 | P1.7    | Accepted    | Madhusudan C P, 2026-11-07 | 2026-11-07 | [evidence/P1.7.md](evidence/P1.7.md)   | Madhusudan C P, 2026-11-07 | Verified locally (D-22); CI, nightly and ARCH v1.0 still open for P1 exit                               |
 | P1 exit | In progress |                            |            |                                        |                            | Open: CI green on Linux and Windows (D-22), nightly run, ARCH-001 v1.0 (owner); see evidence/P1-exit.md |
+| P2.1    | Not started |                            |            |                                        |                            | Draft spec 2026-11-11; awaiting product-owner approval; D-24, D-25                                      |
 
 ## Product-owner answers to open questions
 
