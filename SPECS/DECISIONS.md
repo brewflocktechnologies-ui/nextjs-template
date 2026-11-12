@@ -213,6 +213,13 @@ Three gates are added to `pnpm verify` and the quality report:
 
 The report gains a Dependency audit section, a Database safety table and a Coverage section.
 
+### D-28 — Dashboard security headers, secret scanning, visual results and trends in the report — **Fixed (product owner, 2026-11-12), applies from P2.1-T19**
+
+- **Dashboard headers.** Every dashboard response carries `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()` and `Cross-Origin-Opener-Policy: same-origin`, without `X-Powered-By`. Every page through the proxy carries a per-request nonce CSP: `default-src 'self'`, scripts by nonce with `'strict-dynamic'` (plus `'unsafe-eval'` in development only, which React needs there), `<style>` elements from the origin or by nonce, style attributes allowed (`style-src-attr 'unsafe-inline'`: React server-renders them, for example the theme swatches, and Base UI's visually hidden inputs use them; they cannot run script), the widget origin as the only `frame-src`, `frame-ancestors 'none'`, `base-uri 'none'`, `object-src 'none'`, `form-action 'self'`. ARCH-001 §10.7 covers only the widget frame; this is the dashboard's counterpart. `Strict-Transport-Security` waits for HTTPS hosting. An end-to-end test asserts the headers and that the main pages log no CSP violation.
+- **Secret scanning** (`check-secrets`, a policy check). Tracked and new files are scanned for private keys, cloud and service tokens, and URLs with credentials; committed `.env` files other than `.env.development` and `.env.example`, and key files, fail. The local development passwords (`byteflock`, `byteflock_app`) are allowed by name. A line can opt out with `secret-scan: allow` and a reason. Git history is not scanned.
+- **Visual results in the report.** `pnpm visual` writes a run folder (`reports/visual/`) like `pnpm verify`, so `report.mjs` merges it with the other runs.
+- **Trend.** Each run folder keeps the metrics of the previous run in the same folder, and the report shows what changed (tests, failures, coverage, bundle sizes, accessibility and audit findings, lint warnings, durations). CI runners start empty, so CI reports show no trend until a previous report is supplied.
+
 ## How to change a decision
 
 Add a dated line under the decision ("Overturned on … by …: new text"), update `STATUS.md`, and list the affected spec sections in the same commit. Do not rewrite history.

@@ -7,6 +7,7 @@ import {
 
 export const WIDGET_ORIGIN = 'http://localhost:4400';
 export const DEFAULT_PRIMARY = '#334155';
+// secret-scan: allow sentinel typed by the isolation tests, which assert it never leaks
 export const SECRET = 'secret-123';
 
 /** The first launcher's host element. Playwright CSS selectors pierce open shadow roots. */

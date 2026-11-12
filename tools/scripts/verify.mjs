@@ -218,8 +218,32 @@ const reportsOf = (projectRoot, dir) =>
 
 // Results of an earlier run must never look like this run's: clear the result folders this run
 // fills. Nx restores them from its cache for tasks that do not run again.
-fs.rmSync(reportDir, { recursive: true, force: true });
+// D-28: keep the metrics of the run this folder held, for the report's trend section.
+let previousMetrics = null;
+try {
+  previousMetrics = fs.readFileSync(
+    path.join(reportDir, 'metrics.json'),
+    'utf8',
+  );
+} catch {
+  // First run in this folder.
+}
+// Clear only what a run writes: the folder may hold other runs' folders (reports/linux, reports/visual).
+for (const entry of [
+  'details',
+  'logs',
+  'run.json',
+  'metrics.json',
+  'previous-metrics.json',
+  'quality-report.md',
+])
+  fs.rmSync(path.join(reportDir, entry), { recursive: true, force: true });
 fs.mkdirSync(path.join(reportDir, 'logs'), { recursive: true });
+if (previousMetrics)
+  fs.writeFileSync(
+    path.join(reportDir, 'previous-metrics.json'),
+    previousMetrics,
+  );
 for (const step of steps)
   for (const [, projectRoot] of scopeOf(step))
     for (const dir of Object.values(step.targets ?? {}))
