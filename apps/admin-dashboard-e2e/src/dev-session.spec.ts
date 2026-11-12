@@ -2,26 +2,15 @@
 // tenant; one click switches; the badge says who you are; an agent's settings are read-only; a
 // forged choice is refused; production has no switcher at all (P2.1-AC15 part).
 import { expect, test, type Page } from '@playwright/test';
-import { DASHBOARD, signIn, signInPlatform } from './helpers';
+import {
+  DASHBOARD,
+  signIn,
+  signInPlatform,
+  signInWithSwitcher,
+} from './helpers';
 
-/**
- * Clicks a switcher button and waits until the browser has left /dev/session. On a cold `next dev`
- * the page can reload while a route compiles and swallow the click, so it tries three times.
- */
-const signInAs = async (page: Page, name: string) => {
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    await page.goto(`${DASHBOARD}/dev/session`);
-    await page.getByRole('button', { name, exact: true }).click();
-    try {
-      await page.waitForURL((url) => !url.pathname.startsWith('/dev/session'), {
-        timeout: 15_000,
-      });
-      return;
-    } catch (error) {
-      if (attempt === 3) throw error;
-    }
-  }
-};
+const signInAs = (page: Page, name: string) =>
+  signInWithSwitcher(page, name, { exact: true });
 
 // Compile every route these tests visit once, before they run (a cold `next dev` compiles each
 // route on first visit and may reload the page).

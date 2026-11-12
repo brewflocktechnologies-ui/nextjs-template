@@ -10,7 +10,7 @@
     "lint:affected": "nx affected -t lint",
     "graph": "nx graph",
     "e2e": "nx run-many -t e2e",
-    "stack": "nx run-many -t dev -p @byteflock/admin-dashboard @byteflock/widget @byteflock/widget-playground --output-style=stream",
+    "stack": "node tools/scripts/db/up.mjs && node tools/scripts/db/migrate.mjs && nx run-many -t dev -p @byteflock/admin-dashboard @byteflock/widget @byteflock/widget-playground --output-style=stream",
     "stack:check": "node tools/scripts/stack-check.mjs",
     "stack:reset": "node tools/scripts/stack-reset.mjs",
     "db:up": "node tools/scripts/db/up.mjs",

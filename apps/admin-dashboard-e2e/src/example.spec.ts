@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { signIn } from './helpers';
+import { signIn, signInWithSwitcher } from './helpers';
 
 test('@smoke renders the admin dashboard shell for a tenant', async ({
   page,
@@ -17,8 +17,7 @@ test('@smoke renders the admin dashboard shell for a tenant', async ({
 });
 
 test('@smoke /dev/session switches tenants in one click', async ({ page }) => {
-  await page.goto('/dev/session');
-  await page.getByRole('button', { name: 'Sign in as Globex' }).click();
+  await signInWithSwitcher(page, 'Sign in as Globex');
   await expect(page).toHaveURL('/');
   await expect(page.getByTestId('brand-name')).toHaveText('Globex');
 });

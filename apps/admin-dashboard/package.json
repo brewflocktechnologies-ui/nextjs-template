@@ -21,6 +21,7 @@
     ],
     "targets": {
       "build": {
+        "cache": false,
         "dependsOn": [
           "^build",
           "^typecheck"

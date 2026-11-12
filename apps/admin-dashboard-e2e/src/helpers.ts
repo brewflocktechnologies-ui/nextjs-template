@@ -93,9 +93,33 @@ export function resetLocalState() {
   execFileSync(process.execPath, ['tools/scripts/db/recreate.mjs'], {
     cwd: ROOT,
   });
-  execFileSync(process.execPath, ['tools/scripts/stack-reset.mjs'], {
+  execFileSync(process.execPath, ['tools/scripts/stack-reset.mjs', '--files'], {
     cwd: ROOT,
   });
+}
+
+/**
+ * Signs in through the /dev/session page by clicking a switcher button, and waits until the
+ * browser has left that page. On a cold `next dev` the page can reload while a route compiles and
+ * swallow the click, so it tries three times (P2.1-T12, T13).
+ */
+export async function signInWithSwitcher(
+  page: import('@playwright/test').Page,
+  button: string,
+  { exact = false }: { exact?: boolean } = {},
+) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    await page.goto(`${DASHBOARD}/dev/session`);
+    await page.getByRole('button', { name: button, exact }).click();
+    try {
+      await page.waitForURL((url) => !url.pathname.startsWith('/dev/session'), {
+        timeout: 15_000,
+      });
+      return;
+    } catch (e) {
+      if (attempt === 3) throw e;
+    }
+  }
 }
 
 /**

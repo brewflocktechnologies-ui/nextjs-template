@@ -11,6 +11,13 @@ import { execSync, spawnSync } from 'node:child_process';
 const quick = process.argv.includes('--quick');
 
 const steps = [
+  // P2.1-T13: the dashboard's unit and e2e suites need Postgres. db:up exits with a clear message
+  // when Docker is missing or not running; the database-backed steps below then fail too.
+  {
+    name: 'Database up and migrated (Docker)',
+    cmd: 'node tools/scripts/db/up.mjs && node tools/scripts/db/migrate.mjs',
+    database: true,
+  },
   { name: 'Policy checks', cmd: 'pnpm policy:check' },
   { name: 'Format check (all files)', cmd: 'pnpm nx format:check --all' },
   { name: 'TypeScript project references in sync', cmd: 'pnpm nx sync:check' },
@@ -81,6 +88,10 @@ for (const r of results)
 
 const failed = results.filter((r) => r.status === 'FAIL');
 if (failed.length) {
+  if (failed.some((r) => steps.find((s) => s.name === r.name)?.database))
+    console.error(
+      '\nThe database did not start, so the dashboard tests and e2e could not pass. Start Docker Desktop (Windows: WSL2 backend), then run `pnpm db:up` and `pnpm verify` again.',
+    );
   console.error(`\nverify failed: ${failed.map((r) => r.name).join(', ')}`);
   process.exit(1);
 }
