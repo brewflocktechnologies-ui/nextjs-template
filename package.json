@@ -15,6 +15,7 @@
     "stack:reset": "node tools/scripts/stack-reset.mjs",
     "db:up": "node tools/scripts/db/up.mjs",
     "db:down": "node tools/scripts/db/down.mjs",
+    "db:bootstrap": "node tools/scripts/db/bootstrap.mjs",
     "db:migrate": "node tools/scripts/db/migrate.mjs",
     "db:seed": "node tools/scripts/db/seed.mjs",
     "db:materialise": "node tools/scripts/db/materialise.mjs",

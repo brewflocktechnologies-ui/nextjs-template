@@ -8,6 +8,7 @@
 // store between runs. Snapshots are copied back; on failure, the diff images are copied to
 // test-output/visual/. Never commit snapshots made outside this image.
 import { spawnSync } from 'node:child_process';
+import path from 'node:path';
 
 export const IMAGE =
   'mcr.microsoft.com/playwright:v1.62.1-noble@sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e';
@@ -44,12 +45,39 @@ fi`,
 exit $status
 `;
 
+// P2.1-T14: the dashboard needs Postgres. The container reaches the host's database through
+// host.docker.internal, on its own freshly seeded database (byteflock_visual), so local publishes
+// in the stack database never change the screenshots.
+const VISUAL_DB = 'byteflock_visual';
+for (const [step, ...args] of [
+  ['up.mjs'],
+  ['recreate.mjs', `--database=${VISUAL_DB}`],
+]) {
+  const r = spawnSync(
+    process.execPath,
+    [path.join(process.cwd(), 'tools', 'scripts', 'db', step), ...args],
+    { stdio: 'inherit' },
+  );
+  if (r.status !== 0) {
+    console.error(`visual: ${step} failed; is Docker running?`);
+    process.exit(1);
+  }
+}
+const HOST_DB = 'host.docker.internal:5440';
+const dbEnv = [
+  `DATABASE_URL=postgres://byteflock_app:byteflock_app@${HOST_DB}/${VISUAL_DB}`,
+  `MIGRATE_DATABASE_URL=postgres://byteflock:byteflock@${HOST_DB}/${VISUAL_DB}`,
+  `RECREATE_ADMIN_URL=postgres://byteflock:byteflock@${HOST_DB}/postgres`,
+].flatMap((e) => ['-e', e]);
+
 const result = spawnSync(
   'docker',
   [
     'run',
     '--rm',
     '--ipc=host',
+    '--add-host=host.docker.internal:host-gateway',
+    ...dbEnv,
     '-v',
     `${process.cwd()}:/src`,
     '-v',

@@ -19,6 +19,19 @@ concurrency:
 jobs:
   lint-test-build:
     runs-on: ubuntu-latest
+    # P2.1-T14: the same Postgres image and digest as compose.yaml (check-compose-pinned).
+    services:
+      db:
+        image: postgres:17.11-alpine@sha256:3540c0362c809df084ffac0ae69fe794515f9de92692f02178bcdce0ef0302ac
+        env:
+          POSTGRES_USER: byteflock
+          POSTGRES_PASSWORD: byteflock
+          POSTGRES_DB: byteflock
+        ports:
+          - 5440:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U byteflock -d byteflock"
+          --health-interval 2s --health-timeout 3s --health-retries 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -44,6 +57,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+
+      # A service cannot mount the init script, so the roles and the test database come from
+      # the same SQL file through db:bootstrap; then migrations and the seed.
+      - name: Database (roles, migrations, seed)
+        run: |
+          node tools/scripts/db/bootstrap.mjs
+          node tools/scripts/db/migrate.mjs
+          node tools/scripts/db/seed.mjs
 
       - name: Policy checks
         run: pnpm policy:check
@@ -116,12 +137,34 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.62.1-noble@sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e
       options: --ipc=host
+    # The job runs in a container, so the database is reached by its service name.
+    # P2.1-T14: the same Postgres image and digest as compose.yaml (check-compose-pinned).
+    services:
+      db:
+        image: postgres:17.11-alpine@sha256:3540c0362c809df084ffac0ae69fe794515f9de92692f02178bcdce0ef0302ac
+        env:
+          POSTGRES_USER: byteflock
+          POSTGRES_PASSWORD: byteflock
+          POSTGRES_DB: byteflock
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U byteflock -d byteflock"
+          --health-interval 2s --health-timeout 3s --health-retries 30
     env:
       VISUAL: '1'
+      DATABASE_URL: postgres://byteflock_app:byteflock_app@db:5432/byteflock
+      MIGRATE_DATABASE_URL: postgres://byteflock:byteflock@db:5432/byteflock
+      RECREATE_ADMIN_URL: postgres://byteflock:byteflock@db:5432/postgres
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - run: pnpm install --frozen-lockfile
+      # A service cannot mount the init script, so the roles and the test database come from
+      # the same SQL file through db:bootstrap; then migrations and the seed.
+      - name: Database (roles, migrations, seed)
+        run: |
+          node tools/scripts/db/bootstrap.mjs
+          node tools/scripts/db/migrate.mjs
+          node tools/scripts/db/seed.mjs
       - name: Playground snapshots
         run: pnpm exec playwright test -c apps/widget-playground/playwright.config.mts --project=chromium --grep @visual
       - name: Dashboard snapshots
