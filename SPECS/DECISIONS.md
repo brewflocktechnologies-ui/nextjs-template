@@ -203,6 +203,16 @@ The product owner asked for one pipeline that produces one human-readable file w
 - In CI each job uploads its `reports/` folder, and a final job merges them into one report, shown as the run's job summary and uploaded as the `quality-report` artifact. `reports/` is never committed; the evidence file still records the summary table.
 - The widget is also scanned with axe on a real host page (playground), so the assembled frame is covered and not only its parts in Storybook.
 
+### D-27 — Security, tenant-isolation and coverage gates — **Fixed (product owner, 2026-11-12), applies from P2.1-T18**
+
+Three gates are added to `pnpm verify` and the quality report:
+
+- **Dependency audit** (`check-audit`, a policy check). `pnpm audit` on production dependencies fails at `high` or `critical`. Dev-tooling advisories at `high` or `critical` fail unless `tools/audit-exceptions.json` lists the advisory with a reason and an expiry date; an expired entry fails, and so does an entry for an advisory that no longer appears (it is cleaned up, not kept). `moderate` and `low` are reported, never failing. Offline, the check skips with a notice locally and fails when `CI` is set, like `check-codeowners`.
+- **Database safety** (`check-db-safety`, a policy check, needs the migrated stack database). Every table with a `tenant_id` has row-level security enabled and forced and a policy that is not `true`; every other table is on a named allowlist, so a new global table is a decision. The application role is not a superuser, owns nothing, has no `BYPASSRLS`, `CREATEROLE` or `CREATEDB`, and has no `TRUNCATE`, `REFERENCES` or `TRIGGER` privilege on any table (`TRUNCATE` ignores row-level security). The check runs its own negative cases first (D-24 pattern of `check-compose-pinned`).
+- **Coverage floors.** Unit-test coverage (V8; Vitest and Jest) is collected on every `test` run, and each project has a floor for lines, statements, functions and branches in `tools/coverage-floor.json`; the test run fails below it. The floor is set from the measured value and only goes up: lowering one needs a `COVERAGE-LOWERED:` trailer (`check-coverage-floor`, same pattern as `TESTS-REMOVED:`). Stories and end-to-end tests are not counted, so the number is a lower bound for the widget and UI libraries, whose behaviour is mostly tested in Storybook.
+
+The report gains a Dependency audit section, a Database safety table and a Coverage section.
+
 ## How to change a decision
 
 Add a dated line under the decision ("Overturned on … by …: new text"), update `STATUS.md`, and list the affected spec sections in the same commit. Do not rewrite history.

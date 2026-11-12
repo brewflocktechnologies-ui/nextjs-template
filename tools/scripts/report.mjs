@@ -64,6 +64,7 @@ for (const dir of dirs) {
       storyA11y: p('storybook', 'story-a11y.json'),
       playwright: p('e2e', 'playwright.json'),
       budgets: p('build', 'budgets.json'),
+      coverage: p(path.join('test', 'coverage'), 'coverage-summary.json'),
     };
   }
   const lhDir = path.join(dir, 'details', 'lighthouse');
@@ -73,6 +74,9 @@ for (const dir of dirs) {
     projects,
     policy: readJson(path.join(dir, 'details', 'policy.json')),
     testCount: readJson(path.join(dir, 'details', 'test-count.json')),
+    audit: readJson(path.join(dir, 'details', 'audit.json')),
+    dbSafety: readJson(path.join(dir, 'details', 'db-safety.json')),
+    coverageFloor: readJson(path.join(dir, 'details', 'coverage-floor.json')),
     lighthouse: {
       assertions: readJson(path.join(lhDir, 'assertion-results.json')),
       lhrs: ls(lhDir)
@@ -704,6 +708,130 @@ if (failedSteps.length) {
 }
 
 md.push(...a11y);
+
+// ---------------------------------------------------------------- security and data safety (D-27)
+
+const security = [];
+const auditRuns = runs.filter((r) => r.audit);
+if (auditRuns.length) {
+  security.push('### Dependency audit', '');
+  for (const r of auditRuns) {
+    if (multi) security.push(`**${r.label}**`, '');
+    if (r.audit.skipped) {
+      security.push(`Skipped: ${r.audit.skipped}.`, '');
+      continue;
+    }
+    const c = r.audit.counts;
+    security.push(
+      '| Scope | Critical | High | Moderate | Low |',
+      '| --- | --- | --- | --- | --- |',
+    );
+    security.push(
+      `| Production dependencies | ${c.production.critical} | ${c.production.high} | ${c.production.moderate} | ${c.production.low} |`,
+    );
+    security.push(
+      `| All dependencies (dev tooling included) | ${c.all.critical} | ${c.all.high} | ${c.all.moderate} | ${c.all.low} |`,
+      '',
+    );
+    security.push(
+      `Checked on ${r.audit.checkedOn}. High and critical advisories fail the gate in production dependencies always, and in dev tooling unless excused in \`tools/audit-exceptions.json\`; moderate and low are shown only.`,
+      '',
+    );
+    if (r.audit.excused?.length) {
+      security.push('Excused (dev tooling, each with an expiry date):', '');
+      security.push(
+        '| Advisory | Package | Severity | Expires | Fixed in | Reason |',
+        '| --- | --- | --- | --- | --- | --- |',
+      );
+      for (const e of r.audit.excused)
+        security.push(
+          `| ${e.id} | ${e.package} | ${e.severity} | ${e.expires} | ${cell(e.fixedIn ?? 'no release')} | ${cell(e.reason).slice(0, 140)}… |`,
+        );
+      security.push('');
+    }
+    if (r.audit.failures?.length)
+      security.push(
+        'Failing:',
+        '',
+        ...r.audit.failures.map((f) => `- ${f}`),
+        '',
+      );
+  }
+}
+
+const dbRuns = runs.filter((r) => r.dbSafety);
+if (dbRuns.length) {
+  security.push('### Database safety (tenant isolation)', '');
+  for (const r of dbRuns) {
+    const d = r.dbSafety;
+    if (multi) security.push(`**${r.label}**`, '');
+    const yes = (b) => (b ? 'yes' : 'no');
+    security.push(
+      `Application role \`${d.appRole}\`: ${d.failures.length ? '**problems found**' : 'not a superuser, no BYPASSRLS, owns nothing, cannot truncate'}.`,
+      '',
+    );
+    security.push(
+      '| Table | Kind | RLS enabled | RLS forced | Policies | App can read | App can write |',
+      '| --- | --- | --- | --- | --- | --- | --- |',
+    );
+    for (const t of d.tables)
+      security.push(
+        `| ${t.table} | ${t.kind} | ${t.kind === 'tenant' ? yes(t.rls) : '—'} | ${t.kind === 'tenant' ? yes(t.forced) : '—'} | ${t.policies} | ${yes(t.appRead)} | ${yes(t.appWrite)} |`,
+      );
+    security.push('');
+    if (d.failures.length)
+      security.push('Failing:', '', ...d.failures.map((f) => `- ${f}`), '');
+  }
+}
+if (security.length) md.push('## Security and data safety', '', ...security);
+
+// ---------------------------------------------------------------- coverage (D-27)
+
+// A floor is keyed by folder (libs/theme), a project by package name (@byteflock/theme): they match
+// on the last segment.
+const floorFor = (run, projectName) => {
+  const floors = run.coverageFloor?.floors ?? {};
+  const key = Object.keys(floors).find(
+    (k) => k.split('/').pop() === projectName.split('/').pop(),
+  );
+  return key ? floors[key] : undefined;
+};
+const coverageRows = runs.flatMap((r) =>
+  Object.entries(r.projects)
+    .filter(([, p]) => p.coverage?.total)
+    .map(([name, p]) => ({
+      run: r,
+      name,
+      total: p.coverage.total,
+      floor: floorFor(r, name),
+    })),
+);
+if (coverageRows.length) {
+  md.push('## Coverage', '');
+  md.push(
+    `| ${multi ? 'Run | ' : ''}Project | Lines | Statements | Functions | Branches |`,
+    `| ${multi ? '--- | ' : ''}--- | --- | --- | --- | --- |`,
+  );
+  const show = (row, m) => {
+    const t = row.total[m];
+    const pct = t.total === 0 ? 'n/a' : `${t.pct}%`;
+    return row.floor ? `${pct} (floor ${row.floor[m]}%)` : pct;
+  };
+  for (const row of coverageRows)
+    md.push(
+      `| ${multi ? `${cell(row.run.label)} | ` : ''}${row.name} | ${show(row, 'lines')} | ${show(row, 'statements')} | ${show(row, 'functions')} | ${show(row, 'branches')} |`,
+    );
+  md.push('');
+  md.push(
+    'Unit-test coverage only (V8; Vitest and Jest). Storybook stories and end-to-end tests are not counted, so the figure is a lower bound for the widget and the UI libraries, whose behaviour is mostly tested there. The test run fails below a floor; floors only go up (`tools/coverage-floor.json`, `COVERAGE-LOWERED:` to lower one).',
+    '',
+  );
+  for (const r of runs.filter((x) => x.coverageFloor?.lowered?.length))
+    md.push(
+      `Floors lowered in ${r.label}: ${r.coverageFloor.lowered.join('; ')}.`,
+      '',
+    );
+}
 if (details.length) md.push('## Details', '', ...details);
 md.push(
   '---',

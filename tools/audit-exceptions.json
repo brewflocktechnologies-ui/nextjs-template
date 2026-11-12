@@ -1,0 +1,53 @@
+{
+  "$comment": "High and critical advisories in DEV dependencies that are accepted for now (D-27, check-audit). Each needs a reason and an expiry date (at most 30 days out); an expired or no-longer-needed entry fails the check. Production dependencies cannot be listed here.",
+  "exceptions": {
+    "GHSA-rfgv-xxqx-mfg5": {
+      "package": "undici",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
+      "expires": "2026-12-12"
+    },
+    "GHSA-w293-vg96-wgc3": {
+      "package": "undici",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
+      "expires": "2026-12-12"
+    },
+    "GHSA-mrhx-c7xc-m3w5": {
+      "package": "zod",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through eslint-config-next>eslint-plugin-react-hooks>zod, lint time only, never shipped. pnpm audit --prod is clean. Clears with an eslint-config-next update.",
+      "expires": "2026-12-12"
+    },
+    "GHSA-xjj6-f33q-929c": {
+      "package": "undici",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
+      "expires": "2026-12-12"
+    },
+    "GHSA-4w7w-5xrc-9h26": {
+      "package": "undici",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
+      "expires": "2026-12-12"
+    },
+    "GHSA-2m5v-pch6-74hx": {
+      "package": "undici",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
+      "expires": "2026-12-12"
+    },
+    "GHSA-qrxm-fqhp-jwvm": {
+      "package": "undici",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
+      "expires": "2026-12-12"
+    },
+    "GHSA-mrwp-f3q8-3g9p": {
+      "package": "follow-redirects",
+      "severity": "high",
+      "reason": "Dev tooling only: reached through @nx/web>http-server>http-proxy, a static file server used for local serve targets, never shipped. pnpm audit --prod is clean. Clears with an nx upgrade.",
+      "expires": "2026-12-12"
+    }
+  }
+}

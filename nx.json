@@ -15,7 +15,10 @@
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/tsconfig.storybook.json"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": [
+      "{workspaceRoot}/tools/coverage-floor.json",
+      "{workspaceRoot}/tools/reporters/**/*"
+    ]
   },
   "plugins": [
     {

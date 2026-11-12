@@ -54,6 +54,8 @@ function vitestCount(config) {
         '--reporter=json',
         `--outputFile=${out}`,
         '--passWithNoTests',
+        // D-27: counting only; coverage would slow it down and overwrite the real results.
+        '--coverage.enabled=false',
       ],
       path.join(root, path.dirname(config)),
     );
@@ -74,7 +76,7 @@ function jestCount() {
   );
   try {
     run(
-      ['jest', '--json', `--outputFile=${out}`, '--silent'],
+      ['jest', '--json', `--outputFile=${out}`, '--silent', '--coverage=false'],
       path.join(root, 'apps', 'admin-dashboard'),
     );
   } catch {
