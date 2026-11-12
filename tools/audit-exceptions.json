@@ -13,12 +13,6 @@
       "reason": "Dev tooling only: reached through nx (.>@nx/devkit>nx>undici), which runs on developer and CI machines and is never shipped. pnpm audit --prod is clean. A fixed undici exists (see the advisory); take it with an nx upgrade or a pnpm override, the owner decides (D-27).",
       "expires": "2026-12-12"
     },
-    "GHSA-mrhx-c7xc-m3w5": {
-      "package": "zod",
-      "severity": "high",
-      "reason": "Dev tooling only: reached through eslint-config-next>eslint-plugin-react-hooks>zod, lint time only, never shipped. pnpm audit --prod is clean. Clears with an eslint-config-next update.",
-      "expires": "2026-12-12"
-    },
     "GHSA-xjj6-f33q-929c": {
       "package": "undici",
       "severity": "high",

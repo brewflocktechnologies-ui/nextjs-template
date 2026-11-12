@@ -64,10 +64,16 @@ const STEPS = {
     name: 'Generated files up to date',
     cmd: nx('build:check'),
   },
+  // D-29: unused files and dependencies fail; unused exports and types are warnings (knip.jsonc).
+  unused: {
+    name: 'Unused code and dependencies',
+    cmd: 'node tools/scripts/unused.mjs',
+  },
   ltb: {
     name: 'Lint, test, typecheck, build',
-    cmd: nx('lint test typecheck build'),
-    targets: { lint: 'lint', test: 'test', build: 'build' },
+    // D-29: `budgets` (dashboard route JS) runs after the dashboard build in the same Nx run.
+    cmd: nx('lint test typecheck build budgets'),
+    targets: { lint: 'lint', test: 'test', build: 'build', budgets: 'budgets' },
   },
   // Stories are component specs and tests (ADR-008): render, play() and axe in Chromium.
   storybook: {
@@ -129,6 +135,7 @@ const PROFILES = {
     'format',
     'sync',
     'generated',
+    'unused',
     'ltb',
     'storybook',
     'e2e',
@@ -139,6 +146,7 @@ const PROFILES = {
     'format',
     'sync',
     'generated',
+    'unused',
     'ltb',
     'storybook',
   ],

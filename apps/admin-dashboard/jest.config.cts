@@ -13,7 +13,8 @@ const toJestThreshold = (f) => ({
 });
 
 const createJestConfig = nextJest({
-  dir: './',
+  // __dirname, not './': the config then loads from any working directory (knip, D-29).
+  dir: __dirname,
 });
 
 const config = {

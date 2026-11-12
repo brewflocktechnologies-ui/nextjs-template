@@ -26,6 +26,19 @@
           "^build",
           "^typecheck"
         ]
+      },
+      "budgets": {
+        "command": "node scripts/route-budgets.mjs",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "dependsOn": [
+          "build"
+        ],
+        "outputs": [
+          "{projectRoot}/test-output/reports/budgets"
+        ],
+        "cache": false
       }
     },
     "name": "@byteflock/admin-dashboard"

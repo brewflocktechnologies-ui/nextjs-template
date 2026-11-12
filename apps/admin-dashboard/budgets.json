@@ -1,0 +1,32 @@
+{
+  "$comment": "Dashboard route budgets: first-load JavaScript per page route, gzip bytes (D-29). Checked by scripts/route-budgets.mjs after next build; the method is checked by tools/scripts/policy/check-budget-exception.mjs.",
+  "method": "budget = ceil(baseline × 1.15). A budget above that needs an entry in exceptions and a BUDGET-EXCEPTION: line in the pull request.",
+  "baseline": {
+    "source": "next build, 2026-11-12",
+    "/": 247382,
+    "/_not-found": 246980,
+    "/dev/session": 243674,
+    "/platform": 246980,
+    "/platform/tenants/[tenantId]": 246980,
+    "/platform/tenants/[tenantId]/dashboard": 248972,
+    "/platform/tenants/[tenantId]/theme": 277185,
+    "/platform/tenants/[tenantId]/widget": 248171,
+    "/settings/dashboard": 248972,
+    "/settings/theme": 277185,
+    "/settings/widget": 248171
+  },
+  "budgets": {
+    "/": 284490,
+    "/_not-found": 284027,
+    "/dev/session": 280226,
+    "/platform": 284027,
+    "/platform/tenants/[tenantId]": 284027,
+    "/platform/tenants/[tenantId]/dashboard": 286318,
+    "/platform/tenants/[tenantId]/theme": 318763,
+    "/platform/tenants/[tenantId]/widget": 285397,
+    "/settings/dashboard": 286318,
+    "/settings/theme": 318763,
+    "/settings/widget": 285397
+  },
+  "exceptions": {}
+}

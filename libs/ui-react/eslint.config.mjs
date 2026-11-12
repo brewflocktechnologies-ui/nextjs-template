@@ -1,10 +1,13 @@
 import nx from '@nx/eslint-plugin';
 import baseConfig from '../../eslint.config.mjs';
 import { tagRestrictions } from '../../tools/eslint/tag-restrictions.mjs';
+import { a11yAsErrors } from '../../tools/eslint/a11y-errors.mjs';
 
 export default [
   ...nx.configs['flat/react'],
   ...baseConfig,
+  // D-29: jsx-a11y rules fail lint instead of warning.
+  a11yAsErrors(nx.configs['flat/react-jsx']),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {},

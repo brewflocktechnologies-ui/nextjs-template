@@ -1,0 +1,91 @@
+// Unused files, dependencies and exports (D-29, P2.1-T20). Run by `pnpm verify` (step "Unused code
+// and dependencies"). Unused files, unused or unlisted dependencies and unlisted binaries fail;
+// unused exports and types are warnings (some are in contract files, D-29). Every entry and every
+// ignore below says why knip cannot see the use itself.
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  "rules": {
+    "exports": "warn",
+    "types": "warn",
+    "nsExports": "warn",
+    "nsTypes": "warn",
+    "enumMembers": "warn",
+    "duplicates": "warn",
+  },
+  "ignore": [
+    // Agent skill bundles copied in by Nx's AI setup; not part of the product or its tooling.
+    ".agents/**",
+    ".github/skills/**",
+    ".opencode/**",
+    // Host-page fixtures served as static files, written like customer pages (and vendored rrweb).
+    "apps/widget-playground/public/**",
+  ],
+  "workspaces": {
+    ".": {
+      // Node scripts run from package.json, the workflows, Nx targets or by hand; nothing imports them.
+      "entry": [
+        "tools/scripts/**/*.mjs",
+        "tools/scripts/**/*.cjs",
+        "tools/reporters/*.{mjs,cjs}",
+        "tools/eslint/*.mjs",
+        "tools/eslint-byteflock/*.mjs",
+      ],
+      "ignoreDependencies": [
+        // ESLint plugins loaded by name inside @nx/eslint-plugin's React presets.
+        "eslint-plugin-import",
+        "eslint-plugin-jsx-a11y",
+        "eslint-plugin-react-hooks",
+        // Loaded by @nx/eslint-plugin's flat JavaScript and TypeScript presets.
+        "@eslint/js",
+        // Nx workspace generators and migrations (`nx g`, `nx migrate`).
+        "@nx/workspace",
+        // Jest reads the TypeScript config apps/admin-dashboard/jest.config.cts through ts-node.
+        "ts-node",
+        // Loaded by @nx/react/babel, the preset in libs/ui-react/.babelrc.
+        "@babel/preset-react",
+        // Shared dev tools installed at the root and used inside the workspaces: ui-react's Storybook
+        // (@storybook/react), the dashboard and Storybook CSS (tailwindcss), dashboard types and specs
+        // (typescript-eslint).
+        "@storybook/react",
+        "tailwindcss",
+        "typescript-eslint",
+        // tools/scripts/db and check-db-safety load pg through createRequire from the dashboard's
+        // package.json, the only package that depends on it (ADR-012).
+        "pg",
+      ],
+      "ignoreBinaries": [
+        // `next` is called as `pnpm exec next ...` in Playwright's webServer commands; it is the
+        // dashboard's dependency, resolved through pnpm.
+        "next",
+      ],
+    },
+    "apps/admin-dashboard": {
+      "entry": ["scripts/*.mjs"],
+    },
+    "apps/widget": {
+      // The widget's own build (scripts/build.mjs) bundles these entries; Vite's config does not name them.
+      "entry": [
+        "src/loader.ts",
+        "src/launcher/index.ts",
+        "src/frame/main.ts",
+        "scripts/*.mjs",
+      ],
+      "ignoreDependencies": [
+        // scripts/vendor-fonts.mjs copies files out of these packages by path (P1.5-T05).
+        "@fontsource/inter",
+        "@fontsource/noto-sans",
+        "@fontsource/roboto",
+        "@fontsource/source-sans-3",
+      ],
+    },
+    "apps/widget-playground": {
+      "ignoreDependencies": [
+        // Pins the version and licence of the copy vendored in public/vendor/rrweb.umd.min.js.
+        "rrweb",
+      ],
+    },
+    "libs/ui-react": {
+      "entry": ["scripts/*.mjs"],
+    },
+  },
+}

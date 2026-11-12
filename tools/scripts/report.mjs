@@ -64,6 +64,7 @@ for (const dir of dirs) {
       storyA11y: p('storybook', 'story-a11y.json'),
       playwright: p('e2e', 'playwright.json'),
       budgets: p('build', 'budgets.json'),
+      routeBudgets: p('budgets', 'routes.json'),
       coverage: p(path.join('test', 'coverage'), 'coverage-summary.json'),
     };
   }
@@ -78,6 +79,7 @@ for (const dir of dirs) {
     dbSafety: readJson(path.join(dir, 'details', 'db-safety.json')),
     coverageFloor: readJson(path.join(dir, 'details', 'coverage-floor.json')),
     secrets: readJson(path.join(dir, 'details', 'secrets.json')),
+    unused: readJson(path.join(dir, 'details', 'unused.json')),
     // D-28: the metrics of the run this folder held before (kept by verify.mjs and visual.mjs).
     previous: readJson(path.join(dir, 'previous-metrics.json')),
     lighthouse: {
@@ -498,6 +500,120 @@ if (budgetRuns.length) {
   }
 }
 
+// Dashboard route budgets (D-29)
+const routeRuns = runs.flatMap((r) =>
+  Object.entries(r.projects)
+    .filter(([, p]) => p.routeBudgets)
+    .map(([name, p]) => ({ run: r, name, ...p.routeBudgets })),
+);
+for (const b of routeRuns) {
+  details.push('### Dashboard route budgets (first-load JS, gzip bytes)', '');
+  if (multi) details.push(`**${b.run.label}**`, '');
+  details.push(
+    '| Route | Raw | Gzip | Budget | Headroom |',
+    '| --- | --- | --- | --- | --- |',
+  );
+  for (const [route, s] of Object.entries(b.sizes)) {
+    const head =
+      s.budget == null
+        ? 'no budget'
+        : s.gzip > s.budget
+          ? `**over by ${s.gzip - s.budget} B**`
+          : `${s.budget - s.gzip} B (${Math.round(((s.budget - s.gzip) / s.budget) * 100)}%)`;
+    details.push(
+      `| ${cell(route)} | ${s.raw} | ${s.gzip} | ${s.budget ?? '—'} | ${head} |`,
+    );
+  }
+  details.push('');
+  if (b.problems.length)
+    details.push(
+      'Route budget problems:',
+      '',
+      ...b.problems.map((p) => `- ${p}`),
+      '',
+    );
+  const prev = stepSummary[`${b.run.dir}:ltb`];
+  note(
+    b.run,
+    'ltb',
+    `${prev ? `${prev}; ` : ''}routes: ${b.problems.length ? `${plural(b.problems.length, 'problem')}` : 'within budget'}`,
+  );
+}
+
+// Unused code and dependencies (D-29)
+const UNUSED_FAIL = [
+  'files',
+  'dependencies',
+  'devDependencies',
+  'optionalPeerDependencies',
+  'unlisted',
+  'binaries',
+  'unresolved',
+];
+const UNUSED_WARN = [
+  'exports',
+  'types',
+  'nsExports',
+  'nsTypes',
+  'enumMembers',
+  'duplicates',
+];
+function unusedOf(r) {
+  const by = {};
+  for (const issue of r.unused?.result?.issues ?? [])
+    for (const kind of [...UNUSED_FAIL, ...UNUSED_WARN])
+      for (const item of issue[kind] ?? [])
+        (by[kind] ??= []).push({
+          file: issue.file,
+          name: item.name ?? issue.file,
+          line: item.line,
+        });
+  return by;
+}
+for (const r of runs.filter((x) => x.unused)) {
+  const by = unusedOf(r);
+  const failing = UNUSED_FAIL.reduce((n, k) => n + (by[k]?.length ?? 0), 0);
+  const warning = UNUSED_WARN.reduce((n, k) => n + (by[k]?.length ?? 0), 0);
+  note(
+    r,
+    'unused',
+    `${plural(failing, 'failing finding')}, ${plural(warning, 'warning')}`,
+  );
+  details.push('### Unused code and dependencies (knip)', '');
+  if (multi) details.push(`**${r.label}**`, '');
+  if (!r.unused.result) {
+    details.push(
+      'knip did not produce a readable result; see the step log.',
+      '',
+    );
+    continue;
+  }
+  details.push('| Kind | Count | Fails the gate |', '| --- | --- | --- |');
+  for (const k of [...UNUSED_FAIL, ...UNUSED_WARN])
+    if (by[k]?.length)
+      details.push(
+        `| ${k} | ${by[k].length} | ${UNUSED_FAIL.includes(k) ? 'yes' : 'no (warning)'} |`,
+      );
+  if (!failing && !warning) details.push('| (none) | 0 | |');
+  details.push('');
+  const listed = [...UNUSED_FAIL, ...UNUSED_WARN].flatMap((k) =>
+    (by[k] ?? []).map((x) => ({ kind: k, ...x })),
+  );
+  if (listed.length) {
+    details.push(
+      '<details><summary>Every finding</summary>',
+      '',
+      '| Kind | File | Name |',
+      '| --- | --- | --- |',
+    );
+    for (const x of listed.slice(0, 200))
+      details.push(
+        `| ${x.kind} | ${cell(x.file)}${x.line ? `:${x.line}` : ''} | ${cell(x.name)} |`,
+      );
+    details.push('', '</details>', '');
+  }
+}
+
 // Test count
 for (const r of runs.filter((x) => x.testCount)) {
   const t = r.testCount;
@@ -611,10 +727,15 @@ if (any) {
     '| Source | Scanned | Findings (critical / serious / moderate / minor) | Fails the gate on |',
     '| --- | --- | --- | --- |',
   );
-  if (lintRows.length)
+  if (lintRows.length) {
+    // D-29: only JSX files in projects where the jsx-a11y rules are on count as checked.
+    const withJsx = lintRows.filter((l) => l.jsxFiles > 0);
+    const checked = withJsx.filter((l) => l.jsxA11yRules > 0);
+    const unchecked = withJsx.filter((l) => !l.jsxA11yRules);
     a11y.push(
-      `| Lint (\`jsx-a11y\`) | ${lintRows.filter((l) => l.files !== undefined).reduce((n, l) => n + l.filesLinted, 0)} files | ${plural(lintA11y.filter((m) => m.severity === 'error').length, 'error')}, ${plural(lintA11y.filter((m) => m.severity === 'warning').length, 'warning')} | errors only (the rules are warnings today) |`,
+      `| Lint (\`jsx-a11y\`) | ${checked.reduce((n, l) => n + l.jsxFiles, 0)} JSX files in ${checked.map((l) => l.name).join(', ') || 'no project'}${unchecked.length ? `; **not checked:** ${unchecked.map((l) => `${l.name} (${l.jsxFiles})`).join(', ')}` : ''} | ${plural(lintA11y.filter((m) => m.severity === 'error').length, 'error')}, ${plural(lintA11y.filter((m) => m.severity === 'warning').length, 'warning')} | any finding (rules are errors, D-29) |`,
     );
+  }
   if (stories.length)
     a11y.push(
       `| Storybook + axe | ${stories.filter((s) => s.scanned).length} of ${stories.length} stories | ${byImpact(storyViolations)} | any violation (\`a11y: { test: 'error' }\`) |`,
@@ -963,6 +1084,9 @@ function metricsFor(r) {
   for (const b of budgetRuns.filter((x) => x.run === r))
     for (const [name, s] of Object.entries(b.sizes))
       put(`Bundle gzip bytes: ${name}`, s.gzip, 'lower');
+  for (const b of routeRuns.filter((x) => x.run === r))
+    for (const [route, s] of Object.entries(b.sizes))
+      put(`Route JS gzip bytes: ${route}`, s.gzip, 'lower');
   for (const c of coverageRows.filter((x) => x.run === r))
     if (c.total.lines.total)
       put(`Coverage lines %: ${c.name}`, c.total.lines.pct, 'higher');
@@ -975,6 +1099,19 @@ function metricsFor(r) {
   }
   if (r.secrets)
     put('Secret scan findings', r.secrets.findings.length, 'lower');
+  if (r.unused?.result) {
+    const by = unusedOf(r);
+    put(
+      'Unused files and dependencies',
+      UNUSED_FAIL.reduce((n, k) => n + (by[k]?.length ?? 0), 0),
+      'lower',
+    );
+    put(
+      'Unused exports and types',
+      UNUSED_WARN.reduce((n, k) => n + (by[k]?.length ?? 0), 0),
+      'lower',
+    );
+  }
   if (r.testCount) put('Test count', r.testCount.total, 'higher');
   return m;
 }

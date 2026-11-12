@@ -20,6 +20,18 @@ export default async function format(results, context) {
       })),
     }));
   const sum = (key) => results.reduce((n, r) => n + r[key], 0);
+  const eslint = new ESLint({ cwd });
+  // D-29: which JSX files the jsx-a11y rules actually check, so the report states real coverage.
+  const jsx = results.filter((r) => /.(tsx|jsx)$/.test(r.filePath));
+  let jsxA11yRules = 0;
+  if (jsx.length) {
+    const config = await eslint.calculateConfigForFile(jsx[0].filePath);
+    jsxA11yRules = Object.entries(config?.rules ?? {}).filter(
+      ([rule, setting]) =>
+        rule.startsWith('jsx-a11y/') &&
+        ![0, 'off'].includes(Array.isArray(setting) ? setting[0] : setting),
+    ).length;
+  }
   const out = path.join(cwd, 'test-output', 'reports', 'lint', 'eslint.json');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(
@@ -29,12 +41,14 @@ export default async function format(results, context) {
         filesLinted: results.length,
         errors: sum('errorCount'),
         warnings: sum('warningCount'),
+        jsxFiles: jsx.length,
+        jsxA11yRules,
         files,
       },
       null,
       2,
     ) + '\n',
   );
-  const stylish = await new ESLint({ cwd }).loadFormatter('stylish');
+  const stylish = await eslint.loadFormatter('stylish');
   return stylish.format(results, context);
 }

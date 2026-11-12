@@ -220,6 +220,13 @@ The report gains a Dependency audit section, a Database safety table and a Cover
 - **Visual results in the report.** `pnpm visual` writes a run folder (`reports/visual/`) like `pnpm verify`, so `report.mjs` merges it with the other runs.
 - **Trend.** Each run folder keeps the metrics of the previous run in the same folder, and the report shows what changed (tests, failures, coverage, bundle sizes, accessibility and audit findings, lint warnings, durations). CI runners start empty, so CI reports show no trend until a previous report is supplied.
 
+### D-29 — Accessibility lint as errors, pre-commit hook, dashboard route budgets, unused code — **Fixed (product owner, 2026-11-12), applies from P2.1-T20**
+
+- **jsx-a11y rules are errors** in the React projects (dashboard, ui-react). Nx's React preset sets them as warnings, so they never failed lint.
+- **Pre-commit hook.** `.githooks/pre-commit` runs `tools/scripts/pre-commit.mjs` on the staged files: Prettier check, the secret scan of `check-secrets` on the staged content, and ESLint per project. `pnpm install` points git at `.githooks` (`core.hooksPath`) outside CI. It takes seconds; `git commit --no-verify` skips it, and `pnpm verify` remains the gate.
+- **Dashboard route budgets.** After `next build`, the first-load JavaScript of every page route (the shared runtime chunks plus the layout and page chunks from Next's client manifest, gzip) is held to `apps/admin-dashboard/budgets.json`, set by the widget's method: `ceil(baseline × 1.15)`, with exceptions written down (`check-budget-exception` covers both files). The results appear in the report's budgets section.
+- **Unused code and dependencies** (knip, `knip.jsonc`). Unused files, unused or unlisted dependencies and unlisted binaries fail; every dependency that is used in a way knip cannot see is listed with its reason. Unused exports and types are reported as warnings, because some are in contract files whose changes need `CONTRACT-CHANGE:`; tightening them is a later decision.
+
 ## How to change a decision
 
 Add a dated line under the decision ("Overturned on … by …: new text"), update `STATUS.md`, and list the affected spec sections in the same commit. Do not rewrite history.
