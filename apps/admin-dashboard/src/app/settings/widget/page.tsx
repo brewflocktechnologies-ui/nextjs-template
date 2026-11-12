@@ -1,5 +1,6 @@
 import { AppShell } from '../../../components/AppShell';
 import { getWidgetSettings } from '../../../data/widget-config';
+import { can } from '../../../server/authorize';
 import { getTenantContext } from '../../../server/request-context';
 import { requireModule } from '../../../server/tenant-config/modules';
 import { WidgetSettingsForm } from './WidgetSettingsForm';
@@ -20,7 +21,10 @@ export default async function WidgetSettingsPage() {
             origins listed here (D-21). On any other site the chat stays
             unavailable.
           </p>
-          <WidgetSettingsForm initial={settings.allowedOrigins} />
+          <WidgetSettingsForm
+            initial={settings.allowedOrigins}
+            readOnly={!can(ctx, ctx.tenantId, 'widget.write')}
+          />
         </>
       ) : (
         <p className="text-muted-foreground">This tenant has no widget.</p>

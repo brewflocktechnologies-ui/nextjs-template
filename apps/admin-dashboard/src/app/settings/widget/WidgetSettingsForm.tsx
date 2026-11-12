@@ -14,9 +14,12 @@ const parse = (text: string) =>
 export function WidgetSettingsForm({
   initial,
   apiQuery = '',
+  readOnly = false,
 }: {
   initial: string[];
   apiQuery?: string;
+  /** True for users who may read but not change the settings (agents). */
+  readOnly?: boolean;
 }) {
   const [text, setText] = useState(initial.join('\n'));
   const [status, setStatus] = useState('');
@@ -60,6 +63,7 @@ export function WidgetSettingsForm({
         rows={6}
         value={text}
         spellCheck={false}
+        readOnly={readOnly}
         aria-invalid={problems.length ? true : undefined}
         aria-describedby="origins-help"
         onChange={(e) => setText(e.target.value)}
@@ -76,10 +80,22 @@ export function WidgetSettingsForm({
         </ul>
       ) : null}
       <div>
-        <Button type="submit" disabled={busy || problems.length > 0}>
+        <Button
+          type="submit"
+          disabled={readOnly || busy || problems.length > 0}
+        >
           Save
         </Button>
       </div>
+      {readOnly ? (
+        <p
+          role="note"
+          data-testid="read-only-note"
+          className="text-sm text-muted-foreground"
+        >
+          Read only: only a tenant admin can change these settings.
+        </p>
+      ) : null}
       <p
         role="status"
         aria-live="polite"

@@ -48,6 +48,7 @@ export function ThemeEditor({
   widgetOrigin,
   dashboardOrigin,
   apiQuery = '',
+  readOnly = false,
 }: {
   tenantId: string;
   initial: Theme;
@@ -56,6 +57,8 @@ export function ThemeEditor({
   dashboardOrigin: string;
   /** Appended to every API URL: '' for a tenant user, '?tenantId=t_x' for a super admin (P2.1-T10). */
   apiQuery?: string;
+  /** True for users who may read but not change the theme (agents); actions are disabled. */
+  readOnly?: boolean;
 }) {
   const [theme, setTheme] = useState<Theme>(initial);
   const [colourSet, setColourSet] = useState<'light' | 'dark'>(
@@ -82,7 +85,11 @@ export function ThemeEditor({
   );
   const schemaErrors = validation.ok ? [] : validation.errors;
   const canPublish =
-    widgetKey !== null && validation.ok && violations.length === 0 && !busy;
+    !readOnly &&
+    widgetKey !== null &&
+    validation.ok &&
+    violations.length === 0 &&
+    !busy;
 
   const update = (change: (t: Theme) => Theme) => setTheme((t) => change(t));
   const setColour = (role: ColorRole, value: string) =>
@@ -301,7 +308,7 @@ export function ThemeEditor({
           <Button
             type="button"
             variant="outline"
-            disabled={busy || !validation.ok}
+            disabled={readOnly || busy || !validation.ok}
             onClick={onSave}
           >
             Save draft
@@ -310,6 +317,15 @@ export function ThemeEditor({
             Publish
           </Button>
         </div>
+        {readOnly ? (
+          <p
+            role="note"
+            data-testid="read-only-note"
+            className="text-sm text-muted-foreground"
+          >
+            Read only: only a tenant admin can change these settings.
+          </p>
+        ) : null}
         <p
           role="status"
           aria-live="polite"
@@ -360,7 +376,7 @@ export function ThemeEditor({
                       type="button"
                       size="sm"
                       variant="outline"
-                      disabled={busy}
+                      disabled={readOnly || busy}
                       onClick={() => onRollback(rev)}
                     >
                       Use revision {rev}

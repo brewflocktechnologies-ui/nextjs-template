@@ -24,7 +24,9 @@ test('the super admin lands on /platform and sees the three real tenants', async
 }) => {
   await signInPlatform(context);
   await page.goto('/dev/session');
-  await page.getByRole('button', { name: 'Sign in as Super admin' }).click();
+  await page
+    .getByRole('button', { name: 'Sign in as Platform Admin (super admin)' })
+    .click();
   await expect(page).toHaveURL(`${DASHBOARD}/platform`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tenants');
   const rows = page.getByTestId('tenant-list').locator('tbody tr');

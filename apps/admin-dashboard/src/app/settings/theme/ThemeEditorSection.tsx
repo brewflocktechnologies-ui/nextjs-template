@@ -17,9 +17,11 @@ import { ThemeEditor } from './ThemeEditor';
 export async function ThemeEditorSection({
   tenantId,
   apiQuery = '',
+  readOnly = false,
 }: {
   tenantId: string;
   apiQuery?: string;
+  readOnly?: boolean;
 }) {
   const widgetKey = (await getWidgetSettings(tenantId))?.widgetKey ?? null;
   const draft = await getDraft(tenantId);
@@ -48,6 +50,7 @@ export async function ThemeEditorSection({
           process.env.NEXT_PUBLIC_DASHBOARD_ORIGIN ?? 'http://localhost:3000'
         }
         apiQuery={apiQuery}
+        readOnly={readOnly}
       />
     </HydrationBoundary>
   );

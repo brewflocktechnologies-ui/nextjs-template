@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/test';
 import {
   DASHBOARD,
   cssVar,
+  gotoSettled,
   previewStyle,
   rootNonce,
   signIn,
@@ -95,10 +96,15 @@ test('P2.1-AC06: computed variables are the default on html and the tenant’s i
     t_initech: '#b45309',
   } as const;
   for (const tenant of TENANTS) {
-    await page.goto(`${DASHBOARD}/platform/tenants/${tenant}`);
-    const preview = page.getByTestId('tenant-preview');
-    await expect(preview).toBeVisible();
+    // toPass retries the whole step if a cold `next dev` reloads the page mid-way.
+    await expect(async () => {
+      await gotoSettled(page, `${DASHBOARD}/platform/tenants/${tenant}`);
+      await expect(page.getByTestId('tenant-preview')).toBeVisible();
+      await checkComputed(tenant);
+    }).toPass({ timeout: 60_000 });
+  }
 
+  async function checkComputed(tenant: (typeof TENANTS)[number]) {
     const computed = await page.evaluate((id) => {
       const read = (el: Element, name: string) =>
         getComputedStyle(el).getPropertyValue(name).trim();
@@ -131,20 +137,28 @@ test('the preview is labelled and the primary button inside really uses the tena
   context,
 }) => {
   await signInPlatform(context);
-  await page.goto(`${DASHBOARD}/platform/tenants/t_acme`);
-  await expect(page.getByTestId('preview-label')).toHaveText(
-    'Preview: Acme Corp',
-  );
   const bg = (selector: string) =>
     page
       .locator(selector)
       .first()
       .evaluate((el) => getComputedStyle(el).backgroundColor);
-  // rgb(29, 78, 216) is #1d4ed8, Acme's primary; the page's own primary button is not Acme blue.
-  expect(await bg('[data-tenant-preview] button')).toBe('rgb(29, 78, 216)');
-  await page.goto(`${DASHBOARD}/platform/tenants/t_globex`);
-  await expect(page.getByTestId('preview-label')).toHaveText('Preview: Globex');
-  expect(await bg('[data-tenant-preview] button')).not.toBe('rgb(29, 78, 216)');
+  // rgb(29, 78, 216) is #1d4ed8, Acme's primary. toPass retries if a cold `next dev` reloads.
+  await expect(async () => {
+    await gotoSettled(page, `${DASHBOARD}/platform/tenants/t_acme`);
+    await expect(page.getByTestId('preview-label')).toHaveText(
+      'Preview: Acme Corp',
+    );
+    expect(await bg('[data-tenant-preview] button')).toBe('rgb(29, 78, 216)');
+  }).toPass({ timeout: 60_000 });
+  await expect(async () => {
+    await gotoSettled(page, `${DASHBOARD}/platform/tenants/t_globex`);
+    await expect(page.getByTestId('preview-label')).toHaveText(
+      'Preview: Globex',
+    );
+    expect(await bg('[data-tenant-preview] button')).not.toBe(
+      'rgb(29, 78, 216)',
+    );
+  }).toPass({ timeout: 60_000 });
 });
 
 test('the theme page shows the preview and the editor, and a tenant user never gets a preview', async ({
@@ -152,7 +166,7 @@ test('the theme page shows the preview and the editor, and a tenant user never g
   context,
 }) => {
   await signInPlatform(context);
-  await page.goto(`${DASHBOARD}/platform/tenants/t_initech/theme`);
+  await gotoSettled(page, `${DASHBOARD}/platform/tenants/t_initech/theme`);
   await expect(page.getByTestId('preview-label')).toHaveText(
     'Preview: Initech',
   );

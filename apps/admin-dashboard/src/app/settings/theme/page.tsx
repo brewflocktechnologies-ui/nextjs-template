@@ -1,4 +1,5 @@
 import { AppShell } from '../../../components/AppShell';
+import { can } from '../../../server/authorize';
 import { getTenantContext } from '../../../server/request-context';
 import { requireModule } from '../../../server/tenant-config/modules';
 import { ThemeEditorSection } from './ThemeEditorSection';
@@ -15,7 +16,10 @@ export default async function ThemeSettingsPage() {
         Edit your brand theme, preview it in the real chat widget, and publish
         it to your widget and this dashboard.
       </p>
-      <ThemeEditorSection tenantId={ctx.tenantId} />
+      <ThemeEditorSection
+        tenantId={ctx.tenantId}
+        readOnly={!can(ctx, ctx.tenantId, 'theme.write')}
+      />
     </AppShell>
   );
 }

@@ -99,6 +99,27 @@ export function resetLocalState() {
 }
 
 /**
+ * Opens a page and waits for its main heading. On a cold `next dev`, a route that compiles while a
+ * page is open can reload that page and abort the navigation; it tries three times (P2.1-T12).
+ * Callers that read from the page afterwards wrap the step in `expect(...).toPass()`, because a
+ * reload can still destroy the page's context later.
+ */
+export async function gotoSettled(
+  page: import('@playwright/test').Page,
+  url: string,
+) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await page.goto(url);
+      await page.getByRole('heading', { level: 1 }).waitFor();
+      return;
+    } catch (e) {
+      if (attempt === 3) throw e;
+    }
+  }
+}
+
+/**
  * Opens a page and waits until its client form has hydrated (`form[data-hydrated]`). On the first
  * `next dev` start after a production build, a page occasionally never hydrates with no error in
  * the browser; a reload recovers it. Three attempts, then the test fails.
