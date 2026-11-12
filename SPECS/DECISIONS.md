@@ -161,6 +161,9 @@ The product owner deferred pushing to GitHub and running CI, to focus on local s
 - **The Windows CI job (D-17) is replaced by running `verify` on the product owner's Windows 11 machine.** The Linux side is unverified until CI returns; evidence says so.
 - **The workflow file is still maintained.** Each phase updates `ci.yml` so CI is ready to turn on, and `check-workflows-pinned` keeps checking it.
 - **Deferred until CI returns:** branch protection and required checks (P1.0-AC06, P1.0-AC08, P1.0-T12), the CI cache-hit check, the PR template in use, Renovate, and the PR-body trailer checks that read `GITHUB_EVENT_PATH` (they skip locally with a notice). The independent verifier runs `verify` on a fresh clone instead.
+
+2026-11-12, at the product owner's request: the P2.1 branch was pushed and a pull request opened into `main`, so `ci.yml` runs on GitHub for the first time. Nothing else in D-22 changes: local `pnpm verify` stays the gate, and branch protection and required checks stay deferred, until the product owner overturns D-22.
+
 - **CODEOWNERS:** the `@OWNER` placeholder is a warning locally and an error only when `CI` is set, because CODEOWNERS has no effect without GitHub.
 
 To end the deferral: complete P1.0-T12, open the P1.0 pull request, and record the first green CI run in `SPECS/evidence/P1.0.md`.
