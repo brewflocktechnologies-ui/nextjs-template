@@ -193,6 +193,16 @@ Phase 1 had no backend; file stubs stood in for one (D-13, `validation/tenants.j
 - Tenant scope keeps D-20: the whole chrome uses the tenant's published theme.
 - Recorded in ADR-013, which supersedes ADR-005's request-context shape.
 
+### D-26 — One gate pipeline and one quality report — **Fixed (product owner, 2026-11-12), applies from P2.1-T17**
+
+The product owner asked for one pipeline that produces one human-readable file with every quality-gate result, accessibility included. From P2.1-T17:
+
+- **`pnpm verify` is the only gate runner**, locally and in CI. `ci.yml` and `nightly.yml` call it with a profile (`--profile=<name>`) instead of listing gate commands themselves, so the two can no longer drift (this replaces the "keep them in step by hand" rule of D-22; the rest of D-22 stands). Pull requests pass `--affected --base=<ref>`.
+- **Every gate leaves machine-readable results** that Nx caches with the task, so a cached run still reports: Vitest and Jest JSON, Playwright JSON (with each axe scan attached), an ESLint JSON file next to the normal console output, the widget bundle sizes against `budgets.json`, each policy check, and the test count against `tools/test-count.json`. Nightly adds Lighthouse.
+- **`reports/quality-report.md`** is built from them by `tools/scripts/report.mjs`: overall result and run facts, one table of gates, then details per gate, and each failed gate with the last lines of its output (full logs stay in `reports/logs/`). **Accessibility** is its own section: lint `jsx-a11y` findings, axe results from Storybook and from the end-to-end suites (violations by rule and impact, plus how many pages and stories were scanned), theme contrast tests, and the Lighthouse accessibility score.
+- In CI each job uploads its `reports/` folder, and a final job merges them into one report, shown as the run's job summary and uploaded as the `quality-report` artifact. `reports/` is never committed; the evidence file still records the summary table.
+- The widget is also scanned with axe on a real host page (playground), so the assembled frame is covered and not only its parts in Storybook.
+
 ## How to change a decision
 
 Add a dated line under the decision ("Overturned on … by …: new text"), update `STATUS.md`, and list the affected spec sections in the same commit. Do not rewrite history.

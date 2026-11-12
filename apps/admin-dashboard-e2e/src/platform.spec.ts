@@ -2,8 +2,8 @@
 // lists and edits every tenant; tenant users never see /platform; a tenant user cannot reach another
 // tenant by naming it.
 import path from 'node:path';
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { scanA11y } from './a11y';
 import {
   DASHBOARD,
   WIDGET_PUBLIC,
@@ -242,7 +242,7 @@ for (const url of [
     await signInPlatform(context);
     await page.goto(`${DASHBOARD}${url}`);
     await page.getByRole('heading', { level: 1 }).waitFor();
-    const results = await new AxeBuilder({ page }).analyze();
+    const results = await scanA11y(page);
     const bad = results.violations.filter(
       (v) => v.impact === 'serious' || v.impact === 'critical',
     );

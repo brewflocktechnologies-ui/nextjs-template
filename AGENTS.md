@@ -78,6 +78,8 @@ pnpm db:materialise                             # rebuild the widget's static fi
 pnpm db:bootstrap                               # roles and test database on a fresh server (CI service containers)
 pnpm verify                                     # every CI gate locally; its summary goes in the evidence file (D-22)
 pnpm verify --quick                             # the same without end-to-end tests
+pnpm verify --profile=<name>                    # what a CI job runs: windows, visual, browsers, measure, lighthouse (D-26)
+node tools/scripts/report.mjs <dir>...          # merge reports/ folders into one quality report (CI does this)
 pnpm policy:check                               # pinned actions, ADRs, CODEOWNERS, supply chain, tags, project graph
 pnpm nx run-many -t lint test typecheck build   # all projects
 pnpm nx affected -t lint test typecheck build   # only what changed
@@ -95,6 +97,8 @@ pnpm nx e2e @byteflock/admin-dashboard-e2e -- --project=chromium src/example.spe
 ```
 
 The dashboard unit tests and the e2e suites need Postgres: run `pnpm db:up` first (`pnpm verify` and `pnpm stack` do it themselves). Playwright starts the server it needs, or reuses a running `pnpm stack`, so e2e works either way; its global setup resets the database that server uses (`byteflock_test` when Playwright starts it, the stack database `byteflock` when it reuses `pnpm stack`). The dashboard Jest suites and the e2e suite share `byteflock_test`: do not run them at the same time. Install browsers once with `pnpm exec playwright install --with-deps chromium`. Details of the local multi-tenant stack: `SPECS/validation/local-stack.md`.
+
+Quality report (D-26): every `pnpm verify` run writes `reports/quality-report.md` (gates, accessibility, details, failure output) and keeps its raw results and step logs in `reports/`, which is not committed. A gate is added once, as a step in `tools/scripts/verify.mjs`; the workflows only pick a profile. A gate's machine-readable results go to `<project>/test-output/reports/<target>/`, which `nx.json` declares as that target's output so cached runs still report; give a new target its own folder there, since two targets sharing one folder would overwrite each other's cache restore.
 
 Adding a dependency: `pnpm add <pkg> --filter <project>` (`-w` for the root). pnpm refuses packages younger than 7 days, and install scripts run only for packages set to `true` under `allowBuilds` in `pnpm-workspace.yaml`. Do not use `nx add`: it failed here with a pnpm store error. Use `pnpm add -D -w @nx/<plugin>@24.0.0`, then `pnpm nx g @nx/<plugin>:init`.
 

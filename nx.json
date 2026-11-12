@@ -96,7 +96,30 @@
   ],
   "targetDefaults": {
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": [
+        "{projectRoot}/test-output/vitest/coverage",
+        "{projectRoot}/test-output/reports/test"
+      ]
+    },
+    "lint": {
+      "options": {
+        "format": "../../tools/reporters/eslint-formatter.mjs"
+      },
+      "outputs": [
+        "{options.outputFile}",
+        "{projectRoot}/test-output/reports/lint"
+      ]
+    },
+    "test-storybook": {
+      "outputs": ["{projectRoot}/test-output/reports/storybook"]
+    },
+    "e2e": {
+      "outputs": [
+        "{projectRoot}/test-output/playwright/output",
+        "{projectRoot}/test-output/playwright/report",
+        "{projectRoot}/test-output/reports/e2e"
+      ]
     }
   },
   "generators": {

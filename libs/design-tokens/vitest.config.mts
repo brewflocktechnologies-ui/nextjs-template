@@ -9,7 +9,9 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    reporters: ['default'],
+    // D-26: the JSON copy feeds the quality report; Nx caches it with the test task.
+    reporters: ['default', 'json'],
+    outputFile: { json: 'test-output/reports/test/vitest.json' },
     coverage: {
       reportsDirectory: './test-output/vitest/coverage',
       provider: 'v8' as const,

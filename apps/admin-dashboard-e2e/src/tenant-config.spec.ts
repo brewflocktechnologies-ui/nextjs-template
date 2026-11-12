@@ -1,6 +1,6 @@
 // Tenant dashboard config (P2.1-T09, AC12): module gating, literal text, fallback, validation.
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { scanA11y } from './a11y';
 import { DASHBOARD, gotoHydrated, resetLocalState, signIn } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
@@ -144,7 +144,7 @@ for (const tenant of ['t_acme', 't_globex', 't_initech']) {
   }) => {
     await signIn(context, tenant);
     await gotoHydrated(page, `${DASHBOARD}/settings/dashboard`);
-    const results = await new AxeBuilder({ page }).analyze();
+    const results = await scanA11y(page);
     const bad = results.violations.filter(
       (v) => v.impact === 'serious' || v.impact === 'critical',
     );

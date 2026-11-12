@@ -15,8 +15,15 @@ import { workspaceRoot } from '@nx/devkit';
  *
  * Tests tagged @measure only run with MEASURE=1 (PoC-A-T11), against a built widget.
  */
+// D-26: a JSON copy of the results (with each axe scan attached) feeds the quality report.
+const preset = nxE2EPreset(import.meta.dirname, { testDir: './src/tests' });
+
 export default defineConfig({
-  ...nxE2EPreset(import.meta.dirname, { testDir: './src/tests' }),
+  ...preset,
+  reporter: [
+    ...(Array.isArray(preset.reporter) ? preset.reporter : []),
+    ['json', { outputFile: 'test-output/reports/e2e/playwright.json' }],
+  ],
   grepInvert: process.env['MEASURE'] ? undefined : /@measure/,
   use: {
     baseURL: process.env['BASE_URL'] || 'http://localhost:4300',

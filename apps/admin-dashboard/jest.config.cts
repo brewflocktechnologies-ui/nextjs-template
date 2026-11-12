@@ -13,6 +13,8 @@ const config = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/admin-dashboard',
   testEnvironment: 'jsdom',
+  // D-26: test-output/reports/jest.json feeds the quality report; Nx caches it with the test task.
+  reporters: ['default', '<rootDir>/../../tools/reporters/jest-json.cjs'],
 };
 
 const jestConfig = createJestConfig(config);

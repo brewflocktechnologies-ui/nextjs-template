@@ -122,6 +122,31 @@ if (!loader.includes('byteflock-chat-v1'))
     'dist/v1/loader.js: the versioned element name byteflock-chat-v1 is missing',
   );
 
+// D-26: sizes against budgets for the quality report (cached with the build, see package.json).
+const reportFile = path.join(
+  root,
+  'test-output',
+  'reports',
+  'build',
+  'budgets.json',
+);
+fs.mkdirSync(path.dirname(reportFile), { recursive: true });
+fs.writeFileSync(
+  reportFile,
+  JSON.stringify(
+    {
+      sizes: Object.fromEntries(
+        Object.entries(sizes)
+          .filter(([, s]) => s)
+          .map(([name, s]) => [name, { ...s, budget: budgets[name] ?? null }]),
+      ),
+      problems,
+    },
+    null,
+    2,
+  ) + '\n',
+);
+
 if (problems.length) {
   console.error(`\nassert-bundle failed:\n  ${problems.join('\n  ')}`);
   process.exit(1);

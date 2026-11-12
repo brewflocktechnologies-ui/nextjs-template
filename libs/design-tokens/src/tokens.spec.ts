@@ -67,7 +67,9 @@ describe('design-tokens build', () => {
       fs.rmSync(a, { recursive: true, force: true });
       fs.rmSync(b, { recursive: true, force: true });
     }
-  });
+    // Two full builds: about 1.5 s alone, over the 5 s default when every task runs cold in
+    // parallel (seen in P2.1-T17, after nx.json changed every hash).
+  }, 30_000);
 
   it('P1.2-AC03 emits no primitive token names in semantic.css', () => {
     expect(css).not.toMatch(

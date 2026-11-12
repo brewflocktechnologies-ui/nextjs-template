@@ -2,6 +2,9 @@ name: Nightly
 
 # Not running yet: GitHub push and CI are deferred (SPECS/DECISIONS.md D-22). P1.7-T02: the browser
 # matrix, the @measure baselines and Lighthouse. A failure opens an issue.
+# D-26: every job runs `pnpm verify` with a profile and uploads its reports/ folder; the `report`
+# job merges them into one quality report. P2.1-T17: the jobs that start the dashboard get the
+# same Postgres service as ci.yml.
 
 on:
   schedule:
@@ -23,6 +26,21 @@ jobs:
       fail-fast: false
       matrix:
         browser: [firefox, webkit]
+    # P2.1-T14: the same Postgres image and digest as compose.yaml (check-compose-pinned).
+    services:
+      db:
+        image: postgres:17.11-alpine@sha256:3540c0362c809df084ffac0ae69fe794515f9de92692f02178bcdce0ef0302ac
+        env:
+          POSTGRES_USER: byteflock
+          POSTGRES_PASSWORD: byteflock
+          POSTGRES_DB: byteflock
+        ports:
+          - 5440:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U byteflock -d byteflock"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      BYTEFLOCK_RUN_LABEL: Nightly ${{ matrix.browser }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
@@ -33,7 +51,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
       - name: Playground and dashboard end-to-end, ${{ matrix.browser }}
-        run: pnpm nx run-many -t e2e --parallel=1 -- --project=${{ matrix.browser }}
+        run: pnpm verify --profile=browsers --browser=${{ matrix.browser }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gates-nightly-${{ matrix.browser }}
+          path: reports/
+          if-no-files-found: ignore
       - name: Write the failure report
         if: failure()
         run: >
@@ -48,6 +72,8 @@ jobs:
 
   measure:
     runs-on: ubuntu-latest
+    env:
+      BYTEFLOCK_RUN_LABEL: Nightly measure
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
@@ -57,20 +83,40 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - name: Build the widget
-        run: pnpm nx run @byteflock/widget:build
-      # Baselines are an artifact, never committed (P1.7-T02).
+      # Widget build, then the @measure baselines (MEASURE=1).
       - name: '@measure baselines'
-        env:
-          MEASURE: '1'
-        run: pnpm nx run @byteflock/widget-playground:e2e -- --project=chromium --grep @measure --reporter=line | tee measure.txt
+        run: pnpm verify --profile=measure
+      # Baselines are an artifact, never committed (P1.7-T02).
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
           name: baselines
-          path: measure.txt
+          path: reports/logs/measure.log
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gates-nightly-measure
+          path: reports/
+          if-no-files-found: ignore
 
   lighthouse:
     runs-on: ubuntu-latest
+    # P2.1-T14: the same Postgres image and digest as compose.yaml (check-compose-pinned).
+    services:
+      db:
+        image: postgres:17.11-alpine@sha256:3540c0362c809df084ffac0ae69fe794515f9de92692f02178bcdce0ef0302ac
+        env:
+          POSTGRES_USER: byteflock
+          POSTGRES_PASSWORD: byteflock
+          POSTGRES_DB: byteflock
+        ports:
+          - 5440:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U byteflock -d byteflock"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      BYTEFLOCK_RUN_LABEL: Nightly Lighthouse
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
@@ -79,9 +125,16 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Budgets warn first; switch to error after two green weeks (P1.7-T02). See lighthouserc.json.
+      # Database, then Lighthouse on /settings/theme. Budgets warn first; switch to error after two
+      # green weeks (P1.7-T02). See lighthouserc.json.
       - name: Lighthouse on /settings/theme
-        run: pnpm dlx @lhci/cli@0.16.0 autorun --config=lighthouserc.json
+        run: pnpm verify --profile=lighthouse
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gates-nightly-lighthouse
+          path: reports/
+          if-no-files-found: ignore
       - name: Write the failure report
         if: failure()
         run: >
@@ -93,3 +146,26 @@ jobs:
           title: 'Nightly: Lighthouse failed'
           content-filepath: nightly-failure.md
           labels: nightly
+
+  # D-26: one report for the whole nightly run.
+  report:
+    needs: [browsers, measure, lighthouse]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: gates-*
+          path: all-reports
+      - name: Quality report
+        run: node tools/scripts/report.mjs all-reports/gates-nightly-firefox all-reports/gates-nightly-webkit all-reports/gates-nightly-measure all-reports/gates-nightly-lighthouse --out=quality-report.md --summary
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-report
+          path: |
+            quality-report.md
+            all-reports/

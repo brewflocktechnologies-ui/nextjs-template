@@ -134,6 +134,23 @@ if (process.argv.includes('--write')) {
 const recorded = fs.existsSync(FILE)
   ? JSON.parse(fs.readFileSync(FILE, 'utf8'))
   : { total: 0, counts: {} };
+// D-26: the counts against the recorded floor, for the quality report.
+if (process.env.BYTEFLOCK_REPORT_DIR) {
+  const out = path.join(
+    process.env.BYTEFLOCK_REPORT_DIR,
+    'details',
+    'test-count.json',
+  );
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(
+    out,
+    JSON.stringify(
+      { total, recorded: recorded.total, counts, floor: recorded.counts },
+      null,
+      2,
+    ) + '\n',
+  );
+}
 const lower = Object.entries(recorded.counts)
   .filter(([k, n]) => (counts[k] ?? 0) < n)
   .map(([k, n]) => `${k}: ${counts[k] ?? 0} < ${n}`);

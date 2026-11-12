@@ -1,7 +1,9 @@
 name: CI
 
-# Not running yet: GitHub push and CI are deferred (SPECS/DECISIONS.md D-22). `pnpm verify` runs the
-# same steps locally. Keep this file and tools/scripts/verify.mjs in step.
+# Not running yet: GitHub push and CI are deferred (SPECS/DECISIONS.md D-22).
+# D-26: every job runs `pnpm verify` with a profile; no gate command lives in this file. Each job
+# uploads its reports/ folder, and the `report` job merges them into one quality report (job
+# summary and the `quality-report` artifact).
 
 on:
   push:
@@ -32,6 +34,8 @@ jobs:
         options: >-
           --health-cmd "pg_isready -h 127.0.0.1 -U byteflock -d byteflock"
           --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      BYTEFLOCK_RUN_LABEL: Linux
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -58,59 +62,28 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
 
-      # A service cannot mount the init script, so the roles and the test database come from
-      # the same SQL file through db:bootstrap; then migrations and the seed.
-      - name: Database (roles, migrations, seed)
-        run: |
-          node tools/scripts/db/bootstrap.mjs
-          node tools/scripts/db/migrate.mjs
-          node tools/scripts/db/seed.mjs
-
-      - name: Policy checks
-        run: pnpm policy:check
-
-      - name: Format check (changed files)
+      # Database (db:bootstrap, migrate, seed), policy, format, sync, generated files, lint, test,
+      # typecheck, build, Storybook and Chromium e2e: the steps of tools/scripts/verify.mjs.
+      - name: Gates (affected)
         if: github.event_name == 'pull_request'
-        run: pnpm nx format:check --base=origin/${{ github.base_ref }} --head=HEAD
+        run: pnpm verify --affected --base=origin/${{ github.base_ref }}
 
-      - name: Format check (all files)
+      - name: Gates (all)
         if: github.event_name != 'pull_request'
-        run: pnpm nx format:check --all
+        run: pnpm verify
 
-      - name: TypeScript project references in sync
-        run: pnpm nx sync:check
-
-      # Generated files are committed; every generator exposes build:check (P1.2 onwards).
-      - name: Generated files up to date
-        run: pnpm nx run-many -t build:check
-
-      - name: Lint, test, typecheck, build (affected)
-        if: github.event_name == 'pull_request'
-        run: pnpm nx affected -t lint test typecheck build --base=origin/${{ github.base_ref }} --head=HEAD
-
-      - name: Storybook builds and story tests (affected)
-        if: github.event_name == 'pull_request'
-        run: pnpm nx affected -t build-storybook test-storybook --base=origin/${{ github.base_ref }} --head=HEAD
-
-      - name: End-to-end, Chromium (affected)
-        if: github.event_name == 'pull_request'
-        run: pnpm nx affected -t e2e --parallel=1 --base=origin/${{ github.base_ref }} --head=HEAD -- --project=chromium
-
-      - name: Lint, test, typecheck, build (all)
-        if: github.event_name != 'pull_request'
-        run: pnpm nx run-many -t lint test typecheck build
-
-      - name: Storybook builds and story tests (all)
-        if: github.event_name != 'pull_request'
-        run: pnpm nx run-many -t build-storybook test-storybook
-
-      - name: End-to-end, Chromium (all)
-        if: github.event_name != 'pull_request'
-        run: pnpm nx run-many -t e2e --parallel=1 -- --project=chromium
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gates-linux
+          path: reports/
+          if-no-files-found: ignore
 
   # D-17: Windows is a first-class development environment.
   widget-windows:
     runs-on: windows-latest
+    env:
+      BYTEFLOCK_RUN_LABEL: Windows
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -124,11 +97,16 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install chromium
 
-      - name: Build the widget
-        run: pnpm nx run @byteflock/widget:build
+      # Widget build with its bundle assertions, then the playground @smoke tests.
+      - name: Gates (Windows)
+        run: pnpm verify --profile=windows
 
-      - name: Playground smoke test
-        run: pnpm nx run @byteflock/widget-playground:e2e -- --project=chromium --grep @smoke
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gates-windows
+          path: reports/
+          if-no-files-found: ignore
 
   # P1.7-T03: visual regression in the pinned Linux Playwright image, the same one `pnpm visual`
   # uses locally (tools/scripts/visual.mjs). Snapshots are *-linux.png; blocking.
@@ -151,6 +129,7 @@ jobs:
           --health-interval 2s --health-timeout 3s --health-retries 30
     env:
       VISUAL: '1'
+      BYTEFLOCK_RUN_LABEL: Visual (Linux container)
       DATABASE_URL: postgres://byteflock_app:byteflock_app@db:5432/byteflock
       MIGRATE_DATABASE_URL: postgres://byteflock:byteflock@db:5432/byteflock
       RECREATE_ADMIN_URL: postgres://byteflock:byteflock@db:5432/postgres
@@ -158,14 +137,42 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - run: pnpm install --frozen-lockfile
-      # A service cannot mount the init script, so the roles and the test database come from
-      # the same SQL file through db:bootstrap; then migrations and the seed.
-      - name: Database (roles, migrations, seed)
-        run: |
-          node tools/scripts/db/bootstrap.mjs
-          node tools/scripts/db/migrate.mjs
-          node tools/scripts/db/seed.mjs
-      - name: Playground snapshots
-        run: pnpm exec playwright test -c apps/widget-playground/playwright.config.mts --project=chromium --grep @visual
-      - name: Dashboard snapshots
-        run: pnpm exec playwright test -c apps/admin-dashboard-e2e/playwright.config.mts --project=chromium --grep @visual
+
+      # Database (db:bootstrap, migrate, seed), then the @visual snapshots of both suites.
+      - name: Gates (visual)
+        run: pnpm verify --profile=visual
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: gates-visual
+          path: reports/
+          if-no-files-found: ignore
+
+  # D-26: one report for the whole run.
+  report:
+    needs: [lint-test-build, widget-windows, visual]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: gates-*
+          path: all-reports
+
+      # report.mjs needs only Node; a job whose folder is missing is reported as missing.
+      - name: Quality report
+        run: node tools/scripts/report.mjs all-reports/gates-linux all-reports/gates-windows all-reports/gates-visual --out=quality-report.md --summary
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-report
+          path: |
+            quality-report.md
+            all-reports/

@@ -281,6 +281,9 @@ importers:
 
   apps/widget-playground:
     devDependencies:
+      '@axe-core/playwright':
+        specifier: 4.14.0
+        version: 4.14.0(playwright-core@1.62.1)
       rrweb:
         specifier: 2.2.0
         version: 2.2.0

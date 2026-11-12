@@ -18,8 +18,15 @@ const E2E_DATABASE_URL =
  *
  * Generated as a .mts file so Node forces ESM regardless of workspace `type`.
  */
+// D-26: a JSON copy of the results (with each axe scan attached) feeds the quality report.
+const preset = nxE2EPreset(import.meta.dirname, { testDir: './src' });
+
 export default defineConfig({
-  ...nxE2EPreset(import.meta.dirname, { testDir: './src' }),
+  ...preset,
+  reporter: [
+    ...(Array.isArray(preset.reporter) ? preset.reporter : []),
+    ['json', { outputFile: 'test-output/reports/e2e/playwright.json' }],
+  ],
   globalSetup: './src/global-setup.ts',
   // A cold `next dev` compiles each route on first request; give tests room for that.
   timeout: 60_000,
