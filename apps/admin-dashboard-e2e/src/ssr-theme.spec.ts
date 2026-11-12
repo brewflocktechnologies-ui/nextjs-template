@@ -13,7 +13,7 @@ const html = async (
   return { res, text: await res.text() };
 };
 
-test.describe('SSR tenant theme (P1.6-T04, D-20)', () => {
+test.describe('SSR tenant theme (P1.6-T04, D-20; P2.1-AC07 on Postgres)', () => {
   test('T-04 two tenants in sequence in one server process get distinct themes; the third render matches the first', async ({
     request,
   }) => {

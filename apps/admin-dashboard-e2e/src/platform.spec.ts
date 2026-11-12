@@ -38,7 +38,7 @@ test('the super admin lands on /platform and sees the three real tenants', async
   );
 });
 
-test('AC08: a super admin is redirected from tenant routes to /platform', async ({
+test('P2.1-AC08: a super admin is redirected from tenant routes to /platform', async ({
   page,
   context,
 }) => {
@@ -54,7 +54,7 @@ test('AC08: a super admin is redirected from tenant routes to /platform', async 
   }
 });
 
-test('AC08: tenant users get 404 on /platform/** (the route is not revealed)', async ({
+test('P2.1-AC08: tenant users get 404 on /platform/** (the route is not revealed)', async ({
   page,
   context,
 }) => {
@@ -235,7 +235,7 @@ for (const url of [
   '/platform/tenants/t_globex/dashboard',
   '/platform/tenants/t_initech/widget',
 ]) {
-  test(`axe: no serious or critical issues on ${url} (AC16)`, async ({
+  test(`axe: no serious or critical issues on ${url} (P2.1-AC16)`, async ({
     page,
     context,
   }) => {

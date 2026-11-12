@@ -24,7 +24,7 @@ async function save(
   });
 }
 
-test('disabling themeEditor hides the nav entry and 404s its page and API (AC12)', async ({
+test('disabling themeEditor hides the nav entry and 404s its page and API (P2.1-AC12)', async ({
   page,
   context,
 }) => {
@@ -61,7 +61,7 @@ test('disabling themeEditor hides the nav entry and 404s its page and API (AC12)
   await other.close();
 });
 
-test('home title and notice render as literal text, never HTML (AC12)', async ({
+test('home title and notice render as literal text, never HTML (P2.1-AC12)', async ({
   page,
   context,
 }) => {
@@ -138,7 +138,7 @@ test('unauthenticated requests are redirected to the session page, not served', 
 });
 
 for (const tenant of ['t_acme', 't_globex', 't_initech']) {
-  test(`axe: no serious or critical issues on /settings/dashboard for ${tenant} (AC16)`, async ({
+  test(`axe: no serious or critical issues on /settings/dashboard for ${tenant} (P2.1-AC16)`, async ({
     page,
     context,
   }) => {

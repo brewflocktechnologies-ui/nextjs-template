@@ -4,16 +4,23 @@ import { workspaceRoot } from '@nx/devkit';
 
 const baseURL = process.env['BASE_URL'] || 'http://localhost:3000';
 
+// P2.1-T15: the dashboard servers Playwright starts use the test database; global-setup.ts resets
+// it (or, when a running `pnpm stack` is reused, the database that server reports).
+const E2E_DATABASE_URL =
+  'postgres://byteflock_app:byteflock_app@localhost:5440/byteflock_test';
+
 /**
  * Dashboard end-to-end tests (P1.6-T09). Servers, all reused when `pnpm stack` already runs them:
  * - the dashboard in development on 3000 (dev session, theme fixture override from .env.development);
  * - the widget origin on 4400 and the playground on 4300, for the preview and allowlist flows;
  * - a production build of the dashboard on 3005 (P1.6-AC07: no dev-only routes).
+ * Both dashboard servers use the `byteflock_test` database; global-setup.ts resets it first.
  *
  * Generated as a .mts file so Node forces ESM regardless of workspace `type`.
  */
 export default defineConfig({
   ...nxE2EPreset(import.meta.dirname, { testDir: './src' }),
+  globalSetup: './src/global-setup.ts',
   // A cold `next dev` compiles each route on first request; give tests room for that.
   timeout: 60_000,
   // Several tests publish into the widget's static folder; run them one at a time.
@@ -37,7 +44,10 @@ export default defineConfig({
             // workspace root fails to prerender. A separate distDir keeps a running dev server
             // intact; the build rewrites the committed next-env.d.ts for that distDir, so it is
             // restored before starting.
-            env: { NEXT_DIST_DIR: '.next-e2e-prod' },
+            env: {
+              NEXT_DIST_DIR: '.next-e2e-prod',
+              DATABASE_URL: E2E_DATABASE_URL,
+            },
             url: 'http://localhost:3005/healthz',
             reuseExistingServer: true,
             cwd: `${workspaceRoot}/apps/admin-dashboard`,
@@ -46,6 +56,8 @@ export default defineConfig({
         ]),
     {
       command: 'pnpm exec next dev apps/admin-dashboard --port 3000',
+      // Process env wins over .env.development, so the dev server reads the test database.
+      env: { DATABASE_URL: process.env.DATABASE_URL ?? E2E_DATABASE_URL },
       url: 'http://localhost:3000/healthz',
       reuseExistingServer: true,
       cwd: workspaceRoot,

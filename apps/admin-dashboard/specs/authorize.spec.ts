@@ -31,7 +31,7 @@ const superAdmin: RequestContext = {
 const READS: Action[] = ['theme.read', 'config.read', 'widget.read'];
 const TENANT_ACTIONS = ACTIONS.filter((a) => a !== 'tenants.list');
 
-describe('authorization matrix (P2.1-T06)', () => {
+describe('authorization matrix (P2.1-T06; P2.1-AC04 at helper level)', () => {
   it('lists exactly the actions of the spec', () => {
     expect([...ACTIONS].sort()).toEqual(
       [

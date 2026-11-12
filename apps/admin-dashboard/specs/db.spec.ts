@@ -286,3 +286,133 @@ describe('getPool (P2.1-T05)', () => {
     expect(getPool()).toBe(getPool());
   });
 });
+
+const TENANT_TABLES = [
+  'tenants',
+  'tenant_memberships',
+  'widget_keys',
+  'theme_drafts',
+  'theme_revisions',
+  'tenant_configs',
+];
+
+/** A direct connection as one role, for the database-level criteria below. */
+async function connectAs(role: 'byteflock' | 'byteflock_app') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { Client } = require('pg');
+  const client = new Client({
+    connectionString: `postgres://${role}:${role}@127.0.0.1:5440/byteflock_test`,
+  });
+  await client.connect();
+  return client as {
+    query: (text: string) => Promise<{ rows: Record<string, unknown>[] }>;
+    end: () => Promise<void>;
+  };
+}
+
+const errorCode = async (run: () => Promise<unknown>) => {
+  try {
+    await run();
+    return 'no error';
+  } catch (error) {
+    return (error as { code?: string }).code ?? String(error);
+  }
+};
+
+describe('P2.1-AC02: row-level security for byteflock_app', () => {
+  it('with no scope set, every tenant table returns no rows', async () => {
+    const app = await connectAs('byteflock_app');
+    try {
+      for (const table of TENANT_TABLES) {
+        const { rows } = await app.query(
+          `SELECT count(*)::int AS n FROM ${table}`,
+        );
+        expect([table, rows[0].n]).toEqual([table, 0]);
+      }
+    } finally {
+      await app.end();
+    }
+  });
+
+  it('cannot disable or bypass row-level security', async () => {
+    const app = await connectAs('byteflock_app');
+    try {
+      for (const table of TENANT_TABLES) {
+        // Only the owner may ALTER a table: insufficient_privilege (42501).
+        expect(
+          await errorCode(() =>
+            app.query(`ALTER TABLE ${table} DISABLE ROW LEVEL SECURITY`),
+          ),
+        ).toBe('42501');
+        expect(
+          await errorCode(() =>
+            app.query(`ALTER TABLE ${table} NO FORCE ROW LEVEL SECURITY`),
+          ),
+        ).toBe('42501');
+      }
+      expect(
+        await errorCode(() => app.query('ALTER ROLE byteflock_app BYPASSRLS')),
+      ).toBe('42501');
+      // Turning row security off makes a query that RLS would filter fail instead of leak.
+      await app.query('SET row_security = off');
+      expect(await errorCode(() => app.query('SELECT * FROM tenants'))).toBe(
+        '42501',
+      );
+    } finally {
+      await app.end();
+    }
+  });
+});
+
+describe('P2.1-AC03: theme_revisions is immutable', () => {
+  it('the app role has no UPDATE or DELETE, even in platform scope', async () => {
+    const app = await connectAs('byteflock_app');
+    try {
+      await app.query('BEGIN');
+      await app.query("SELECT set_config('app.scope', 'platform', true)");
+      expect(
+        await errorCode(() =>
+          app.query("UPDATE theme_revisions SET doc = '{}'"),
+        ),
+      ).toBe('42501');
+      await app.query('ROLLBACK');
+      await app.query('BEGIN');
+      await app.query("SELECT set_config('app.scope', 'platform', true)");
+      expect(
+        await errorCode(() => app.query('DELETE FROM theme_revisions')),
+      ).toBe('42501');
+      await app.query('ROLLBACK');
+    } finally {
+      await app.end();
+    }
+  });
+
+  it('the trigger rejects UPDATE, DELETE and TRUNCATE even for the owner', async () => {
+    const owner = await connectAs('byteflock');
+    try {
+      for (const sql of [
+        "UPDATE theme_revisions SET doc = '{}'",
+        'DELETE FROM theme_revisions',
+      ]) {
+        await owner.query('BEGIN');
+        await owner.query("SELECT set_config('app.scope', 'platform', true)");
+        // restrict_violation (23001) from theme_revisions_immutable().
+        expect([sql, await errorCode(() => owner.query(sql))]).toEqual([
+          sql,
+          '23001',
+        ]);
+        await owner.query('ROLLBACK');
+      }
+      // TRUNCATE is refused too (by the trigger, or first by the foreign key from tenants).
+      expect(
+        await errorCode(() => owner.query('TRUNCATE theme_revisions')),
+      ).not.toBe('no error');
+      const { rows } = await owner.query(
+        'SELECT count(*)::int AS n FROM theme_revisions',
+      );
+      expect(Number(rows[0].n)).toBeGreaterThanOrEqual(3);
+    } finally {
+      await owner.end();
+    }
+  });
+});

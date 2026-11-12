@@ -140,9 +140,13 @@ if (
     console.error(`${SCRIPT}: invalid database name "${database}"`);
     process.exit(1);
   }
+  // Tests only (P2.1-AC01): --dir=<folder> runs another copy of the migrations, for example one
+  // with an applied file edited, which must fail.
+  const dirArg = process.argv.find((a) => a.startsWith('--dir='));
   try {
     const { applied, total } = await migrate({
       databaseUrl: ownerUrl(database),
+      dir: dirArg ? path.resolve(dirArg.slice('--dir='.length)) : undefined,
       log: (m) => console.log(`${SCRIPT}: ${m}`),
     });
     console.log(

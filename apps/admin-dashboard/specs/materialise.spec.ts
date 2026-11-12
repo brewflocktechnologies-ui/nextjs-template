@@ -65,7 +65,7 @@ afterEach(() => jest.restoreAllMocks());
 afterAll(closePool);
 
 describe('db:materialise (P2.1-T08)', () => {
-  it('reproduces validation/widget-fixtures byte for byte for the seeded tenants', () => {
+  it('P2.1-AC11: reproduces validation/widget-fixtures byte for byte for the seeded tenants', () => {
     const out = tmp();
     expect(materialise(out)).toContain('6 written');
     expect(list(out)).toEqual(TENANT_FILES);
@@ -101,7 +101,7 @@ describe('db:materialise (P2.1-T08)', () => {
     expect(list(scriptOut)).toContain('themes/t_acme/1.json');
   });
 
-  it('materialise repair: a forced write failure after commit is repaired', async () => {
+  it('materialise repair: a forced write failure after commit is repaired (P2.1-AC10)', async () => {
     const out = path.join(tmp(), 'v1');
     fs.cpSync(fixtures, out, { recursive: true });
     process.env.THEME_PUBLISH_DIR = out;

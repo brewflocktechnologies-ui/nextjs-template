@@ -134,7 +134,7 @@ describe('theme data access (P1.6-AC05 on Postgres)', () => {
     expect(fs.readFileSync(themeFile(2), 'utf8')).toBe('{}');
   });
 
-  it('concurrent publishes get distinct, gap-free revisions', async () => {
+  it('P2.1-AC03: concurrent publishes get distinct, gap-free revisions', async () => {
     await saveDraft('t_acme', acme, USER);
     const results = await Promise.all([
       publish('t_acme', USER),

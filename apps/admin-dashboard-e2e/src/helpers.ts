@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import type { APIRequestContext, BrowserContext } from '@playwright/test';
 
@@ -85,14 +86,62 @@ export const readJson = (file: string) =>
   JSON.parse(fs.readFileSync(file, 'utf8'));
 
 /**
- * Undoes local publishes and drafts (P2.1): the dashboard's database is dropped, recreated,
- * migrated and seeded (published revisions are immutable, so they cannot be deleted), then the
- * widget fixtures are copied back to apps/widget/public/v1.
+ * The database the dashboard server under test uses (P2.1-T15): set by global-setup.ts from the
+ * server's /healthz; `byteflock_test` when Playwright started the server itself.
+ */
+export const e2eDatabase = () => process.env.E2E_DATABASE ?? 'byteflock_test';
+
+/**
+ * Runs one parameterised statement on the e2e database as the owner role (row-level security is
+ * bypassed by the owner's platform scope). For tests that change the database behind the server's
+ * back, such as removing a membership (P2.1-AC09). `pg` is a dashboard dependency; it is resolved
+ * from there, like the database scripts do.
+ */
+export async function ownerQuery<T = Record<string, unknown>>(
+  text: string,
+  values: unknown[] = [],
+): Promise<T[]> {
+  const requirePg = createRequire(
+    path.join(ROOT, 'apps', 'admin-dashboard', 'package.json'),
+  );
+  // A minimal local type: the e2e project does not depend on `pg` or its types.
+  const { Client } = requirePg('pg') as {
+    Client: new (options: { connectionString: string }) => {
+      connect(): Promise<void>;
+      query(text: string, values?: unknown[]): Promise<{ rows: unknown[] }>;
+      end(): Promise<void>;
+    };
+  };
+  // Same owner connection as the database scripts: MIGRATE_DATABASE_URL (CI) or the local stack.
+  const url = new URL(
+    process.env.MIGRATE_DATABASE_URL ??
+      'postgres://byteflock:byteflock@127.0.0.1:5440/byteflock',
+  );
+  url.pathname = `/${e2eDatabase()}`;
+  const client = new Client({ connectionString: url.toString() });
+  await client.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query("SELECT set_config('app.scope', 'platform', true)");
+    const { rows } = await client.query(text, values);
+    await client.query('COMMIT');
+    return rows as T[];
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Undoes local publishes and drafts (P2.1): the e2e database is dropped, recreated, migrated and
+ * seeded (published revisions are immutable, so they cannot be deleted), then the widget fixtures
+ * are copied back to apps/widget/public/v1.
  */
 export function resetLocalState() {
-  execFileSync(process.execPath, ['tools/scripts/db/recreate.mjs'], {
-    cwd: ROOT,
-  });
+  execFileSync(
+    process.execPath,
+    ['tools/scripts/db/recreate.mjs', `--database=${e2eDatabase()}`],
+    { cwd: ROOT },
+  );
   execFileSync(process.execPath, ['tools/scripts/stack-reset.mjs', '--files'], {
     cwd: ROOT,
   });
