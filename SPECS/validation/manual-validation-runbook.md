@@ -40,7 +40,7 @@ Start `pnpm stack` (dashboard may be empty). Open `http://localhost:4300/`.
 ## P1.3 — Theme contract
 
 1. Open `libs/theme/schema/theme.v1.json`. **Expect:** `additionalProperties: false` under every object; the colour pattern; enums as in THEME-02.
-2. Open the three valid fixtures. **Expect:** they match `validation/tenant-fixtures.md` field by field.
+2. Open the three valid fixtures. **Expect:** they match `SPECS/validation/tenant-fixtures.md` field by field.
 3. In the terminal, `pnpm nx test @byteflock/theme`. **Expect:** all malicious fixtures reported as rejected "before resolution".
 
 ## PoC-B — React primitives
@@ -92,3 +92,16 @@ While CI is deferred (D-22), each pull-request step has a local equivalent: make
 4. Walk ARCH-001 §14.4 items 1–11 with the evidence file open. **Expect:** each item has its proof; item 10 (CI green) stays open until the repository is pushed (D-22). Sign the last column.
 5. README links to AGENTS.md, ADR index, SPECS, and the embedding guide.
 6. `pnpm visual` (needs Docker). **Expect:** "all snapshots match". Optionally change Globex's dark `primary` in both `validation/widget-fixtures/v1/themes/t_globex/1.json` and `apps/widget/public/v1/themes/t_globex/1.json`, rerun, see the Globex frame snapshot fail, then undo both edits with `git checkout -- validation apps/widget/public`.
+
+## P2.1 — Tenant data backend and platform scope
+
+Docker Desktop must be running. Start from `pnpm stack:reset`, then `pnpm stack`, and `pnpm stack:check --wait 120` in a second terminal. **Expect:** every origin `OK`, and the database lines `OK`, `migrations ok` and `seed ok 3 of 3 tenants`.
+
+1. **Super admin.** Open `http://localhost:3000/dev/session` and click **Sign in** next to **Platform Admin (super admin)**. **Expect:** you land on `/platform`, which shows the platform default design (slate header, brand name Byteflock), the badge `platform · u_platform_admin`, and three tenants: Acme Corp, Globex and Initech (no broken tenant).
+2. **Edit a tenant as super admin.** Open **Acme Corp**, then **Theme**. **Expect:** the header and navigation stay on the default design; the **Preview: Acme Corp** box shows Acme's blue buttons. Change the primary colour and click **Publish**. **Expect:** "Published revision 2." Reload `http://localhost:4300/clean.html?key=wk_acme_demo`. **Expect:** the widget shows the new colour.
+3. **Tenant admin.** Back on `/dev/session`, choose **Acme Corp Admin (admin)**. **Expect:** the whole dashboard uses Acme's new design. Open `http://localhost:3000/platform`. **Expect:** a 404 page.
+4. **Disable a module.** As Acme Corp Admin, open **Dashboard**, untick **Theme editor**, click **Save**, then reload. **Expect:** the **Theme** entry is gone from the navigation and `http://localhost:3000/settings/theme` returns 404. Switch to the super admin and open Acme's **Theme** page. **Expect:** it still opens.
+5. **Isolation.** Choose **Globex Admin (admin)**. **Expect:** Globex's dark teal design; nothing of Acme's (name, colours, title) anywhere.
+6. **Agent.** Choose **Acme Agent (agent)**. **Expect:** no **Dashboard** entry in the navigation. On **Widget** (and **Theme**, if you re-enabled it), the page shows "Read only: only a tenant admin can change these settings." and the save and publish buttons are disabled.
+7. **Database down.** Run `pnpm db:down` and reload a dashboard page. **Expect:** the page does not render, and nothing of any tenant's data appears. In development, Next.js shows its error overlay naming a connection error (`ECONNREFUSED`), which includes a stack trace: the dashboard has no error page yet (see the P2.1 evidence). Run `pnpm db:up`, reload. **Expect:** the page works again.
+8. **Reset.** Stop `pnpm stack`, run `pnpm stack:reset`. **Expect:** it ends with `db:materialise: 0 written, 6 already correct` and `stack:reset: done`; `git status` shows nothing under `apps/widget/public/v1/`.

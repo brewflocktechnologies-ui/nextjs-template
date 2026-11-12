@@ -4,7 +4,7 @@ Canonical instructions for AI coding agents (Claude Code, Codex and others) and 
 
 ## Purpose
 
-Byteflock is a multi-tenant customer-support and live-chat SaaS. Phase 1 builds the frontend foundation only: a Next.js admin dashboard, an embeddable chat widget whose conversation runs in a cross-origin iframe, a shared design-token and tenant-theme contract, and the quality gates around them. There is no backend, database or production infrastructure in Phase 1.
+Byteflock is a multi-tenant customer-support and live-chat SaaS. Phase 1 builds the frontend foundation only: a Next.js admin dashboard, an embeddable chat widget whose conversation runs in a cross-origin iframe, a shared design-token and tenant-theme contract, and the quality gates around them. Phase 1 had no backend or database. **Phase 2 (P2.1) adds a local data backend**: Postgres in Docker, used only by the dashboard's Next.js server (ADR-012, D-24), a platform scope for a super admin next to the tenant scope (ADR-013, D-25), and a per-tenant dashboard config (`SPECS/contracts/tenant-config-v1.md`). There is still no separate backend service, real authentication or production infrastructure.
 
 ## Specs and workflow
 
@@ -30,6 +30,8 @@ pnpm 11 workspace (`pnpm-workspace.yaml`), `@byteflock` scope. Projects are name
 | `@byteflock/ui-react`            | `libs/ui-react`            | `type:lib scope:shared platform:react`    |                                                                           |
 | `@byteflock/chat-widget`         | `libs/chat-widget`         | `type:lib scope:widget platform:lit`      |                                                                           |
 
+Postgres 17 runs in Docker Compose (`compose.yaml`, service `db`, image pinned by digest) on `127.0.0.1:5440`, with the databases `byteflock` (the stack) and `byteflock_test` (tests). SQL migrations are in `apps/admin-dashboard/db/migrations/`; the scripts are `tools/scripts/db/*.mjs`.
+
 The libraries hold placeholders until their phases: tokens in P1.2, theme in P1.3, ui-react in PoC-B and P1.4, chat-widget in PoC-A and P1.5. The expected projects and dependency edges are committed in `tools/scripts/policy/expected-graph.json`, and `pnpm policy:check` fails if the graph drifts.
 
 Targets are inferred by Nx plugins from config files; there are no `project.json` files. Run `pnpm nx show project <name>` to see what a project exposes. Libraries are consumed from source: their `package.json` `exports` point at `./src/index.ts`, linked by `workspace:*` dependencies plus TypeScript project references (`pnpm nx sync` keeps those aligned), and app builds depend on `^build` and `^typecheck` (D-07). Unit tests run on Vitest, except the dashboard, which keeps Jest through `next/jest`.
@@ -43,6 +45,15 @@ Full rules: `SPECS/contracts/boundary-rules.md`. Enforced on every lint run.
 - Forbidden imports: `react`, `react-dom`, `next` in `platform:lit` projects; `lit`, `lit-html`, `@lit/*` in `platform:react` projects; `@radix-ui/*` everywhere unless ADR-006 selects Radix.
 - Workspace constraints live in the root `eslint.config.mjs`. Restricted imports come from `tools/eslint/tag-restrictions.mjs`, which every project's `eslint.config.mjs` calls with its own directory. A new project must call it too.
 
+## Data access (P2.1)
+
+- `pg` is imported only under `apps/admin-dashboard/src/server/db/**` (lint). Every query runs through `withScope(ctx, fn)`, which sets `app.scope` and `app.tenant_id` for one transaction; row-level security reads them. The app connects as `byteflock_app`, which is not the table owner and cannot bypass RLS.
+- Functions in `src/data/**` take `tenantId` first; platform-only ones live in `src/data/platform/**` and take `ctx: PlatformContext` first (lint `data-access-tenant-first`).
+- Route handlers call `requireTenantTarget(request, action)` (`src/server/api.ts`), which runs `authorize()` (`src/server/authorize.ts`) before any data access. Pages use `getTenantContext()` or `getPlatformContext()`.
+- The request context is rebuilt from the database on every request; the dev cookie carries only `{ userId, tenantId | null, iat }`.
+- Migrations are forward-only. Never edit an applied file: the runner stores a checksum and fails. Add a new `NNNN_<name>.sql`.
+- Publishing writes the widget's static files after the commit (`src/server/store/materialise.ts`); `pnpm db:materialise` rebuilds them. Documents are canonical JSON (sorted keys), because `jsonb` does not keep key order.
+
 ## Non-negotiables
 
 These apply from day one, even before lint enforces them.
@@ -55,9 +66,16 @@ These apply from day one, even before lint enforces them.
 
 ```bash
 pnpm install --frozen-lockfile                  # install; never npm or yarn
-pnpm stack                                      # dashboard 3000, widget origin 4400, playground 4300
-pnpm stack:check                                # are the three origins up, with the frame headers?
-pnpm stack:reset                                # restore widget config and themes from validation/widget-fixtures
+pnpm stack                                      # Postgres up and migrated, then dashboard 3000, widget 4400, playground 4300
+pnpm stack:check                                # origins, frame headers, database (reachable, migrations, seed)
+pnpm stack:reset                                # widget files from validation/widget-fixtures, then db:reset + db:materialise
+pnpm db:up | db:down                            # start (and wait until healthy) or stop Postgres in Docker
+pnpm db:migrate                                 # apply pending migrations (add -- --database=byteflock_test)
+pnpm db:seed                                    # insert the fixture tenants and users if missing
+pnpm db:reset                                   # wipe the volume, then migrate and seed
+pnpm db:recreate -- --database=<name>           # drop, create, migrate, seed one database (fast; no container restart)
+pnpm db:materialise                             # rebuild the widget's static files from the database
+pnpm db:bootstrap                               # roles and test database on a fresh server (CI service containers)
 pnpm verify                                     # every CI gate locally; its summary goes in the evidence file (D-22)
 pnpm verify --quick                             # the same without end-to-end tests
 pnpm policy:check                               # pinned actions, ADRs, CODEOWNERS, supply chain, tags, project graph
@@ -76,7 +94,7 @@ pnpm nx e2e @byteflock/widget-playground -- --project=chromium --grep @smoke
 pnpm nx e2e @byteflock/admin-dashboard-e2e -- --project=chromium src/example.spec.ts
 ```
 
-Playwright starts the server it needs, or reuses a running `pnpm stack`, so e2e works either way. Install browsers once with `pnpm exec playwright install --with-deps chromium`. Details of the local multi-tenant stack: `SPECS/validation/local-stack.md`.
+The dashboard unit tests and the e2e suites need Postgres: run `pnpm db:up` first (`pnpm verify` and `pnpm stack` do it themselves). Playwright starts the server it needs, or reuses a running `pnpm stack`, so e2e works either way; its global setup resets the database that server uses (`byteflock_test` when Playwright starts it, the stack database `byteflock` when it reuses `pnpm stack`). The dashboard Jest suites and the e2e suite share `byteflock_test`: do not run them at the same time. Install browsers once with `pnpm exec playwright install --with-deps chromium`. Details of the local multi-tenant stack: `SPECS/validation/local-stack.md`.
 
 Adding a dependency: `pnpm add <pkg> --filter <project>` (`-w` for the root). pnpm refuses packages younger than 7 days, and install scripts run only for packages set to `true` under `allowBuilds` in `pnpm-workspace.yaml`. Do not use `nx add`: it failed here with a pnpm store error. Use `pnpm add -D -w @nx/<plugin>@24.0.0`, then `pnpm nx g @nx/<plugin>:init`.
 
@@ -112,7 +130,9 @@ The product owner develops on Windows 11, so Windows is a first-class environmen
 - All scripts are Node; never assume bash, curl or GNU tools. Build paths with `path.join`.
 - Line endings are LF everywhere (`.gitattributes`, Prettier `endOfLine: lf`). `.gitattributes` keeps a clone clean even with `core.autocrlf=true`; only if a clone still shows every file modified, run `git config core.autocrlf false` and check out again.
 - Use one checkout per environment: native Windows or WSL2, not both on the same folder.
-- Do not change the local ports in `SPECS/validation/local-stack.md`; the widget's preview mode is pinned to the dashboard origin.
+- Do not change the local ports in `SPECS/validation/local-stack.md`; the widget's preview mode is pinned to the dashboard origin. Postgres uses 5440; free the port rather than changing it.
+- The database needs Docker Desktop with the WSL2 backend (or Docker Engine with Compose v2 on Linux). The `db:*` scripts say so when Docker is missing or stopped.
+- The dashboard `build` target is not cached by Nx: Turbopack links `pg` into `.next/node_modules`, and Nx recreating that link as a symlink fails without the Windows symlink privilege (`os error 1314`).
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

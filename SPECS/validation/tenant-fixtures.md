@@ -30,6 +30,23 @@ One set of tenants used everywhere: theme fixtures (`libs/theme/fixtures/valid/`
 
 All remaining colour roles are filled in P1.3 so that every pair passes THEME-06 contrast policy in both sets; the P1.3 test suite proves it. The three must be visually distinct at a glance (different hue family, different radius, different density) so that a wrong-tenant render is obvious to a human.
 
+## Users (P2.1)
+
+Users live in Postgres, seeded from `validation/tenants.json` by `pnpm db:seed` (`tools/scripts/db/seed.mjs`). Roles come from the database on every request (ADR-013).
+
+| User               | Scope    | Role           | Tenant      | Source in `tenants.json` |
+| ------------------ | -------- | -------------- | ----------- | ------------------------ |
+| `u_platform_admin` | platform | `super_admin`  | (none)      | `platformAdmin`          |
+| `u_acme_admin`     | tenant   | `tenant_admin` | `t_acme`    | `tenants[0].user`        |
+| `u_acme_agent`     | tenant   | `agent`        | `t_acme`    | `tenants[0].extraUsers`  |
+| `u_globex_admin`   | tenant   | `tenant_admin` | `t_globex`  | `tenants[1].user`        |
+| `u_initech_admin`  | tenant   | `tenant_admin` | `t_initech` | `tenants[2].user`        |
+| `u_broken_admin`   | tenant   | `tenant_admin` | `t_broken`  | `brokenUser`             |
+
+- `u_platform_admin` is the super admin: it sees `/platform` and every tenant, always on the platform default design (D-25). It has no tenant membership (a database trigger forbids one).
+- `u_acme_agent` may read Acme's theme, widget and dashboard settings but not change them; the settings pages are read-only for it.
+- `t_broken` and `u_broken_admin` are seeded as a tenant and a membership only (no widget key, draft or revision), so the dev session can sign in as the failure-fixture tenant. `/platform` hides `t_broken`; its pages stay reachable by URL.
+
 ## Failure fixtures
 
 | `widgetKey`          | Config                                                                    | Theme                                       | Exercises                                                                                                 |
@@ -49,10 +66,10 @@ The frame and launcher ship a neutral default: `primary #334155`, `accent #33415
 
 ## Where each tenant appears
 
-| Place                  | Files                                                                                                                          |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Theme fixtures         | `libs/theme/fixtures/valid/{acme-light,globex-dark,initech-compact}.json` (Initech light `onAccent` is `#020617` for contrast) |
-| Widget stubs           | `apps/widget/public/v1/config/wk_*.json`, `apps/widget/public/v1/themes/t_*/1.json`                                            |
-| Dashboard dev sessions | `apps/admin-dashboard/src/dev/tenants.ts` (imports `validation/tenants.json`)                                                  |
-| Playground index       | generated from `validation/tenants.json` at dev-server start                                                                   |
-| Storybook decorators   | `libs/ui-react/.storybook/themes.ts`, `libs/chat-widget/.storybook/themes.ts` (both import from `@byteflock/theme` fixtures)   |
+| Place                | Files                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Theme fixtures       | `libs/theme/fixtures/valid/{acme-light,globex-dark,initech-compact}.json` (Initech light `onAccent` is `#020617` for contrast)  |
+| Widget stubs         | `apps/widget/public/v1/config/wk_*.json`, `apps/widget/public/v1/themes/t_*/1.json`                                             |
+| Dashboard            | Postgres, seeded from `validation/tenants.json` and the theme fixtures (`pnpm db:seed`); `/dev/session` lists the users from it |
+| Playground index     | generated from `validation/tenants.json` at dev-server start                                                                    |
+| Storybook decorators | `libs/ui-react/.storybook/themes.ts`, `libs/chat-widget/.storybook/themes.ts` (both import from `@byteflock/theme` fixtures)    |
