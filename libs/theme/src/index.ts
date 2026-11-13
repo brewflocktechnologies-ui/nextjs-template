@@ -7,6 +7,7 @@ export * from './guard';
 export * from './policy';
 export * from './validate';
 export * from './migrate';
+export * from './import-dtcg';
 
 /** Library identity (kept for the project-graph placeholders). */
 export const LIB_NAME = 'theme';

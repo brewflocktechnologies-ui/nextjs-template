@@ -23,6 +23,7 @@ import {
 import { Button, Input, Label } from '@byteflock/ui-react';
 import { qk } from '../../../lib/query/qk';
 import { ColourField, EnumField, humanise } from './fields';
+import { ImportTokensPanel } from './ImportTokensPanel';
 import { PreviewFrame } from './PreviewFrame';
 
 type Revisions = { revisions: number[]; current: number | null };
@@ -161,6 +162,16 @@ export function ThemeEditor({
         data-hydrated={hydrated || undefined}
         onSubmit={(e) => e.preventDefault()}
       >
+        {readOnly ? null : (
+          <ImportTokensPanel
+            base={theme}
+            disabled={busy}
+            onImport={(imported) => {
+              setTheme(imported);
+              setStatus('');
+            }}
+          />
+        )}
         <fieldset className="grid gap-4 sm:grid-cols-2">
           <legend className="mb-2 text-lg font-medium">Brand and layout</legend>
           <div className="grid gap-1.5 sm:col-span-2">

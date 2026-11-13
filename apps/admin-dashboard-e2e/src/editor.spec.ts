@@ -78,6 +78,45 @@ test.describe('theme editor (P1.6-T07)', () => {
     expect(acmeConfig().themeRevision).toBe(1);
   });
 
+  test('import from design tokens: a DTCG file fills the form; a bad file changes nothing', async ({
+    page,
+    context,
+  }) => {
+    await signIn(context, 't_acme');
+    await gotoHydrated(page, '/settings/theme');
+    const fileInput = page.getByLabel('Token file');
+    const primary = page.getByRole('textbox', { name: 'Primary', exact: true });
+    const tokens = (doc: unknown, name = 'brand.tokens.json') => ({
+      name,
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(doc)),
+    });
+
+    await fileInput.setInputFiles(
+      tokens({
+        color: {
+          $type: 'color',
+          light: { primary: { $value: '#0f5132' } },
+        },
+        shape: { radius: { $value: 'lg' } },
+      }),
+    );
+    await expect(page.getByTestId('import-status')).toContainText(
+      'Imported 1 colour from brand.tokens.json',
+    );
+    await expect(primary).toHaveValue('#0f5132');
+    await expect(page.getByTestId('import-warnings')).toBeVisible();
+
+    // Invalid against the contract: listed, and the form keeps its values.
+    await fileInput.setInputFiles(
+      tokens({ shape: { radius: { $value: '13px' } } }, 'bad.tokens.json'),
+    );
+    await expect(page.getByTestId('import-errors')).toContainText(
+      '/shape/radius',
+    );
+    await expect(primary).toHaveValue('#0f5132');
+  });
+
   test('preview: a colour change reaches the real frame without a reload (theme.preview)', async ({
     page,
     context,
