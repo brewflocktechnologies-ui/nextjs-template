@@ -29,7 +29,7 @@ The editor's import flow runs these steps in order. Each step can be cancelled; 
 | 5    | Projection report: every conversion and drop, by severity, with approvals where required (PROJ-07, PROJ-08) |
 | 6    | Apply to the form, or cancel                                                                                |
 
-Steps with nothing to decide are shown as a one-line summary and need no click, so a file that follows the convention (PROJ-05 rule 1) imports in one step.
+Steps with nothing to decide are shown as a one-line summary and need no click, so a file that follows the convention (PROJ-05 rule 1) needs one click: Apply. This is one click more than the single-file baseline, which fills the form as soon as the file is picked; the Apply step is deliberate, so the user sees the report before the form changes.
 
 ## PROJ-04 Choosing light and dark
 
@@ -46,6 +46,8 @@ Layer A finds themes and keeps their original identifiers; layer B decides which
 
 Names (levels 3 and 4) are hints only.
 
+Level 2 runs before role mapping (step 3), so it uses the **likely** `surface` token: the best `surface` suggestion by the synonym table (PROJ-05 rule 2) in each theme. If the user later maps `surface` to a different token and that token's lightness contradicts the light and dark choice, step 3 says so and offers to go back to step 2.
+
 **Confidence:**
 
 - **Confident:** level 1 names both modes; or every available signal from levels 2 to 4 agrees.
@@ -60,22 +62,22 @@ The step always shows the decision and its reason ("dark: from Figma metadata", 
 
 Each of the 13 `ColorRoles` gets a token from the chosen theme (or `shared`), or stays with the base theme.
 
-1. **Exact convention, no question.** Paths that follow the theme contract map directly: `color.<appearance>.<role>` in a single tree, or `color.<role>` inside a chosen theme, with the role in camelCase or kebab-case.
+1. **Exact convention, no question.** A token whose `themePath` (EXTRACT-09) is `color.<role>` in the chosen theme maps directly, with the role in camelCase or kebab-case. This covers both a single tree with `color.light.<role>` and `color.dark.<role>` (the theme segment is removed by `themePath`) and separate theme files holding `color.<role>`.
 2. **Suggestions otherwise,** using, in order: a synonym table of common names (`brand`, `bg`, `background`, `surface`, `text`, `fg`, `border`, `error`, `positive` and so on, kept in `libs/theme` and grown from real exports); `on-X` / `X` pairs found by name; and contrast between candidate pairs as a tiebreaker. Each suggestion shows its confidence and reason.
-3. **Only semantic or unknown tokens are suggested first;** primitives are offered only when nothing else fits, and component tokens are never suggested automatically (a component colour is not a global role).
+3. **Namespace tags rank, they do not filter.** Between equally good name matches, `semantic` beats `unknown`, which beats `primitive`. A primitive with a strong name match (a `background` token holding a raw value) is still suggested. **Component tokens are never suggested automatically** (a component colour is not a global role); the user may still pick one by hand.
 4. **The user confirms** every mapping that is not an exact convention match. They can change any suggestion or leave a role unset.
 5. **Unset roles** keep the base theme's value. The report lists them.
 6. The value used is the token's **resolved value in the chosen theme context**. A token with an error status (EXTRACT-14) cannot be mapped.
 
 ## PROJ-06 Presets and other token types
 
-| Theme field                                                                 | Projected from                                                                                                |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `shape.radius`                                                              | A string token naming a preset; or a dimension token chosen by the user, snapped to the nearest radius preset |
-| `typography.fontFamily`                                                     | A `fontFamily` token whose first family matches one of the five curated fonts                                 |
-| `typography.scale`, `elevation`, `density`, `appearance.mode`, `launcher.*` | A string token naming a preset                                                                                |
-| `brand.name`                                                                | A string token                                                                                                |
-| `brand.logoAssetId`                                                         | Always from the base theme; a token file cannot name an uploaded asset                                        |
+| Theme field                                                                 | Projected from                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shape.radius`                                                              | A string token naming a preset; or a dimension token chosen by the user, snapped to the nearest radius preset                                                                                                                    |
+| `typography.fontFamily`                                                     | A `fontFamily` token whose first family matches one of the five curated fonts, by a case-insensitive name table kept in `libs/theme` (for example `Source Sans 3` and `Source Sans Pro` → `source-sans`, `system-ui` → `system`) |
+| `typography.scale`, `elevation`, `density`, `appearance.mode`, `launcher.*` | A string token naming a preset                                                                                                                                                                                                   |
+| `brand.name`                                                                | A string token                                                                                                                                                                                                                   |
+| `brand.logoAssetId`                                                         | Always from the base theme; a token file cannot name an uploaded asset                                                                                                                                                           |
 
 Every other token (spacing, typography composites, shadows, motion, breakpoints, component tokens, other colours) is listed as **not projected**, grouped by namespace and type, with counts.
 

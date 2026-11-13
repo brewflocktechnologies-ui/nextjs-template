@@ -19,18 +19,19 @@ Layer A takes one **import set**: a list of entries `{ sourcePath, text, sha256,
 
 | What the user picks                | How it becomes an import set                                  |
 | ---------------------------------- | ------------------------------------------------------------- |
-| One `.json` file                   | One entry                                                     |
+| One token file                     | One entry                                                     |
 | Several files (multiple selection) | One entry per file                                            |
 | A folder (folder picker)           | One entry per file found recursively, at any depth            |
 | A `.zip` archive                   | One entry per file inside it, recursively through its folders |
 
 Rules:
 
-1. Reading files, walking folders, unpacking archives and hashing happen in the dashboard. The extraction library receives only the import set, so it has no file-system, DOM or archive dependency and can later run on a server unchanged.
-2. Every entry is identified by its hash and path, never by its file name alone. Two entries with the same name in different folders are different sources.
-3. Byte-identical entries (same `sha256`) are recorded once, with all their paths, and reported as duplicates.
-4. The original text of every entry is kept unchanged for the bundle (EXTRACT-12).
-5. The result never depends on the order of entries in the set. Entries are processed in a canonical order: by `sourcePath`, then `sha256`.
+1. **Token files** are files ending in `.json`, `.tokens` or `.tokens.json` (the extensions DTCG suggests). Files with other extensions found in a folder or archive become entries too, and are classified `unsupported` without being parsed.
+2. Reading files, walking folders, unpacking archives and hashing happen in the dashboard. The extraction library receives only the import set, so it has no file-system, DOM or archive dependency and can later run on a server unchanged.
+3. Every entry is identified by its hash and path, never by its file name alone. Two entries with the same name in different folders are different sources.
+4. Byte-identical entries (same `sha256`) are extracted once, from the entry whose `sourcePath` sorts first, and reported as duplicate files with all their paths. Their tokens are counted once (EXTRACT-09).
+5. The original text of every entry is kept unchanged for the bundle (EXTRACT-12).
+6. The result never depends on the order of entries in the set. Entries are processed in a canonical order: by `sourcePath`, then `sha256`.
 
 ## EXTRACT-02 Limits
 
@@ -46,21 +47,23 @@ Checked before parsing and after unpacking. Exceeding a limit stops extraction w
 | Tokens across the set                   | 10,000 |
 | Alias chain length                      | 32     |
 
-The values may be tuned in implementation; a change is recorded in the P2.2 evidence.
+The values may be tuned in implementation; a change is recorded in the P2.2 evidence. P2.2-T01 checks them against the real samples first: Figma exports carry `$extensions` on every token and can be much larger than hand-written files.
+
+Archive limits are enforced while unpacking, by counting the bytes actually produced, not only from the sizes an archive declares in its headers.
 
 ## EXTRACT-03 File classification
 
 Every entry gets exactly one class, from its content alone:
 
-| Class           | Recognised by                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------------- |
-| `dtcg`          | Contains at least one token: an object with `$value`                                                          |
-| `legacy-tokens` | Leaves are objects with `value` (usually with `type`) and no `$` keys: Tokens Studio, Style Dictionary v3     |
-| `tool-metadata` | A known tool's index of sets, themes or modes, for example a Tokens Studio `$themes.json` or `$metadata.json` |
-| `unsupported`   | Valid JSON with no tokens, or tokens in an unknown shape                                                      |
-| `invalid`       | Not valid JSON, not UTF-8, or not a `.json` file                                                              |
+| Class           | Recognised by                                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `dtcg`          | Contains at least one token: an object with `$value`                                                                          |
+| `legacy-tokens` | Contains token leaves that are objects with `value` (usually with `type`) and no `$value`: Tokens Studio, Style Dictionary v3 |
+| `tool-metadata` | Holds only a known tool's index of sets, themes or modes, for example a Tokens Studio `$themes.json` or `$metadata.json`      |
+| `unsupported`   | Valid JSON with no tokens, tokens in an unknown shape, or a file without a token-file extension (EXTRACT-01 rule 1)           |
+| `invalid`       | A token file that is not valid JSON or not UTF-8                                                                              |
 
-A file's class never depends on its name: renaming a file does not change its class. A file that mixes tokens with other data is `dtcg` (or `legacy-tokens`), and the non-token part is reported. Every `unsupported` and `invalid` entry is listed in the report with the reason.
+A file's class never depends on its name: renaming a file does not change its class (only its extension decides whether it is parsed at all). A file that mixes tokens with other data is `dtcg` (or `legacy-tokens`), and the non-token part is reported. A token file may also **embed** tool metadata, for example a single-file Tokens Studio export with top-level `$themes` and `$metadata` keys next to its token sets: it keeps its token class, and the embedded metadata is used as theme evidence (EXTRACT-11). Every `unsupported` and `invalid` entry is listed in the report with the reason.
 
 ## EXTRACT-04 DTCG recognition
 
@@ -112,7 +115,7 @@ Rules: numbers are not rounded; units are not converted; alpha is not removed; c
    | `component` | Sits under a component group or file (for example `button`, `input`), detected by structure, folder or tool metadata |
    | `unknown`   | None of the above with confidence                                                                                    |
 
-   Tags are analysis, not renaming: they never move a token. Component tokens are never merged into global tokens.
+   Tags are analysis, not renaming: they never move a token. Component tokens are never merged into global tokens. Consumers use `primitive`, `semantic` and `unknown` as ranking signals, not as filters, because many exports hold semantic roles as raw values (a `background` group of hex colours looks like primitives by this evidence). Only `component` is used as an exclusion (PROJ-05).
 
 5. **Collisions.** Two different tokens that normalise to the same path in the same theme context are a namespace collision, reported with both sources.
 
@@ -120,26 +123,29 @@ Rules: numbers are not rounded; units are not converted; alpha is not removed; c
 
 Every token in the inventory has:
 
-| Field            | Content                                                                                    |
-| ---------------- | ------------------------------------------------------------------------------------------ |
-| `originalPath`   | Keys as written                                                                            |
-| `normalisedPath` | Dot-joined path                                                                            |
-| `type`           | `$type`, and whether it was explicit, inherited or inferred                                |
-| `originalValue`  | As written                                                                                 |
-| `canonicalValue` | Typed form, or empty with a flag                                                           |
-| `resolvedValue`  | The value after following references in the token's theme context, if resolvable           |
-| `reference`      | The original reference string and the full chain of paths followed                         |
-| `description`    | `$description`                                                                             |
-| `deprecated`     | Flag and message                                                                           |
-| `extensions`     | `$extensions`, unchanged                                                                   |
-| `source`         | `sourcePath`, `sha256`, the JSON pointer inside the file                                   |
-| `theme`          | Theme identifier (EXTRACT-11), or `shared`                                                 |
-| `namespace`      | Tag and evidence (EXTRACT-08)                                                              |
-| `status`         | `ok`, `warning` or `error`, with the reasons                                               |
-| `duplicates`     | Other sources defining the same path with the same value                                   |
-| `override`       | Whether a configured precedence rule replaced this token, and by which source (EXTRACT-13) |
+| Field            | Content                                                                                                                                                                                        |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `originalPath`   | Keys as written                                                                                                                                                                                |
+| `normalisedPath` | Dot-joined path                                                                                                                                                                                |
+| `themePath`      | The normalised path with the theme's own segment removed (for `color.dark.primary` in theme `dark`, `color.primary`); equal to `normalisedPath` for shared tokens and for themes found by file |
+| `type`           | `$type`, and whether it was explicit, inherited or inferred                                                                                                                                    |
+| `originalValue`  | As written                                                                                                                                                                                     |
+| `canonicalValue` | Typed form, or empty with a flag                                                                                                                                                               |
+| `resolvedValue`  | The value after following references in the token's theme context, if resolvable                                                                                                               |
+| `reference`      | The original reference string and the full chain of paths followed                                                                                                                             |
+| `description`    | `$description`                                                                                                                                                                                 |
+| `deprecated`     | Flag and message                                                                                                                                                                               |
+| `extensions`     | `$extensions`, unchanged                                                                                                                                                                       |
+| `source`         | `sourcePath`, `sha256`, the JSON pointer inside the file                                                                                                                                       |
+| `theme`          | Theme identifier (EXTRACT-11), or `shared`                                                                                                                                                     |
+| `namespace`      | Tag and evidence (EXTRACT-08)                                                                                                                                                                  |
+| `status`         | `ok`, `warning` or `error`, with the reasons                                                                                                                                                   |
+| `duplicates`     | Other sources defining the same path with the same value                                                                                                                                       |
+| `override`       | Whether a configured precedence rule replaced this token, and by which source (EXTRACT-13)                                                                                                     |
 
-Every token found in every `dtcg` and `legacy-tokens` entry appears in the inventory exactly once per source definition. The report's counts must add up: tokens found = tokens in the inventory.
+Every token found in every extracted `dtcg` and `legacy-tokens` entry appears in the inventory exactly once per source definition. Entries skipped as byte-identical duplicates (EXTRACT-01 rule 4) are not counted again. The report's counts must add up: tokens found = tokens in the inventory.
+
+`themePath` is how the same token is matched across themes (EXTRACT-11) and how layer B finds roles inside a chosen theme (PROJ-05). Collisions and conflicts are judged on `themePath` within one theme context.
 
 ## EXTRACT-10 References
 
@@ -157,14 +163,15 @@ Themes (modes) are independent configurations. Any number of themes is allowed.
 
 1. **Finding themes.** Evidence, strongest first:
    - level 1: explicit metadata from a known tool (`$extensions` mode entries, a `tool-metadata` file listing sets per theme); one reader per tool;
-   - level 2: structure (the same paths repeated under sibling groups, or across files with largely identical paths);
+   - level 2: structure (the same `themePath`s repeated under sibling groups, or across files whose paths largely overlap). P2.2-T07 sets the overlap threshold from the real samples and records it in the evidence; until then it is "at least 80% of the smaller side's paths";
    - level 3: names of groups, files or folders (`dark`, `light`, `high-contrast`), as hints only.
 2. **Theme identifier.** Each theme keeps its original identifier (the mode name from metadata, the group key or the file path). Layer A never renames a theme, and never decides which theme is "light" or "dark": that is layer B's job (PROJ-04).
 3. **Shared tokens.** Tokens outside every theme are `shared`. A token is shared only where the source defines it once for all themes.
 4. **No inheritance.** A token missing in one theme is not filled from another. It is reported as missing.
 5. **Ambiguity.** When files share many paths with different values and the evidence does not show whether they are themes or conflicting files, layer A asks the user: "themes" (with names) or "conflict" (EXTRACT-13).
 6. **Theme-difference report:** per path, which themes define it, whether values differ, whether references resolve to different values, and which themes lack it.
-7. Themes are detected per collection when the source has several collections, each with its own modes.
+7. Themes are detected per collection when the source has several collections, each with its own modes. A collection with a single mode (typical for a primitives collection, often named `Mode 1` or `Value`) is `shared`, not a theme.
+8. Embedded tool metadata (EXTRACT-03) counts as level-1 evidence, like a separate metadata file.
 
 ## EXTRACT-12 Outputs
 
@@ -197,7 +204,7 @@ Layer A produces, in memory, in a canonical order (by normalised path, then them
 
    The `tokens/` split is a presentation of the inventory. File names inside it are generated by layer A and do not claim more than the detection evidence supports.
 
-4. **Reproducibility.** The same import set gives byte-identical inventory, reports and bundle (apart from the date in the folder name). This is a tested property.
+4. **Reproducibility.** The same import set gives byte-identical inventory, reports and bundle (apart from the date in the folder name). This is a tested property. To make it hold, nothing inside the outputs carries a time stamp (the manifest records the import date only as the folder name), JSON is written with sorted keys and fixed indentation, and the bundle ZIP uses a fixed modification time and a fixed entry order for every file.
 
 Storing the inventory or the bundle on the server is out of scope for this contract.
 
