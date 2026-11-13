@@ -4,10 +4,13 @@
 //   node tools/scripts/generate-widget-fixtures.mjs           write validation/widget-fixtures/v1
 //   node tools/scripts/generate-widget-fixtures.mjs --check   fail if they are stale
 //
+// Documents are canonical JSON (sorted keys, tools/scripts/db/canonical.mjs): the same bytes
+// `pnpm db:materialise` writes from Postgres, which does not keep key order.
 // Only the tenants' files are generated. The deliberate failure fixtures (t_broken, wk_broken_*,
 // wk_slow, wk_wrong_domain) are hand-written and left alone. `pnpm stack:reset` copies the result into the widget.
 import fs from 'node:fs';
 import path from 'node:path';
+import { canonicalText } from './db/canonical.mjs';
 
 const root = process.cwd();
 const out = path.join(root, 'validation', 'widget-fixtures', 'v1');
@@ -34,7 +37,7 @@ for (const t of tenants) {
 const stale = [];
 for (const [rel, doc] of files) {
   const target = path.join(out, rel);
-  const text = JSON.stringify(doc, null, 2) + '\n';
+  const text = canonicalText(doc);
   const current = fs.existsSync(target)
     ? fs.readFileSync(target, 'utf8')
     : null;

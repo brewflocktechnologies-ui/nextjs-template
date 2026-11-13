@@ -1,6 +1,6 @@
 import path from 'node:path';
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { scanA11y } from './a11y';
 import {
   WIDGET_PUBLIC,
   gotoHydrated,
@@ -167,9 +167,7 @@ test.describe('accessibility of the themed chrome (P1.6-AC12)', () => {
       for (const url of ['/', '/settings/theme', '/settings/widget']) {
         await page.goto(url);
         // The preview iframe is the widget's own document, covered by its own suite.
-        const results = await new AxeBuilder({ page })
-          .exclude('iframe')
-          .analyze();
+        const results = await scanA11y(page, { exclude: ['iframe'] });
         expect(
           results.violations.map((v) => `${url} ${v.id}: ${v.help}`),
         ).toEqual([]);

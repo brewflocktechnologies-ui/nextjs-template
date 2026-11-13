@@ -1,0 +1,47 @@
+{
+  "$comment": "Unit-test coverage floors in percent (V8; Vitest and Jest), D-27. The test run fails below them. Set from the measured values by tools/scripts/coverage-floor.mjs --write; they only go up: lowering one needs a COVERAGE-LOWERED: trailer (check-coverage-floor). Stories and end-to-end tests are not counted.",
+  "projects": {
+    "libs/design-tokens": {
+      "lines": 0,
+      "statements": 0,
+      "functions": 0,
+      "branches": 0
+    },
+    "libs/theme": {
+      "lines": 94,
+      "statements": 92,
+      "functions": 96,
+      "branches": 90
+    },
+    "libs/chat-widget": {
+      "lines": 51,
+      "statements": 50,
+      "functions": 44,
+      "branches": 60
+    },
+    "libs/ui-react": {
+      "lines": 19,
+      "statements": 20,
+      "functions": 7,
+      "branches": 26
+    },
+    "apps/widget": {
+      "lines": 20,
+      "statements": 19,
+      "functions": 21,
+      "branches": 36
+    },
+    "apps/widget-playground": {
+      "lines": 3,
+      "statements": 2,
+      "functions": 0,
+      "branches": 0
+    },
+    "apps/admin-dashboard": {
+      "lines": 35,
+      "statements": 35,
+      "functions": 55,
+      "branches": 76
+    }
+  }
+}

@@ -15,6 +15,7 @@ const r = spawnSync(
     '--test',
     '--test-reporter=dot',
     path.join(root, 'tools', 'eslint-byteflock', 'rules.test.mjs'),
+    path.join(root, 'tools', 'eslint', 'pg-restriction.test.mjs'),
   ],
   { stdio: 'inherit', cwd: root },
 );

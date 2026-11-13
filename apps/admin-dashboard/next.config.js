@@ -15,6 +15,25 @@ const nextConfig = {
   devIndicators: false,
   // Explicitly off (P1.6-T05): authenticated pages are rendered per request and never cached.
   cacheComponents: false,
+  // D-28: security headers on every response, static files included. The CSP is per request (proxy.ts).
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=()',
+          },
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+        ],
+      },
+    ];
+  },
   // See: https://nextjs.org/docs/app/api-reference/config/next-config-js
 };
 

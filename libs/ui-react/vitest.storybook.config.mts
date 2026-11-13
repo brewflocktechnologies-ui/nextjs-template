@@ -45,6 +45,13 @@ export default defineConfig({
   },
   test: {
     name: 'ui-react-storybook',
+    // D-26: results and each story's axe report feed the quality report (test-output/reports).
+    reporters: [
+      'default',
+      'json',
+      '../../tools/reporters/vitest-story-a11y.mjs',
+    ],
+    outputFile: { json: 'test-output/reports/storybook/vitest.json' },
     watch: false,
     browser: {
       enabled: true,

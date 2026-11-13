@@ -5,6 +5,11 @@ export interface ThemeStyleTagProps {
   vars: ResolvedVars;
   /** CSP nonce for the <style> element. */
   nonce?: string;
+  /**
+   * Where the variables apply. Default `:root:root` (the whole page). A scoped preview passes
+   * `[data-tenant-preview="t_acme"]` (P2.1-T11); nothing else is accepted.
+   */
+  selector?: string;
   /** `brand` emits only the colour roles; `all` (default) emits every resolved variable. */
   scope?: 'all' | 'brand';
   /**
@@ -17,6 +22,18 @@ export interface ThemeStyleTagProps {
 // Values come from the resolver (colours already validated as #rrggbb, everything else from token
 // scales). This is a second line of defence: anything that could leave the declaration is refused.
 const UNSAFE_VALUE = /[;{}<>\\]|\/\*|url\(|expression\(/i;
+
+const ROOT_SELECTOR = ':root:root';
+// The only scoped selector: one tenant's preview container. Anything else is refused.
+const PREVIEW_SELECTOR = /^\[data-tenant-preview="t_[a-z0-9_]{2,40}"\]$/;
+
+function checkSelector(selector: string): string {
+  if (selector !== ROOT_SELECTOR && !PREVIEW_SELECTOR.test(selector))
+    throw new Error(
+      `ThemeStyleTag: refusing selector ${JSON.stringify(selector)}`,
+    );
+  return selector;
+}
 
 function declarations(vars: ResolvedVars, scope: 'all' | 'brand'): string {
   const out: string[] = [];
@@ -42,11 +59,15 @@ export function themeCss(
   vars: ResolvedVars,
   scope: 'all' | 'brand' = 'all',
   darkVars?: ResolvedVars,
+  selector: string = ROOT_SELECTOR,
 ): string {
-  const base = `:root:root{${declarations(vars, scope)}}`;
-  return darkVars
-    ? `${base}@media (prefers-color-scheme: dark){:root:root[data-appearance="system"]{${declarations(darkVars, scope)}}}`
-    : base;
+  const target = checkSelector(selector);
+  const base = `${target}{${declarations(vars, scope)}}`;
+  if (!darkVars) return base;
+  // On the page, `system` appearance is the html attribute; in a scoped preview it follows the OS.
+  const dark =
+    target === ROOT_SELECTOR ? `${target}[data-appearance="system"]` : target;
+  return `${base}@media (prefers-color-scheme: dark){${dark}{${declarations(darkVars, scope)}}}`;
 }
 
 /**
@@ -59,10 +80,11 @@ export function ThemeStyleTag({
   nonce,
   scope = 'all',
   darkVars,
+  selector,
 }: ThemeStyleTagProps) {
   return (
     <style nonce={nonce} data-byteflock-theme="">
-      {themeCss(vars, scope, darkVars)}
+      {themeCss(vars, scope, darkVars, selector)}
     </style>
   );
 }

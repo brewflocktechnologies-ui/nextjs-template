@@ -98,8 +98,32 @@ tester.run('data-access-tenant-first', rule('data-access-tenant-first'), {
       code: 'export class ThemeError extends Error {}',
       filename: 'src/data/themes.ts',
     },
+    {
+      code: 'export async function listTenants(ctx: PlatformContext) {}',
+      filename: 'src/data/platform/tenants.ts',
+    },
   ],
   invalid: [
+    {
+      code: 'export async function listTenants(tenantId: string) {}',
+      filename: 'src/data/platform/tenants.ts',
+      errors: [{ messageId: 'first' }],
+    },
+    {
+      code: 'export async function listTenants(ctx: TenantContext) {}',
+      filename: 'src/data/platform/tenants.ts',
+      errors: [{ messageId: 'first' }],
+    },
+    {
+      code: 'export async function listTenants(ctx) {}',
+      filename: 'src/data/platform/tenants.ts',
+      errors: [{ messageId: 'first' }],
+    },
+    {
+      code: 'export async function getDraft(ctx: PlatformContext) {}',
+      filename: 'src/data/themes.ts',
+      errors: [{ messageId: 'first' }],
+    },
     {
       code: 'export async function getDraft(id: string) {}',
       filename: 'src/data/themes.ts',

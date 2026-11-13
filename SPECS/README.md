@@ -28,19 +28,20 @@ P0 ─ P1.0 ─ P1.1 ─┬─ PoC-A (widget isolation) ────────
                   └─ PoC-B (primitives) ─ P1.4 (ui-react) ──┴────────┘
 ```
 
-| Spec                                              | Title                                | Depends on       | Produces                                                                 |
-| ------------------------------------------------- | ------------------------------------ | ---------------- | ------------------------------------------------------------------------ |
-| [P0](phases/P0-approval.md)                       | Baseline approval and open decisions | —                | Approval record, ADR statuses                                            |
-| [P1.0](phases/P1.0-governance-and-ci-skeleton.md) | Governance files and CI skeleton     | P0               | AGENTS.md, templates, CODEOWNERS, CI with pinned actions                 |
-| [P1.1](phases/P1.1-workspace-foundation.md)       | Workspace foundation                 | P1.0             | pnpm, 8 projects, tags, boundary lint, Linux + Windows CI                |
-| [PoC-A](phases/POC-A-widget-isolation.md)         | Widget isolation proof of concept    | P1.1             | Loader, launcher, frame shell, bridge, playground fixtures, measurements |
-| [P1.2](phases/P1.2-design-tokens.md)              | Design tokens                        | P1.1             | DTCG sources, Style Dictionary build, committed outputs                  |
-| [P1.3](phases/P1.3-theme-contract.md)             | Theme contract (includes PoC-C)      | P1.2             | TypeBox schema, JSON Schema, resolver, migrations, fixtures              |
-| [PoC-B](phases/POC-B-react-primitives.md)         | React primitives proof of concept    | P1.1             | Base UI decision, first components                                       |
-| [P1.4](phases/P1.4-ui-react-foundation.md)        | React UI foundation                  | P1.3, PoC-B      | ui-react components, Tailwind bridge, Storybook, Vitest, axe             |
-| [P1.5](phases/P1.5-frame-app-foundation.md)       | Frame app foundation                 | PoC-A, P1.3      | chat-widget elements, controllers, consent gate, budgets                 |
-| [P1.6](phases/P1.6-themed-vertical-slice.md)      | Themed vertical slice                | P1.3, P1.4, P1.5 | SSR brand layer, theme editor with preview, publish stub                 |
-| [P1.7](phases/P1.7-hardening-and-exit.md)         | Hardening and Phase-1 exit           | all              | Gates promoted, budgets, nightly matrix, docs, exit checklist            |
+| Spec                                                          | Title                                  | Depends on       | Produces                                                                 |
+| ------------------------------------------------------------- | -------------------------------------- | ---------------- | ------------------------------------------------------------------------ |
+| [P0](phases/P0-approval.md)                                   | Baseline approval and open decisions   | —                | Approval record, ADR statuses                                            |
+| [P1.0](phases/P1.0-governance-and-ci-skeleton.md)             | Governance files and CI skeleton       | P0               | AGENTS.md, templates, CODEOWNERS, CI with pinned actions                 |
+| [P1.1](phases/P1.1-workspace-foundation.md)                   | Workspace foundation                   | P1.0             | pnpm, 8 projects, tags, boundary lint, Linux + Windows CI                |
+| [PoC-A](phases/POC-A-widget-isolation.md)                     | Widget isolation proof of concept      | P1.1             | Loader, launcher, frame shell, bridge, playground fixtures, measurements |
+| [P1.2](phases/P1.2-design-tokens.md)                          | Design tokens                          | P1.1             | DTCG sources, Style Dictionary build, committed outputs                  |
+| [P1.3](phases/P1.3-theme-contract.md)                         | Theme contract (includes PoC-C)        | P1.2             | TypeBox schema, JSON Schema, resolver, migrations, fixtures              |
+| [PoC-B](phases/POC-B-react-primitives.md)                     | React primitives proof of concept      | P1.1             | Base UI decision, first components                                       |
+| [P1.4](phases/P1.4-ui-react-foundation.md)                    | React UI foundation                    | P1.3, PoC-B      | ui-react components, Tailwind bridge, Storybook, Vitest, axe             |
+| [P1.5](phases/P1.5-frame-app-foundation.md)                   | Frame app foundation                   | PoC-A, P1.3      | chat-widget elements, controllers, consent gate, budgets                 |
+| [P1.6](phases/P1.6-themed-vertical-slice.md)                  | Themed vertical slice                  | P1.3, P1.4, P1.5 | SSR brand layer, theme editor with preview, publish stub                 |
+| [P1.7](phases/P1.7-hardening-and-exit.md)                     | Hardening and Phase-1 exit             | all              | Gates promoted, budgets, nightly matrix, docs, exit checklist            |
+| [P2.1](phases/P2.1-tenant-data-backend-and-platform-scope.md) | Tenant data backend and platform scope | P1.7, D-24, D-25 | Postgres in Docker, RLS, super admin with default chrome, tenant config  |
 
 ## Workflow per phase
 

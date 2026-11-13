@@ -75,9 +75,13 @@ Four tenants, three valid and one failure fixture, defined once in `validation/t
 
 Signed `dev-session` cookie (HMAC-SHA256 over `{tenantId,userId,roles,locale}`), secret from `DEV_SESSION_SECRET` with a documented dev default, module refuses to load when `NODE_ENV === 'production'`. A dev-only route `/dev/session` lists the tenants and sets the cookie, so the product owner can switch tenants in one click. Specified in P1.6; the route and adapter are the only "dev-only" code allowed in `admin-dashboard`, guarded by one `isDevOnly()` helper.
 
+Amended on 2026-11-11 by the product owner (D-25, from P2.1): the cookie carries only `{userId, tenantId | null, iat}`; roles and membership are loaded from Postgres on every request, and `/dev/session` also offers the super admin.
+
 ### D-13 — Theme publish stub writes into the widget's static folder in development — **Default**
 
 P1.6's publish stub writes `/v1/themes/<tenantId>/<rev>.json` and updates `/v1/config/<widgetKey>.json` under `apps/widget/public/v1/` (path from `THEME_PUBLISH_DIR`, dev only). This makes the Draft → Preview → Publish → widget loop fully observable on the local stack without a backend. Production publish is the Java backend's job (later).
+
+Amended on 2026-11-11 by the product owner (D-24, from P2.1): Postgres becomes the source of truth for drafts and revisions; the static files stay in the same place but are materialised from the database after each publish commits.
 
 ### D-14 — Widget dev server provides the failure-mode fixtures — **Default**
 
@@ -136,6 +140,8 @@ Overturns the Q-013 default (brand layer only). The dashboard root layout emits 
 - Runbook P1.6 step 1 expects the whole chrome themed.
 - Risk accepted: a tenant palette can make the agent inbox less comfortable to use; the contrast policy is the guard, and per-agent overrides are a later feature.
 
+Amended on 2026-11-11 by the product owner (D-25, from P2.1): applies to tenant-scoped requests only. Platform-scoped requests (super admin) always render the chrome with the platform default design.
+
 ### D-21 — Per-widgetKey domain allowlist in Phase 1 — **Fixed (Q-014 answered)**
 
 Overturns the Q-014 default (no allowlist). The config document gains a required `allowedOrigins` list (ENDP-02a). The frame refuses to bootstrap when the parent origin is not listed: no `ready`, no content, an `ORIGIN_NOT_ALLOWED` beacon only. The `frame-ancestors *` header stays, because one static frame document serves every widget key; enforcement is in the frame. In `mode=preview` the build-time dashboard origin is always allowed. Consequences:
@@ -155,6 +161,9 @@ The product owner deferred pushing to GitHub and running CI, to focus on local s
 - **The Windows CI job (D-17) is replaced by running `verify` on the product owner's Windows 11 machine.** The Linux side is unverified until CI returns; evidence says so.
 - **The workflow file is still maintained.** Each phase updates `ci.yml` so CI is ready to turn on, and `check-workflows-pinned` keeps checking it.
 - **Deferred until CI returns:** branch protection and required checks (P1.0-AC06, P1.0-AC08, P1.0-T12), the CI cache-hit check, the PR template in use, Renovate, and the PR-body trailer checks that read `GITHUB_EVENT_PATH` (they skip locally with a notice). The independent verifier runs `verify` on a fresh clone instead.
+
+2026-11-12, at the product owner's request: the P2.1 branch was pushed and a pull request opened into `main`, so `ci.yml` runs on GitHub for the first time. Nothing else in D-22 changes: local `pnpm verify` stays the gate, and branch protection and required checks stay deferred, until the product owner overturns D-22.
+
 - **CODEOWNERS:** the `@OWNER` placeholder is a warning locally and an error only when `CI` is set, because CODEOWNERS has no effect without GitHub.
 
 To end the deferral: complete P1.0-T12, open the P1.0 pull request, and record the first green CI run in `SPECS/evidence/P1.0.md`.
@@ -167,6 +176,59 @@ ARCH-001 §7 and the P1.2 spec placed the committed token outputs under the libr
 - The same convention applies to later generators unless their spec says otherwise. `libs/theme/schema/theme.v1.json` stays where THEME-08 puts it, because it is a contract document, not a build output.
 - Each generator exposes a `build:check` target that builds to a temp folder and compares the result with the committed files. `pnpm verify` and CI run `nx run-many -t build:check`.
 - Generated folders are excluded from Prettier (they have their own stale check) and marked `linguist-generated`.
+
+## Product-owner decisions for Phase 2 (2026-11-11)
+
+### D-24 — Local data backend: Postgres in Docker, Next.js server as the data layer — **Fixed (product owner, 2026-11-11), applies from P2.1**
+
+Phase 1 had no backend; file stubs stood in for one (D-13, `validation/tenants.json`). From P2.1:
+
+- Postgres 17 runs in Docker Compose (`compose.yaml`, host port 5440). Started, migrated, seeded and reset by Node scripts (`pnpm db:*`), so Windows needs only Docker Desktop.
+- The dashboard's Next.js server is the data layer: route handlers and server-only modules query Postgres through `pg`, with SQL migrations and no ORM. No separate backend service in this phase.
+- Every tenant table has row-level security, and every query runs through one scoped transaction helper.
+- Postgres is the source of truth for tenants, users, roles, theme drafts and revisions, widget settings and tenant config. The widget's static documents under `apps/widget/public/v1` become a projection materialised on publish (D-13 keeps the location).
+- Alternatives considered: a separate Node or Java service (reusing chatplatform), an ORM, SQLite. Recorded in ADR-012.
+
+### D-25 — Platform scope for super admins; the chrome stays on the default design — **Fixed (product owner, 2026-11-11), applies from P2.1**
+
+- A request is either tenant-scoped (a tenant user) or platform-scoped (a super admin with access to every tenant).
+- Platform scope always renders the dashboard chrome with the platform default design, including on pages about a specific tenant. A tenant's design appears only inside a labelled, scoped preview area and in the widget preview frame.
+- Tenant scope keeps D-20: the whole chrome uses the tenant's published theme.
+- Recorded in ADR-013, which supersedes ADR-005's request-context shape.
+
+### D-26 — One gate pipeline and one quality report — **Fixed (product owner, 2026-11-12), applies from P2.1-T17**
+
+The product owner asked for one pipeline that produces one human-readable file with every quality-gate result, accessibility included. From P2.1-T17:
+
+- **`pnpm verify` is the only gate runner**, locally and in CI. `ci.yml` and `nightly.yml` call it with a profile (`--profile=<name>`) instead of listing gate commands themselves, so the two can no longer drift (this replaces the "keep them in step by hand" rule of D-22; the rest of D-22 stands). Pull requests pass `--affected --base=<ref>`.
+- **Every gate leaves machine-readable results** that Nx caches with the task, so a cached run still reports: Vitest and Jest JSON, Playwright JSON (with each axe scan attached), an ESLint JSON file next to the normal console output, the widget bundle sizes against `budgets.json`, each policy check, and the test count against `tools/test-count.json`. Nightly adds Lighthouse.
+- **`reports/quality-report.md`** is built from them by `tools/scripts/report.mjs`: overall result and run facts, one table of gates, then details per gate, and each failed gate with the last lines of its output (full logs stay in `reports/logs/`). **Accessibility** is its own section: lint `jsx-a11y` findings, axe results from Storybook and from the end-to-end suites (violations by rule and impact, plus how many pages and stories were scanned), theme contrast tests, and the Lighthouse accessibility score.
+- In CI each job uploads its `reports/` folder, and a final job merges them into one report, shown as the run's job summary and uploaded as the `quality-report` artifact. `reports/` is never committed; the evidence file still records the summary table.
+- The widget is also scanned with axe on a real host page (playground), so the assembled frame is covered and not only its parts in Storybook.
+
+### D-27 — Security, tenant-isolation and coverage gates — **Fixed (product owner, 2026-11-12), applies from P2.1-T18**
+
+Three gates are added to `pnpm verify` and the quality report:
+
+- **Dependency audit** (`check-audit`, a policy check). `pnpm audit` on production dependencies fails at `high` or `critical`. Dev-tooling advisories at `high` or `critical` fail unless `tools/audit-exceptions.json` lists the advisory with a reason and an expiry date; an expired entry fails, and so does an entry for an advisory that no longer appears (it is cleaned up, not kept). `moderate` and `low` are reported, never failing. Offline, the check skips with a notice locally and fails when `CI` is set, like `check-codeowners`.
+- **Database safety** (`check-db-safety`, a policy check, needs the migrated stack database). Every table with a `tenant_id` has row-level security enabled and forced and a policy that is not `true`; every other table is on a named allowlist, so a new global table is a decision. The application role is not a superuser, owns nothing, has no `BYPASSRLS`, `CREATEROLE` or `CREATEDB`, and has no `TRUNCATE`, `REFERENCES` or `TRIGGER` privilege on any table (`TRUNCATE` ignores row-level security). The check runs its own negative cases first (D-24 pattern of `check-compose-pinned`).
+- **Coverage floors.** Unit-test coverage (V8; Vitest and Jest) is collected on every `test` run, and each project has a floor for lines, statements, functions and branches in `tools/coverage-floor.json`; the test run fails below it. The floor is set from the measured value and only goes up: lowering one needs a `COVERAGE-LOWERED:` trailer (`check-coverage-floor`, same pattern as `TESTS-REMOVED:`). Stories and end-to-end tests are not counted, so the number is a lower bound for the widget and UI libraries, whose behaviour is mostly tested in Storybook.
+
+The report gains a Dependency audit section, a Database safety table and a Coverage section.
+
+### D-28 — Dashboard security headers, secret scanning, visual results and trends in the report — **Fixed (product owner, 2026-11-12), applies from P2.1-T19**
+
+- **Dashboard headers.** Every dashboard response carries `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()` and `Cross-Origin-Opener-Policy: same-origin`, without `X-Powered-By`. Every page through the proxy carries a per-request nonce CSP: `default-src 'self'`, scripts by nonce with `'strict-dynamic'` (plus `'unsafe-eval'` in development only, which React needs there), `<style>` elements from the origin or by nonce, style attributes allowed (`style-src-attr 'unsafe-inline'`: React server-renders them, for example the theme swatches, and Base UI's visually hidden inputs use them; they cannot run script), the widget origin as the only `frame-src`, `frame-ancestors 'none'`, `base-uri 'none'`, `object-src 'none'`, `form-action 'self'`. ARCH-001 §10.7 covers only the widget frame; this is the dashboard's counterpart. `Strict-Transport-Security` waits for HTTPS hosting. An end-to-end test asserts the headers and that the main pages log no CSP violation.
+- **Secret scanning** (`check-secrets`, a policy check). Tracked and new files are scanned for private keys, cloud and service tokens, and URLs with credentials; committed `.env` files other than `.env.development` and `.env.example`, and key files, fail. The local development passwords (`byteflock`, `byteflock_app`) are allowed by name. A line can opt out with `secret-scan: allow` and a reason. Git history is not scanned.
+- **Visual results in the report.** `pnpm visual` writes a run folder (`reports/visual/`) like `pnpm verify`, so `report.mjs` merges it with the other runs.
+- **Trend.** Each run folder keeps the metrics of the previous run in the same folder, and the report shows what changed (tests, failures, coverage, bundle sizes, accessibility and audit findings, lint warnings, durations). CI runners start empty, so CI reports show no trend until a previous report is supplied.
+
+### D-29 — Accessibility lint as errors, pre-commit hook, dashboard route budgets, unused code — **Fixed (product owner, 2026-11-12), applies from P2.1-T20**
+
+- **jsx-a11y rules are errors** in the React projects (dashboard, ui-react). Nx's React preset sets them as warnings, so they never failed lint.
+- **Pre-commit hook.** `.githooks/pre-commit` runs `tools/scripts/pre-commit.mjs` on the staged files: Prettier check, the secret scan of `check-secrets` on the staged content, and ESLint per project. `pnpm install` points git at `.githooks` (`core.hooksPath`) outside CI. It takes seconds; `git commit --no-verify` skips it, and `pnpm verify` remains the gate.
+- **Dashboard route budgets.** After `next build`, the first-load JavaScript of every page route (the shared runtime chunks plus the layout and page chunks from Next's client manifest, gzip) is held to `apps/admin-dashboard/budgets.json`, set by the widget's method: `ceil(baseline × 1.15)`, with exceptions written down (`check-budget-exception` covers both files). The results appear in the report's budgets section.
+- **Unused code and dependencies** (knip, `knip.jsonc`). Unused files, unused or unlisted dependencies and unlisted binaries fail; every dependency that is used in a way knip cannot see is listed with its reason. Unused exports and types are reported as warnings, because some are in contract files whose changes need `CONTRACT-CHANGE:`; tightening them is a later decision.
 
 ## How to change a decision
 

@@ -1,5 +1,5 @@
 import { resolveTheme, validateTheme } from '@byteflock/theme';
-import { json, readBody, requireContext } from '../../../../server/api';
+import { json, readBody, requireTenantTarget } from '../../../../server/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,8 +9,8 @@ export const dynamic = 'force-dynamic';
  * font stacks only (BRIDGE-02), and the frame does not use elevation.
  */
 export async function POST(request: Request) {
-  const ctx = await requireContext();
-  if (ctx instanceof Response) return ctx;
+  const target = await requireTenantTarget(request, 'theme.read');
+  if (target instanceof Response) return target;
   const body = (await readBody(request)) as {
     theme?: unknown;
     appearance?: unknown;

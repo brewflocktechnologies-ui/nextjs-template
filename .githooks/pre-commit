@@ -1,0 +1,3 @@
+#!/bin/sh
+# D-29: fast checks on the staged files (tools/scripts/pre-commit.mjs). Skip once with --no-verify.
+exec node tools/scripts/pre-commit.mjs

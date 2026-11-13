@@ -1,7 +1,14 @@
 {
-  "schemaVersion": 1,
-  "tenantId": "t_acme",
-  "themeRevision": 1,
+  "allowedOrigins": [
+    "http://localhost:4300"
+  ],
+  "features": {
+    "consent": "required",
+    "proactive": true
+  },
+  "launcher": {
+    "position": "bottom-right"
+  },
   "locale": {
     "default": "en-AU",
     "supported": [
@@ -9,14 +16,7 @@
       "en-US"
     ]
   },
-  "features": {
-    "proactive": true,
-    "consent": "required"
-  },
-  "launcher": {
-    "position": "bottom-right"
-  },
-  "allowedOrigins": [
-    "http://localhost:4300"
-  ]
+  "schemaVersion": 1,
+  "tenantId": "t_acme",
+  "themeRevision": 1
 }

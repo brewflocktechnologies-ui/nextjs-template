@@ -96,3 +96,14 @@ describe('shadcn bridge (P1.4-T01)', () => {
     ).toEqual([]);
   });
 });
+
+describe('bridge scope (P2.1-T11)', () => {
+  it('declares the shadcn names on :root and inside a tenant preview container', () => {
+    const css = fs.readFileSync(
+      path.join(src, 'generated', 'shadcn-bridge.css'),
+      'utf8',
+    );
+    expect(css).toMatch(/^:root,\n\[data-tenant-preview\] \{/m);
+    expect(css).toContain('--primary: var(--sem-color-primary);');
+  });
+});

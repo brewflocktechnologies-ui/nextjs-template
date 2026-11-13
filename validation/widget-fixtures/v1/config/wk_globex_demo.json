@@ -1,21 +1,21 @@
 {
-  "schemaVersion": 1,
-  "tenantId": "t_globex",
-  "themeRevision": 1,
+  "allowedOrigins": [
+    "http://localhost:4300"
+  ],
+  "features": {
+    "consent": "notRequired",
+    "proactive": true
+  },
+  "launcher": {
+    "position": "bottom-left"
+  },
   "locale": {
     "default": "en-US",
     "supported": [
       "en-US"
     ]
   },
-  "features": {
-    "proactive": true,
-    "consent": "notRequired"
-  },
-  "launcher": {
-    "position": "bottom-left"
-  },
-  "allowedOrigins": [
-    "http://localhost:4300"
-  ]
+  "schemaVersion": 1,
+  "tenantId": "t_globex",
+  "themeRevision": 1
 }

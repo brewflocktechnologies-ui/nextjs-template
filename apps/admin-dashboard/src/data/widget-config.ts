@@ -1,10 +1,10 @@
-// Widget settings data access (P1.6-T12, D-21). Writes the widget config document through the
-// development publish stub; the frame enforces allowedOrigins (ENDP-02a).
-import fs from 'node:fs';
-import path from 'node:path';
+// Widget settings data access (P1.6-T12, D-21; on Postgres since P2.1-T07). Allowed origins live in
+// `widget_keys`; the widget reads them from its static config, which is rewritten after commit.
+// The frame enforces allowedOrigins (ENDP-02a).
+import 'server-only';
 import { originProblems } from '../lib/origins';
-import { publishDir, readJson, writeAtomic } from '../server/store/fs-store';
-import { localTenant } from '../server/tenants';
+import { withScope } from '../server/db';
+import { materialiseTenant } from '../server/store/materialise';
 
 export interface WidgetSettings {
   widgetKey: string;
@@ -21,22 +21,23 @@ export class WidgetConfigError extends Error {
   }
 }
 
-function configPath(tenantId: string): { key: string; file: string } {
-  const key = localTenant(tenantId)?.widgetKey;
-  if (!key) throw new WidgetConfigError(`No widget for ${tenantId}`);
-  const file = path.join(publishDir(), 'config', `${key}.json`);
-  if (!fs.existsSync(file))
-    throw new WidgetConfigError(`No widget config for ${key}`);
-  return { key, file };
+const SELECT_KEY = `SELECT widget_key, allowed_origins FROM widget_keys
+                    WHERE tenant_id = $1 ORDER BY widget_key LIMIT 1`;
+
+interface KeyRow {
+  widget_key: string;
+  allowed_origins: string[];
 }
 
 export async function getWidgetSettings(
   tenantId: string,
 ): Promise<WidgetSettings | null> {
-  if (!localTenant(tenantId)?.widgetKey) return null;
-  const { key, file } = configPath(tenantId);
-  const config = readJson(file) as { allowedOrigins?: string[] };
-  return { widgetKey: key, allowedOrigins: config.allowedOrigins ?? [] };
+  const row = await withScope({ scope: 'tenant', tenantId }, (db) =>
+    db.maybeOne<KeyRow>(SELECT_KEY, [tenantId]),
+  );
+  return row
+    ? { widgetKey: row.widget_key, allowedOrigins: row.allowed_origins }
+    : null;
 }
 
 export async function saveAllowedOrigins(
@@ -46,8 +47,23 @@ export async function saveAllowedOrigins(
   const problems = originProblems(origins);
   if (problems.length)
     throw new WidgetConfigError('Invalid allowed origins', problems);
-  const { key, file } = configPath(tenantId);
-  const config = readJson(file) as Record<string, unknown>;
-  writeAtomic(file, { ...config, allowedOrigins: origins });
+  const key = await withScope({ scope: 'tenant', tenantId }, async (db) => {
+    const row = await db.maybeOne<KeyRow>(SELECT_KEY, [tenantId]);
+    if (!row) throw new WidgetConfigError(`No widget for ${tenantId}`);
+    await db.rows(
+      'UPDATE widget_keys SET allowed_origins = $2 WHERE widget_key = $1',
+      [row.widget_key, origins],
+    );
+    return row.widget_key;
+  });
+  try {
+    await materialiseTenant(tenantId);
+  } catch (error) {
+    // The settings are saved; `pnpm db:materialise` rewrites the widget's config file.
+    console.error(
+      `materialise ${tenantId} failed after commit; run pnpm db:materialise:`,
+      (error as Error).message,
+    );
+  }
   return { widgetKey: key, allowedOrigins: origins };
 }

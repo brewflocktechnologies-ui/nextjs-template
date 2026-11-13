@@ -20,7 +20,8 @@
           "^production"
         ],
         "outputs": [
-          "{projectRoot}/dist"
+          "{projectRoot}/dist",
+          "{projectRoot}/test-output/reports/build"
         ],
         "dependsOn": [
           "^build",
