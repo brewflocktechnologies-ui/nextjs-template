@@ -71,7 +71,7 @@ describe('message list', () => {
     await el.updateComplete;
     // Let the first render's scroll finish before stubbing the metrics.
     await el.settled;
-    const ol = el.shadowRoot!.querySelector('ol')!;
+    const ol = el.shadowRoot!.querySelector<HTMLElement>('.log')!;
     // jsdom has no layout: a 1000 px tall list in a 200 px window.
     let top = 0;
     Object.defineProperty(ol, 'scrollHeight', {
@@ -127,5 +127,45 @@ describe('message list', () => {
     await el.updateComplete;
     expect(byId('2')).toBe(before);
     expect(el.shadowRoot!.querySelectorAll('li')).toHaveLength(3);
+  });
+});
+
+describe('accessibility details', () => {
+  it('exposes the messages as a labelled log around a list', async () => {
+    const el = document.createElement(
+      'byteflock-message-list',
+    ) as ByteflockMessageList;
+    el.messages = [msg('1')];
+    document.body.append(el);
+    await el.updateComplete;
+    const log = el.shadowRoot?.querySelector('[role="log"]');
+    expect(log?.getAttribute('aria-label')).toBe('Messages');
+    expect(log?.getAttribute('tabindex')).toBe('0');
+    expect(log?.querySelector('ol > li')).not.toBeNull();
+    expect(log?.hasAttribute('aria-live')).toBe(false);
+  });
+
+  it('sets the sender attribute before the first render', async () => {
+    const list = document.createElement(
+      'byteflock-message-list',
+    ) as ByteflockMessageList;
+    list.messages = [msg('1', 'visitor')];
+    document.body.append(list);
+    await list.updateComplete;
+    const message = list.shadowRoot?.querySelector('byteflock-message');
+    await (message as unknown as { updateComplete: Promise<unknown> })
+      .updateComplete;
+    expect(message?.getAttribute('from')).toBe('visitor');
+  });
+
+  it('limits the composer to 2000 characters', async () => {
+    const el = document.createElement(
+      'byteflock-composer',
+    ) as ByteflockComposer;
+    document.body.append(el);
+    await el.updateComplete;
+    expect(
+      el.shadowRoot?.querySelector('textarea')?.getAttribute('maxlength'),
+    ).toBe('2000');
   });
 });

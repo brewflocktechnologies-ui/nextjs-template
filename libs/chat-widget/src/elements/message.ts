@@ -1,8 +1,19 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, type PropertyValues } from 'lit';
 import { t } from '../i18n/t';
 import { base, defineOnce, type ChatMessage } from './shared';
 
 export const MESSAGE_TAG = 'byteflock-message';
+
+/** One time formatter per locale, shared by every message (creating them is not cheap). */
+const timeFormats = new Map<string, Intl.DateTimeFormat>();
+const timeFormat = (locale: string) => {
+  let f = timeFormats.get(locale);
+  if (!f) {
+    f = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit' });
+    timeFormats.set(locale, f);
+  }
+  return f;
+};
 
 /** One chat message with a localised timestamp (Intl.DateTimeFormat). */
 export class ByteflockMessage extends LitElement {
@@ -33,6 +44,10 @@ export class ByteflockMessage extends LitElement {
         padding-block: calc(0.5rem * var(--sem-density-factor, 1));
         padding-inline: calc(0.75rem * var(--sem-density-factor, 1));
         border-radius: var(--sem-radius-md);
+        /* Invisible normally and takes no space; Windows High Contrast paints it, so the
+           bubble's shape stays visible when backgrounds are dropped. */
+        outline: 1px solid transparent;
+        outline-offset: -1px;
         background: var(--sem-color-surface-variant);
         color: var(--sem-color-on-surface-variant);
         overflow-wrap: anywhere;
@@ -56,17 +71,16 @@ export class ByteflockMessage extends LitElement {
     `,
   ];
 
-  override updated() {
-    if (this.message) this.setAttribute('from', this.message.from);
+  /** Set before rendering, so the sender's styles apply on the first paint. */
+  override willUpdate(changed: PropertyValues<this>) {
+    if (changed.has('message') && this.message)
+      this.setAttribute('from', this.message.from);
   }
 
   override render() {
     const m = this.message;
     if (!m) return html``;
-    const time = new Intl.DateTimeFormat(this.locale, {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
+    const time = timeFormat(this.locale);
     const who = t(
       m.from === 'agent' ? 'message.fromAgent' : 'message.fromVisitor',
       this.locale,

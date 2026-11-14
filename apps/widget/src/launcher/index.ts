@@ -12,6 +12,7 @@ import {
   type HostToFrame,
   type LauncherTheme,
 } from '../bridge/protocol';
+import { launcherDir, launcherStrings } from './strings';
 import { LAUNCHER_CSS } from './styles';
 
 export interface MountOptions {
@@ -32,12 +33,6 @@ export interface MountOptions {
 type Status = 'loading' | 'ready' | 'unavailable';
 const READY_TIMEOUT_MS = 5000;
 const MOBILE_MAX_WIDTH = 640;
-const DEFAULT_LABELS: Record<string, string> = {
-  en: 'Chat',
-  de: 'Chat',
-  fr: 'Discussion',
-  es: 'Chat',
-};
 
 const ICONS: Record<LauncherTheme['icon'], string> = {
   chat: 'M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z',
@@ -78,6 +73,8 @@ class Launcher {
   private iframe: HTMLIFrameElement | null = null;
   private readonly limiter = new RateLimiter();
   private readonly name: string;
+  private readonly locale: string;
+  private readonly strings: ReturnType<typeof launcherStrings>;
   private status: Status = 'loading';
   private open = false;
   private unread = 0;
@@ -87,8 +84,9 @@ class Launcher {
   private pending: HostToFrame[] = [];
 
   constructor(private readonly opts: MountOptions) {
-    const lang = (opts.locale ?? navigator.language ?? 'en').split('-')[0];
-    this.name = opts.label?.trim() || DEFAULT_LABELS[lang] || DEFAULT_LABELS.en;
+    this.locale = opts.locale ?? navigator.language ?? 'en';
+    this.strings = launcherStrings(this.locale);
+    this.name = opts.label?.trim() || this.strings.name;
     this.root = this.container.attachShadow({ mode: 'open' });
   }
 
@@ -118,6 +116,8 @@ class Launcher {
     this.button.type = 'button';
     this.button.className = 'launcher';
     this.button.dataset.shape = 'circle';
+    // Text direction follows the locale; the corner it sits in stays as configured.
+    this.button.dir = launcherDir(this.locale);
     this.button.setAttribute('aria-haspopup', 'dialog');
     this.button.setAttribute('aria-expanded', 'false');
     this.icon.setAttribute('viewBox', '0 0 24 24');
@@ -146,10 +146,9 @@ class Launcher {
 
   private updateName() {
     const unread =
-      this.unread > 0
-        ? `, ${this.unread} unread message${this.unread === 1 ? '' : 's'}`
-        : '';
-    const state = this.status === 'unavailable' ? ' (unavailable)' : '';
+      this.unread > 0 ? `, ${this.strings.unread(this.unread)}` : '';
+    const state =
+      this.status === 'unavailable' ? ` (${this.strings.unavailable})` : '';
     this.button.setAttribute('aria-label', `${this.name}${unread}${state}`);
   }
 
@@ -169,7 +168,8 @@ class Launcher {
     this.button.toggleAttribute('aria-disabled', status === 'unavailable');
     if (status === 'unavailable')
       this.button.setAttribute('aria-disabled', 'true');
-    this.button.title = status === 'unavailable' ? 'Chat unavailable' : '';
+    this.button.title =
+      status === 'unavailable' ? this.strings.unavailableTitle : '';
     this.updateName();
   }
 

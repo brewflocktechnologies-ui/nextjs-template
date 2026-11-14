@@ -34,6 +34,9 @@ export class ByteflockFrameHeader extends LitElement {
         padding-inline: calc(1rem * var(--sem-density-factor, 1));
         background: var(--sem-color-primary);
         color: var(--sem-color-on-primary);
+        /* Invisible normally and takes no space; separates the header in Windows High Contrast. */
+        outline: 1px solid transparent;
+        outline-offset: -1px;
       }
       h1 {
         margin: 0;

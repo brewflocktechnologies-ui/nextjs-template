@@ -66,7 +66,10 @@ export class ByteflockConsentNotice extends LitElement {
   }
 
   override render() {
-    return html`<section role="region" aria-label="Consent">
+    return html`<section
+      role="region"
+      aria-label=${t('consent.label', this.locale)}
+    >
       <p>${t('consent.text', this.locale)}</p>
       <div class="actions">
         <button type="button" class="accept" @click=${() => this.decide(true)}>

@@ -36,18 +36,21 @@ export class ByteflockMessageList extends LitElement {
         flex-direction: column;
         min-block-size: 0;
       }
-      /* The list is the scroll region; it is focusable so keyboard users can scroll it. */
-      ol {
+      /* The log is the scroll region; it is focusable so keyboard users can scroll it. */
+      .log {
         flex: 1;
         overflow-y: auto;
-        margin: 0;
         padding: calc(1rem * var(--sem-density-factor, 1));
+      }
+      ol {
+        margin: 0;
+        padding: 0;
         list-style: none;
         display: flex;
         flex-direction: column;
         gap: calc(0.5rem * var(--sem-density-factor, 1));
       }
-      ol:focus-visible {
+      .log:focus-visible {
         outline: 2px solid var(--sem-color-focus-ring);
         outline-offset: -2px;
       }
@@ -61,8 +64,8 @@ export class ByteflockMessageList extends LitElement {
   /** Whether the next update should keep the newest message in view. */
   private followEnd = true;
 
-  private get scroller(): HTMLOListElement | null {
-    return this.renderRoot?.querySelector('ol') ?? null;
+  private get scroller(): HTMLElement | null {
+    return this.renderRoot?.querySelector<HTMLElement>('.log') ?? null;
   }
 
   override willUpdate(changed: PropertyValues<this>) {
@@ -96,23 +99,28 @@ export class ByteflockMessageList extends LitElement {
   settled: Promise<void> = Promise.resolve();
 
   override render() {
-    return html`<ol
+    // role="log" (implicitly aria-live="polite") is the chat pattern: new messages are announced,
+    // earlier ones are not re-read. The list inside keeps list semantics for navigation.
+    return html`<div
+      class="log"
+      role="log"
       tabindex="0"
-      aria-live="polite"
       aria-label=${t('messages.label', this.locale)}
     >
-      ${repeat(
-        this.messages,
-        (m) => m.id,
-        (m) =>
-          html`<li>
-            <byteflock-message
-              .message=${m}
-              locale=${this.locale}
-            ></byteflock-message>
-          </li>`,
-      )}
-    </ol>`;
+      <ol>
+        ${repeat(
+          this.messages,
+          (m) => m.id,
+          (m) =>
+            html`<li>
+              <byteflock-message
+                .message=${m}
+                locale=${this.locale}
+              ></byteflock-message>
+            </li>`,
+        )}
+      </ol>
+    </div>`;
   }
 }
 

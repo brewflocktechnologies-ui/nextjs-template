@@ -45,7 +45,6 @@ export const LAUNCHER_CSS = `
   color: var(--bf-fg);
   font: var(--bf-font);
   font-weight: 600;
-  direction: ltr;
   cursor: pointer;
   box-shadow: 0 4px 12px rgb(15 23 42 / 0.25);
   transition: transform 120ms ease;
@@ -137,6 +136,19 @@ iframe {
   inline-size: 100%;
   block-size: 100%;
   border: 0;
+}
+/* Windows High Contrast drops backgrounds and shadows; system-colour borders keep the button,
+   badge and panel visible. */
+@media (forced-colors: active) {
+  .launcher {
+    border: 2px solid ButtonText;
+  }
+  .badge {
+    border: 1px solid CanvasText;
+  }
+  .panel[data-state="open"] {
+    border: 1px solid CanvasText;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .launcher {

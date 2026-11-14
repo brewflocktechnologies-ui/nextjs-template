@@ -4,6 +4,9 @@ import { base, defineOnce } from './shared';
 
 export const COMPOSER_TAG = 'byteflock-composer';
 
+/** Longest message a visitor can type, in characters. */
+export const COMPOSER_MAX_LENGTH = 2000;
+
 export interface ComposerSendDetail {
   text: string;
 }
@@ -99,6 +102,7 @@ export class ByteflockComposer extends LitElement {
         aria-label=${t('composer.label', this.locale)}
         placeholder=${t('composer.placeholder', this.locale)}
         rows="1"
+        maxlength=${COMPOSER_MAX_LENGTH}
         ?disabled=${this.disabled}
         @keydown=${this.onKeydown}
       ></textarea>

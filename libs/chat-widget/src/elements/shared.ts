@@ -36,4 +36,10 @@ export const base = css`
     outline: 2px solid var(--sem-color-focus-ring);
     outline-offset: 2px;
   }
+  /* Windows High Contrast drops backgrounds; borders in system colours keep shapes visible. */
+  @media (forced-colors: active) {
+    button {
+      border: 1px solid ButtonText;
+    }
+  }
 `;

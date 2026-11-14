@@ -8,6 +8,7 @@ export const en = {
   'composer.label': 'Message',
   'composer.placeholder': 'Type your message',
   'composer.send': 'Send',
+  'consent.label': 'Consent',
   'consent.text':
     'To keep this conversation, the chat stores a visitor ID in your browser. (Placeholder wording.)',
   'consent.accept': 'Allow',

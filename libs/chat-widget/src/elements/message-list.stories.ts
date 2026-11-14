@@ -36,7 +36,8 @@ export const ThreeMessages: StoryObj = {
     ) as ByteflockMessageList;
     await list.updateComplete;
     const inner = within(list.shadowRoot as unknown as HTMLElement);
-    await expect(inner.getByRole('list', { name: 'Messages' })).toBeVisible();
+    await expect(inner.getByRole('log', { name: 'Messages' })).toBeVisible();
+    await expect(inner.getByRole('list')).toBeVisible();
     await expect(inner.getAllByRole('listitem')).toHaveLength(3);
     const messages = (list.shadowRoot as ShadowRoot).querySelectorAll(
       'byteflock-message',
@@ -75,8 +76,8 @@ const scrollerOf = async (canvasElement: HTMLElement) => {
   await list.updateComplete;
   await list.settled;
   const ol = (list.shadowRoot as ShadowRoot).querySelector(
-    'ol',
-  ) as HTMLOListElement;
+    '.log',
+  ) as HTMLElement;
   const atEnd = () => ol.scrollHeight - ol.scrollTop - ol.clientHeight <= 2;
   const add = async (m: ChatMessage) => {
     list.messages = [...list.messages, m];
