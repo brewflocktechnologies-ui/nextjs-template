@@ -38,6 +38,48 @@ export const Default: StoryObj = {
   },
 };
 
+/** Enter that confirms an input-method candidate (CJK typing) does not send. */
+export const ImeComposition: StoryObj = {
+  play: async ({ canvasElement }) => {
+    const composer = canvasElement.querySelector(
+      'byteflock-composer',
+    ) as ByteflockComposer;
+    await composer.updateComplete;
+    const onSend = fn();
+    canvasElement.addEventListener('composer-send', (e) =>
+      onSend((e as CustomEvent).detail),
+    );
+    const box = shadow(composer).getByRole('textbox', {
+      name: 'Message',
+    }) as HTMLTextAreaElement;
+    box.value = 'にほんご';
+    for (const init of [
+      { key: 'Enter', isComposing: true },
+      { key: 'Enter', keyCode: 229 },
+    ])
+      box.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          ...init,
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    await expect(onSend).not.toHaveBeenCalled();
+    await expect(box).toHaveValue('にほんご');
+
+    box.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    await waitFor(() =>
+      expect(onSend).toHaveBeenCalledWith({ text: 'にほんご' }),
+    );
+  },
+};
+
 /** Shift+Enter adds a line instead of sending; the Send button sends. */
 export const MultiLine: StoryObj = {
   play: async ({ canvasElement }) => {

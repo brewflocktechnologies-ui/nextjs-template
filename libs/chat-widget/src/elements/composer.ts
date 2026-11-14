@@ -87,6 +87,9 @@ export class ByteflockComposer extends LitElement {
   }
 
   private onKeydown(event: KeyboardEvent) {
+    // Enter while an input method is composing (Japanese, Chinese, Korean…) confirms the
+    // candidate text; it must not send. Safari reports the confirming keydown with keyCode 229.
+    if (event.isComposing || event.keyCode === 229) return;
     if (event.key === 'Enter' && !event.shiftKey) this.send(event);
   }
 

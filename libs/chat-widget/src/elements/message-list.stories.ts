@@ -59,3 +59,81 @@ export const Empty: StoryObj = {
     ).toHaveLength(0);
   },
 };
+
+const many = (n: number): ChatMessage[] =>
+  Array.from({ length: n }, (_, i) => ({
+    id: `m${i}`,
+    from: i % 2 ? 'visitor' : 'agent',
+    text: `Message number ${i} with enough words to take some room in the list.`,
+    at,
+  }));
+
+const scrollerOf = async (canvasElement: HTMLElement) => {
+  const list = canvasElement.querySelector(
+    'byteflock-message-list',
+  ) as ByteflockMessageList;
+  await list.updateComplete;
+  await list.settled;
+  const ol = (list.shadowRoot as ShadowRoot).querySelector(
+    'ol',
+  ) as HTMLOListElement;
+  const atEnd = () => ol.scrollHeight - ol.scrollTop - ol.clientHeight <= 2;
+  const add = async (m: ChatMessage) => {
+    list.messages = [...list.messages, m];
+    await list.updateComplete;
+    await list.settled;
+  };
+  return { list, ol, atEnd, add };
+};
+
+/** A visitor reading older messages is not pulled down when an agent message arrives. */
+export const ReadingHistoryStaysPut: StoryObj = {
+  args: { messages: many(30) },
+  play: async ({ canvasElement }) => {
+    const { ol, atEnd, add } = await scrollerOf(canvasElement);
+    await expect(atEnd()).toBe(true);
+    ol.scrollTop = 0;
+    await add({
+      id: 'new-agent',
+      from: 'agent',
+      text: 'Are you still there?',
+      at,
+    });
+    await expect(ol.scrollTop).toBe(0);
+  },
+};
+
+/** At the end, new messages stay in view; the visitor's own message always scrolls. */
+export const FollowsNewMessages: StoryObj = {
+  args: { messages: many(30) },
+  play: async ({ canvasElement }) => {
+    const { ol, atEnd, add } = await scrollerOf(canvasElement);
+    await add({ id: 'a1', from: 'agent', text: 'One more thing.', at });
+    await expect(atEnd()).toBe(true);
+    ol.scrollTop = 0;
+    await add({ id: 'v1', from: 'visitor', text: 'Yes, here.', at });
+    await expect(atEnd()).toBe(true);
+  },
+};
+
+/** Messages are keyed by id: adding older history does not rebind existing elements. */
+export const KeyedByMessageId: StoryObj = {
+  play: async ({ canvasElement }) => {
+    const { list } = await scrollerOf(canvasElement);
+    const element = (id: string) =>
+      [
+        ...(list.shadowRoot as ShadowRoot).querySelectorAll(
+          'byteflock-message',
+        ),
+      ].find(
+        (el) => (el as unknown as { message: ChatMessage }).message.id === id,
+      );
+    const before = element('2');
+    list.messages = [
+      { id: '0', from: 'agent', text: 'Earlier message', at },
+      ...list.messages,
+    ];
+    await list.updateComplete;
+    await expect(element('2')).toBe(before);
+  },
+};

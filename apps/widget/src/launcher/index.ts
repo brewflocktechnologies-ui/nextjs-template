@@ -242,18 +242,33 @@ class Launcher {
     this.open = false;
     this.panel.dataset.state = 'hidden';
     this.button.setAttribute('aria-expanded', 'false');
+    this.untrackViewport();
     this.send({ type: 'close', payload: {} });
     this.button.focus();
   }
 
+  /** Keeps the full-screen frame above the on-screen keyboard on mobile (ARCH-001 §17.1 item 6). */
+  private readonly onViewportResize = () => {
+    const vv = window.visualViewport;
+    if (vv)
+      this.panel.style.setProperty('--bf-viewport-height', `${vv.height}px`);
+  };
+  private trackingViewport = false;
+
+  /** One listener while the panel is open; removed on close, so reopening never adds another. */
   private trackViewport() {
-    // Keeps the full-screen frame above the on-screen keyboard on mobile (ARCH-001 §17.1 item 6).
     const vv = window.visualViewport;
     if (!vv) return;
-    const update = () =>
-      this.panel.style.setProperty('--bf-viewport-height', `${vv.height}px`);
-    update();
-    vv.addEventListener('resize', update);
+    this.onViewportResize();
+    if (this.trackingViewport) return;
+    vv.addEventListener('resize', this.onViewportResize);
+    this.trackingViewport = true;
+  }
+
+  private untrackViewport() {
+    if (!this.trackingViewport) return;
+    window.visualViewport?.removeEventListener('resize', this.onViewportResize);
+    this.trackingViewport = false;
   }
 
   // --- bridge ------------------------------------------------------------------------------
