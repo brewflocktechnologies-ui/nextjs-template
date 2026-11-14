@@ -20,14 +20,14 @@ The projection logic lives in `libs/theme`, exported from its own entry `@bytefl
 
 The editor's import flow runs these steps in order. Each step can be cancelled; cancelling at any step leaves the form unchanged.
 
-| Step | What the user sees                                                                                          |
-| ---- | ----------------------------------------------------------------------------------------------------------- |
-| 1    | Extraction summary from layer A: files and classes, token counts, errors and warnings, bundle download      |
-| 2    | Theme choice: which source theme becomes `light` and which becomes `dark` (PROJ-04)                         |
-| 3    | Role mapping: which token becomes each of the 13 colour roles (PROJ-05)                                     |
-| 4    | Presets taken from tokens (PROJ-06)                                                                         |
-| 5    | Projection report: every conversion and drop, by severity, with approvals where required (PROJ-07, PROJ-08) |
-| 6    | Apply to the form, or cancel                                                                                |
+| Step | What the user sees                                                                                                                             |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Extraction summary from layer A: files and classes, token counts, errors and warnings, bundle download                                         |
+| 2    | Theme choice: the mode on every non-appearance axis (for example the brand), then which source mode becomes `light` and which `dark` (PROJ-04) |
+| 3    | Role mapping: which token becomes each of the 13 colour roles (PROJ-05)                                                                        |
+| 4    | Presets taken from tokens (PROJ-06)                                                                                                            |
+| 5    | Projection report: every conversion and drop, by severity, with approvals where required (PROJ-07, PROJ-08)                                    |
+| 6    | Apply to the form, or cancel                                                                                                                   |
 
 Steps with nothing to decide are shown as a one-line summary and need no click, so a file that follows the convention (PROJ-05 rule 1) needs one click: Apply. This is one click more than the single-file baseline, which fills the form as soon as the file is picked; the Apply step is deliberate, so the user sees the report before the form changes.
 
@@ -58,16 +58,23 @@ Level 2 runs before role mapping (step 3), so it uses the **likely** `surface` t
 
 The step always shows the decision and its reason ("dark: from Figma metadata", "dark: background lightness, confirmed by you").
 
+**Several axes** (EXTRACT-11 rule 6, for example brand × appearance):
+
+1. **Which axis is appearance.** The axis whose modes have light and dark evidence (levels 1 to 4 above) is the appearance axis. If no axis or more than one axis qualifies, the user picks it.
+2. **Other axes first.** For every other axis, the user picks one mode (for example `Brand: Acme`). With one mode only, it is chosen without asking. Nothing is pre-selected between two or more brands, because the right brand depends on the tenant, not on the tokens.
+3. **Then light and dark** on the appearance axis, by the rules above, within the chosen modes of the other axes.
+4. The theme context for projection is the chosen mode on every axis. Unchosen modes are listed as not projected (PROJ-08).
+
 ## PROJ-05 Role mapping
 
 Each of the 13 `ColorRoles` gets a token from the chosen theme (or `shared`), or stays with the base theme.
 
-1. **Exact convention, no question.** A token whose `themePath` (EXTRACT-09) is `color.<role>` in the chosen theme maps directly, with the role in camelCase or kebab-case. This covers both a single tree with `color.light.<role>` and `color.dark.<role>` (the theme segment is removed by `themePath`) and separate theme files holding `color.<role>`.
+1. **Exact convention, no question.** A token whose `themePath` (EXTRACT-09) is `color.<role>` in the chosen theme maps directly, with the role in camelCase or kebab-case. It also covers CSS properties named `--color-<role>` (EXTRACT-05A rule 3). This covers both a single tree with `color.light.<role>` and `color.dark.<role>` (the theme segment is removed by `themePath`) and separate theme files holding `color.<role>`.
 2. **Suggestions otherwise,** using, in order: a synonym table of common names (`brand`, `bg`, `background`, `surface`, `text`, `fg`, `border`, `error`, `positive` and so on, kept in `libs/theme` and grown from real exports); `on-X` / `X` pairs found by name; and contrast between candidate pairs as a tiebreaker. Each suggestion shows its confidence and reason.
 3. **Namespace tags rank, they do not filter.** Between equally good name matches, `semantic` beats `unknown`, which beats `primitive`. A primitive with a strong name match (a `background` token holding a raw value) is still suggested. **Component tokens are never suggested automatically** (a component colour is not a global role); the user may still pick one by hand.
 4. **The user confirms** every mapping that is not an exact convention match. They can change any suggestion or leave a role unset.
 5. **Unset roles** keep the base theme's value. The report lists them.
-6. The value used is the token's **resolved value in the chosen theme context**. A token with an error status (EXTRACT-14) cannot be mapped.
+6. The value used is the token's **resolved value in the chosen theme context** (one mode per axis). A token with an error status (EXTRACT-14) cannot be mapped.
 
 ## PROJ-06 Presets and other token types
 
@@ -88,10 +95,13 @@ Projection blocks (the Apply button stays disabled) only when:
 1. a token chosen in step 3 or 4 has an error status in the inventory;
 2. a conflict affecting a chosen token is unresolved;
 3. a reference used by a chosen token resolves against the wrong theme;
-4. the candidate theme fails `validateTheme`;
-5. an approval required by PROJ-08 is missing.
+4. a chosen token's value cannot be read for its field: wrong type, or a value shape that does not match its type (layer A does not audit compliance, so layer B checks every token it uses);
+5. the candidate theme fails `validateTheme`;
+6. an approval required by PROJ-08 is missing.
 
 Errors in tokens projection does not use are shown as warnings in step 5, not blockers. Contrast (THEME-06) is not a projection error: the editor shows violations as it does for typed values, and publish stays blocked until they are fixed.
+
+**What projection does not re-check.** The design tool's own audit (token layers, unused tokens, naming, raw values outside primitives, contrast inside the design) is not repeated. Projection checks only the tokens it uses, the theme contract and the product's contrast policy, which apply to pairs of roles the design tool does not know about.
 
 ## PROJ-08 Lossy conversions and approvals
 
@@ -105,6 +115,7 @@ Errors in tokens projection does not use are shown as warnings in step 5, not bl
 | Font family not in the curated list                           | info     | — (field keeps base value) |
 | Role left unset (base value kept)                             | info     | —                          |
 | Theme beyond light and dark not projected                     | info     | —                          |
+| Mode on another axis not chosen (for example another brand)   | info     | —                          |
 | Token types and namespaces not projected                      | info     | —                          |
 
 Approvals are one checkbox per warning group in step 5, listing the affected roles with original and projected values side by side. Approving changes only the projection; the inventory and bundle keep the original values.
@@ -115,4 +126,4 @@ The output is one candidate `theme.v1` document: projected values over the base 
 
 ## PROJ-10 Fixtures
 
-`libs/theme/fixtures/projection/` holds cases that start from an inventory fixture (EXTRACT-16) plus scripted user answers, with the expected candidate theme or blocking reasons. At minimum: the convention case (no questions); themes chosen by metadata; a mismatch that must ask; unnamed modes decided by colour and confirmed; three themes; synonym mapping; an `on-X` pair; a component colour that must not be suggested; an alpha colour needing approval; a dimension radius; an unknown font; an error in an unused token (warning only); an error in a used token (blocks).
+`libs/theme/fixtures/projection/` holds cases that start from an inventory fixture (EXTRACT-16) plus scripted user answers, with the expected candidate theme or blocking reasons. At minimum: the convention case (no questions); themes chosen by metadata; a mismatch that must ask; unnamed modes decided by colour and confirmed; three themes; brand × appearance, where the user picks the brand and light and dark are decided within it; a token with a malformed value for its type, used (blocks) and unused (ignored); synonym mapping; an `on-X` pair; a component colour that must not be suggested; an alpha colour needing approval; a dimension radius; an unknown font; an error in an unused token (warning only); an error in a used token (blocks).
