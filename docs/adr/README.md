@@ -17,7 +17,7 @@ MADR format (`SPECS/templates/adr-template.md`). An ADR with status Accepted may
 | [ADR-011](ADR-011-dependency-and-supply-chain-policy.md)          | Dependency and supply-chain policy                                           | Accepted |
 | [ADR-012](ADR-012-local-data-backend.md)                          | Local data backend (Postgres in Docker, Next.js server as data layer)        | Proposed |
 | [ADR-013](ADR-013-request-scope-platform-and-tenant.md)           | Request scope (platform and tenant), authorization helper and default chrome | Proposed |
-| [ADR-014](ADR-014-design-systems-as-platform-generated-themes.md) | Independent design systems as platform-generated themes                      | Proposed |
+| [ADR-014](ADR-014-design-systems-as-platform-generated-themes.md) | Independent design systems as platform-generated themes                      | Accepted |
 | [ADR-015](ADR-015-theme-registry-separate-from-tenants.md)        | Theme registry separate from tenants                                         | Proposed |
-| [ADR-016](ADR-016-one-platform-neutral-theme-generator.md)        | One platform-neutral theme generator                                         | Proposed |
+| [ADR-016](ADR-016-one-platform-neutral-theme-generator.md)        | One platform-neutral theme generator                                         | Accepted |
 | [ADR-017](ADR-017-one-shared-tailwind-mapping.md)                 | One shared Tailwind v4 mapping                                               | Proposed |

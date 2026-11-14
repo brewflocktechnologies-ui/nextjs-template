@@ -68,5 +68,6 @@ Decisions recorded with the implementation:
 
 ## Links
 
+- Superseded by: ADR-014, for the tenant theme grammar decision only (THEME-01 rule 1, THEME-02 as the only tenant theme format), 2026-11-14. The lifecycle, immutability, contrast policy and resolver allow-list stay in force.
 - Evidence: `SPECS/evidence/`
 - Architecture: `docs/architecture/ARCHITECTURE-001-saas-frontend-foundation.md`

@@ -2,7 +2,7 @@
 
 |          |                                                                       |
 | -------- | --------------------------------------------------------------------- |
-| Status   | Proposed                                                              |
+| Status   | Accepted                                                              |
 | Date     | 2026-11-14                                                            |
 | Deciders | Madhusudan C P (product owner, architecture owner, security reviewer) |
 | Source   | ARCH-001 §7; SPECS/DECISIONS.md D-30; ADR-003                         |
