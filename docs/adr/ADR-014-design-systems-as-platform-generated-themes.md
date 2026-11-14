@@ -44,7 +44,7 @@ ADR-004 limits tenant themes to `theme.v1`: 13 colour roles in two appearances p
 
 <!-- verification -->
 
-To be filled by P2.4 (generator) and P2.6 (registry): malicious-fixture suite over DTCG sources (CSS in names, descriptions, values, extensions), property test over random valid tokens, platform-default equivalence test, two-tenant isolation test with a shared theme.
+P2.4, 2026-11-14 (`SPECS/evidence/P2.4.md`): malicious DTCG fixtures (CSS in values, names, descriptions, fonts, shadow colours; injected manifest ids and extension names) are refused; a property test (500 runs) and a scan of every fixture artifact find no forbidden sequence; the platform default regenerates all 58 variables exactly. The two-tenant isolation test with a shared theme follows in P2.6.
 
 <!-- /verification -->
 

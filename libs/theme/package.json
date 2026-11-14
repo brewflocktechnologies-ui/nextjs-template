@@ -21,6 +21,11 @@
       "import": "./src/resolve-entry.ts",
       "default": "./src/resolve-entry.ts"
     },
+    "./generate": {
+      "types": "./src/generate-entry.ts",
+      "import": "./src/generate-entry.ts",
+      "default": "./src/generate-entry.ts"
+    },
     "./schema/theme.v1.json": "./schema/theme.v1.json",
     "./fixtures/*": "./fixtures/*",
     "./package.json": "./package.json"
@@ -33,28 +38,111 @@
     ],
     "targets": {
       "build": {
-        "command": "node scripts/emit-schema.mjs",
+        "command": "node scripts/emit-schema.mjs && node scripts/themes.mjs generate",
         "options": {
           "cwd": "{projectRoot}"
         },
         "inputs": [
           "{projectRoot}/src/schema/**/*",
-          "{projectRoot}/scripts/emit-schema.mjs"
+          "{projectRoot}/src/contract/**/*",
+          "{projectRoot}/scripts/emit-schema.mjs",
+          "{projectRoot}/themes/**/*",
+          "{projectRoot}/src/generate/**/*",
+          "{projectRoot}/src/policy.ts",
+          "{projectRoot}/src/generate-entry.ts",
+          "{projectRoot}/scripts/themes.mjs",
+          "{workspaceRoot}/libs/design-tokens/tokens/**/*",
+          "{workspaceRoot}/libs/design-tokens/src/generated/**/*"
         ],
         "outputs": [
-          "{projectRoot}/schema"
+          "{projectRoot}/schema",
+          "{projectRoot}/generated/themes"
         ],
         "cache": true
       },
       "build:check": {
-        "command": "node scripts/emit-schema.mjs --check",
+        "command": "node scripts/emit-schema.mjs --check && node scripts/themes.mjs compare",
         "options": {
           "cwd": "{projectRoot}"
         },
         "inputs": [
           "{projectRoot}/src/schema/**/*",
+          "{projectRoot}/src/contract/**/*",
           "{projectRoot}/scripts/emit-schema.mjs",
-          "{projectRoot}/schema/**/*"
+          "{projectRoot}/themes/**/*",
+          "{projectRoot}/src/generate/**/*",
+          "{projectRoot}/src/policy.ts",
+          "{projectRoot}/src/generate-entry.ts",
+          "{projectRoot}/scripts/themes.mjs",
+          "{workspaceRoot}/libs/design-tokens/tokens/**/*",
+          "{workspaceRoot}/libs/design-tokens/src/generated/**/*",
+          "{projectRoot}/schema/**/*",
+          "{projectRoot}/generated/themes/**/*"
+        ],
+        "cache": true
+      },
+      "themes-validate": {
+        "command": "node scripts/themes.mjs validate",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/themes/**/*",
+          "{projectRoot}/src/generate/**/*",
+          "{projectRoot}/src/contract/**/*",
+          "{projectRoot}/src/schema/**/*",
+          "{projectRoot}/src/policy.ts",
+          "{projectRoot}/src/generate-entry.ts",
+          "{projectRoot}/scripts/themes.mjs",
+          "{workspaceRoot}/libs/design-tokens/tokens/**/*",
+          "{workspaceRoot}/libs/design-tokens/src/generated/**/*"
+        ],
+        "outputs": [
+          "{projectRoot}/test-output/reports/themes"
+        ],
+        "cache": true
+      },
+      "themes-generate": {
+        "command": "node scripts/themes.mjs generate",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/themes/**/*",
+          "{projectRoot}/src/generate/**/*",
+          "{projectRoot}/src/contract/**/*",
+          "{projectRoot}/src/schema/**/*",
+          "{projectRoot}/src/policy.ts",
+          "{projectRoot}/src/generate-entry.ts",
+          "{projectRoot}/scripts/themes.mjs",
+          "{workspaceRoot}/libs/design-tokens/tokens/**/*",
+          "{workspaceRoot}/libs/design-tokens/src/generated/**/*"
+        ],
+        "outputs": [
+          "{projectRoot}/generated/themes",
+          "{projectRoot}/test-output/reports/themes"
+        ],
+        "cache": false
+      },
+      "themes-compare": {
+        "command": "node scripts/themes.mjs compare",
+        "options": {
+          "cwd": "{projectRoot}"
+        },
+        "inputs": [
+          "{projectRoot}/themes/**/*",
+          "{projectRoot}/src/generate/**/*",
+          "{projectRoot}/src/contract/**/*",
+          "{projectRoot}/src/schema/**/*",
+          "{projectRoot}/src/policy.ts",
+          "{projectRoot}/src/generate-entry.ts",
+          "{projectRoot}/scripts/themes.mjs",
+          "{workspaceRoot}/libs/design-tokens/tokens/**/*",
+          "{workspaceRoot}/libs/design-tokens/src/generated/**/*",
+          "{projectRoot}/generated/themes/**/*"
+        ],
+        "outputs": [
+          "{projectRoot}/test-output/reports/themes"
         ],
         "cache": true
       }
@@ -62,7 +150,8 @@
   },
   "dependencies": {
     "@byteflock/design-tokens": "workspace:*",
-    "@sinclair/typebox": "0.34.52"
+    "@sinclair/typebox": "0.34.52",
+    "colorjs.io": "0.7.1"
   },
   "devDependencies": {
     "ajv": "8.20.0",

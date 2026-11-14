@@ -66,7 +66,7 @@ Alpha below 1 where SEM-02 requires opaque fails G5; it is never flattened.
 
 ## SEM-07 Manifest mapping
 
-Each theme's `theme.manifest.json` maps every required contract path (and any optional one it supplies) to one of its own token paths (`semanticMap`). The manifest schema is `libs/theme/schema/theme-manifest.v1.json` (P2.4).
+Each theme's `theme.manifest.json` maps every required contract path (and any optional one it supplies) to one of its own token paths (`semanticMap`). A mapped path may contain `{mode}`, replaced by `light` or `dark`, for sources that put the mode in their token paths (corrected in P2.4: the platform default does). The manifest schema is `libs/theme/schema/theme-manifest.v1.json`.
 
 ## SEM-08 Extensions
 

@@ -1,0 +1,39 @@
+{
+  "manifestVersion": 1,
+  "themeId": "fx-unresolved-reference",
+  "displayName": "Fixture fx-unresolved-reference",
+  "version": "1.0.0",
+  "contract": "platform-semantic-v1",
+  "source": {
+    "format": "dtcg-2025.10",
+    "producer": {
+      "name": "Design Token Kit Figma plugin",
+      "version": "3.2.0"
+    },
+    "files": ["tokens/tokens.json", "tokens/tokens.dark.json"]
+  },
+  "modes": {
+    "light": ["tokens/tokens.json"],
+    "dark": ["tokens/tokens.json", "tokens/tokens.dark.json"]
+  },
+  "semanticMap": {
+    "color.primary": "semantic.action.primary",
+    "color.on-primary": "semantic.action.on-primary",
+    "color.surface": "semantic.surface.default",
+    "color.on-surface": "semantic.text.default",
+    "color.surface-variant": "semantic.surface.variant",
+    "color.on-surface-variant": "semantic.text.muted",
+    "color.outline": "semantic.border.default",
+    "color.accent": "semantic.action.accent",
+    "color.on-accent": "semantic.action.on-accent",
+    "color.success": "semantic.status.success",
+    "color.warning": "semantic.status.warning",
+    "color.danger": "semantic.status.danger",
+    "color.focus-ring": "semantic.focus.ring",
+    "font.family.sans": "semantic.font.body",
+    "radius.md": "semantic.radius.medium",
+    "elevation.surface": "semantic.shadow.raised",
+    "scale.density": "semantic.scale.density",
+    "scale.type": "semantic.scale.type"
+  }
+}

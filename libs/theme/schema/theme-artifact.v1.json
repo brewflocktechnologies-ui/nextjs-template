@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://byteflock.dev/schemas/theme-artifact.v1.json",
+  "title": "Theme artifact v1",
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "artifactVersion",
+    "themeId",
+    "version",
+    "contract",
+    "modes",
+    "extensions"
+  ],
+  "properties": {
+    "artifactVersion": {
+      "const": 1,
+      "type": "number"
+    },
+    "themeId": {
+      "pattern": "^[a-z][a-z0-9-]{1,40}$",
+      "type": "string"
+    },
+    "version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "type": "string"
+    },
+    "contract": {
+      "const": "platform-semantic-v1",
+      "type": "string"
+    },
+    "modes": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "light",
+        "dark"
+      ],
+      "properties": {
+        "light": {
+          "type": "object",
+          "patternProperties": {
+            "^--sem-[a-z0-9-]+$": {
+              "minLength": 1,
+              "maxLength": 300,
+              "pattern": "^[^;{}<>\\\\\\n\\r]+$",
+              "type": "string"
+            }
+          }
+        },
+        "dark": {
+          "type": "object",
+          "patternProperties": {
+            "^--sem-[a-z0-9-]+$": {
+              "minLength": 1,
+              "maxLength": 300,
+              "pattern": "^[^;{}<>\\\\\\n\\r]+$",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "extensions": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "light",
+        "dark"
+      ],
+      "properties": {
+        "light": {
+          "type": "object",
+          "patternProperties": {
+            "^--ext-[a-z][a-z0-9-]*$": {
+              "minLength": 1,
+              "maxLength": 300,
+              "pattern": "^[^;{}<>\\\\\\n\\r]+$",
+              "type": "string"
+            }
+          }
+        },
+        "dark": {
+          "type": "object",
+          "patternProperties": {
+            "^--ext-[a-z][a-z0-9-]*$": {
+              "minLength": 1,
+              "maxLength": 300,
+              "pattern": "^[^;{}<>\\\\\\n\\r]+$",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

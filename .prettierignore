@@ -31,3 +31,7 @@ apps/**/AGENTS.md
 /apps/widget/public/v1/themes
 libs/ui-react/src/generated
 apps/admin-dashboard/.next-e2e-prod
+
+# P2.4: deliberately invalid generator fixture; generated theme artifacts (stale-checked by build:check)
+libs/theme/fixtures/generate/invalid-json/tokens/tokens.dark.json
+/libs/theme/generated/themes

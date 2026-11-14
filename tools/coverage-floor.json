@@ -8,10 +8,10 @@
       "branches": 0
     },
     "libs/theme": {
-      "lines": 94,
-      "statements": 92,
-      "functions": 96,
-      "branches": 90
+      "lines": 97,
+      "statements": 96,
+      "functions": 98,
+      "branches": 94
     },
     "libs/chat-widget": {
       "lines": 51,

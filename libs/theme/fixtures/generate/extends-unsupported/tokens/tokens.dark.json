@@ -1,0 +1,68 @@
+{
+  "semantic": {
+    "action": {
+      "primary": {
+        "$type": "color",
+        "$value": "{primitive.blue.300}"
+      },
+      "on-primary": {
+        "$type": "color",
+        "$value": "{primitive.gray.950}"
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "#c4b5fd"
+      },
+      "on-accent": {
+        "$type": "color",
+        "$value": "#0f172a"
+      }
+    },
+    "surface": {
+      "default": {
+        "$type": "color",
+        "$value": "{primitive.gray.950}"
+      },
+      "variant": {
+        "$type": "color",
+        "$value": "#1e293b"
+      }
+    },
+    "text": {
+      "default": {
+        "$type": "color",
+        "$value": "#f8fafc"
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "#cbd5e1"
+      }
+    },
+    "border": {
+      "default": {
+        "$type": "color",
+        "$value": "#94a3b8"
+      }
+    },
+    "status": {
+      "success": {
+        "$type": "color",
+        "$value": "#4ade80"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#fbbf24"
+      },
+      "danger": {
+        "$type": "color",
+        "$value": "#f87171"
+      }
+    },
+    "focus": {
+      "ring": {
+        "$type": "color",
+        "$value": "#60a5fa"
+      }
+    }
+  }
+}

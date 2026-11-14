@@ -73,14 +73,18 @@ describe('theme schema v1 (THEME-01, THEME-02)', () => {
 
   it('every fixture file is used by a test (THEME-08)', () => {
     const folders = fs.readdirSync(fixturesDir);
+    // `generate` holds the theme generator's cases (P2.4); generate.spec.ts covers each of them.
     expect(folders.sort()).toEqual([
+      'generate',
       'invalid',
       'malicious',
       'migrated',
       'valid',
     ]);
     const counts = Object.fromEntries(
-      folders.map((f) => [f, fixtures(f as 'valid').length]),
+      folders
+        .filter((f) => f !== 'generate')
+        .map((f) => [f, fixtures(f as 'valid').length]),
     );
     expect(counts).toEqual({ valid: 5, invalid: 8, malicious: 8, migrated: 1 });
   });

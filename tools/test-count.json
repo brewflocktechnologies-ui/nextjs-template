@@ -1,9 +1,9 @@
 {
   "$comment": "Written by check-test-count.mjs --write. Never lower without a TESTS-REMOVED: trailer.",
-  "total": 464,
+  "total": 544,
   "counts": {
     "vitest:libs/design-tokens": 8,
-    "vitest:libs/theme": 91,
+    "vitest:libs/theme": 171,
     "vitest:libs/chat-widget": 12,
     "vitest:libs/ui-react": 16,
     "vitest:apps/widget": 91,

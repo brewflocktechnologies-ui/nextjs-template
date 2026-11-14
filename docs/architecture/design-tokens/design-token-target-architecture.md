@@ -36,6 +36,8 @@ Figma ─► Design Token Kit plugin ─► DTCG files (+ manifest)          can
 
 ## 3. Proposed repository structure
 
+> Correction (P2.4, 2026-11-14): theme sources, the Nx targets and generated artifacts live in `libs/theme` (`themes/<themeId>/`, `generated/themes/`, targets `themes-validate|generate|compare`), because `@byteflock/theme` already depends on `@byteflock/design-tokens` and the reverse would be a cycle. The tree below is the original proposal.
+
 Only additions are shown; everything existing stays.
 
 ```

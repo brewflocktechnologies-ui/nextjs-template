@@ -1,0 +1,34 @@
+{
+  "inputs": {
+    "contract": "5403cc7b5bebd28e84353111e45dea3fb81e685a090a0f9e122c3cd2d7822b87",
+    "fallback": null,
+    "generator": "theme-generator/1.0.0",
+    "manifest": "8d1f3293628f9e00b2cd3231762b30e27a1ff5b912cbdc98e7c13fb9018e810b",
+    "sources": {
+      "../../../design-tokens/tokens/primitives/color.tokens.json": "b7ef026b7aeb4e9269926012d2e7e0f32439e4759b6eddcb7372a462d2bfa898",
+      "../../../design-tokens/tokens/primitives/motion.tokens.json": "da5b3a2205be5b4cb7a59cac927e65d5a80e0b696a6f861862ec0b7a4b04911b",
+      "../../../design-tokens/tokens/primitives/radius.tokens.json": "2e91dcb0ffd9230a2a833547357b23e18230c0e711f0e3fd42b5c9442ab3a85d",
+      "../../../design-tokens/tokens/primitives/shadow.tokens.json": "e98bdd6031e0ecee61d8d17b9abbe7ed8bb12c3cece625ae01680849b148f924",
+      "../../../design-tokens/tokens/primitives/space.tokens.json": "2426464b724ce5791324e396fea2efcbfee827405df3f1b0bd86f969278b44e8",
+      "../../../design-tokens/tokens/primitives/typography.tokens.json": "88d0c44b3b7c8ceb59239bbd2733597eb1edc12d947e7165b1309908094d26a9",
+      "../../../design-tokens/tokens/semantic/dark.tokens.json": "a210b5917f7bd216e04e873b1075fca1868b54c9d1743020d223edafd8b2f9d3",
+      "../../../design-tokens/tokens/semantic/elevation.tokens.json": "e4db7d1116c390898b87656a45b6c3b7a1c8587cd9c2470f7d72227ed1367936",
+      "../../../design-tokens/tokens/semantic/light.tokens.json": "87828e5afbd4a500ed37fc8ecedc27e10268866d23063f8f3b53be2ff94364e1",
+      "../../../design-tokens/tokens/semantic/motion.tokens.json": "75d7382875240e3edbf393ef5d07f2bae8463893350bad85fd386178edbcaeac",
+      "../../../design-tokens/tokens/semantic/shape.tokens.json": "b438f6ee874568ffb09de8c41dccddc02d025fef82c7fbbf4540c0ee1377f793",
+      "../../../design-tokens/tokens/semantic/space.tokens.json": "313bf9520dfbdb86baeb29805cbf58237aa1454ca0a7620a00bb776daa5de5f6",
+      "../../../design-tokens/tokens/semantic/typography.tokens.json": "41fea4fcf8bb8274b17739977d101ffc61df7d09414086be8cc62d16c007d6d4",
+      "../../../design-tokens/tokens/sets/density.tokens.json": "8abb3feaa242ef622dac74c95362286b684d869267d5a430fa8980aea4b467ca",
+      "../../../design-tokens/tokens/sets/type-scale.tokens.json": "8d516422e2e627b30fbccb9158d2813236d17dd96446886aab949701f12fa055"
+    }
+  },
+  "report": {
+    "approvalsRequired": 0,
+    "errors": 0,
+    "findings": [],
+    "generator": "theme-generator/1.0.0",
+    "themeId": "platform-default",
+    "version": "1.0.0",
+    "warnings": 0
+  }
+}

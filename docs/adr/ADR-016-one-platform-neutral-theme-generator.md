@@ -45,7 +45,7 @@ Theme sources arrive by two channels from the start: curated design systems in t
 
 <!-- verification -->
 
-To be filled by P2.4 and P2.7: equivalence test against `semantic.css`; fixture matrix; the same source through the Nx script and the upload route gives byte-identical artifacts.
+P2.4, 2026-11-14 (`SPECS/evidence/P2.4.md`): generator in `libs/theme/src/generate/`, entry `@byteflock/theme/generate`, absent from the widget frame bundle; colour conversion with colorjs.io 0.7.1 (CSS Color 4 gamut mapping); platform default equivalent to `semantic.css` (58 variables, both modes); 23 fixtures. Targets live on `@byteflock/theme` (dependency direction). Channel equivalence (repository and upload) follows in P2.7.
 
 <!-- /verification -->
 

@@ -1,0 +1,583 @@
+{
+  "$comment": "Generated from libs/theme/src/contract/contract.ts. Contract: SPECS/contracts/platform-semantic-v1.md. Do not edit.",
+  "contract": "platform-semantic-v1",
+  "tokens": [
+    {
+      "path": "color.primary",
+      "variable": "--sem-color-primary",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.on-primary",
+      "variable": "--sem-color-on-primary",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.surface",
+      "variable": "--sem-color-surface",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.on-surface",
+      "variable": "--sem-color-on-surface",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.surface-variant",
+      "variable": "--sem-color-surface-variant",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.on-surface-variant",
+      "variable": "--sem-color-on-surface-variant",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.outline",
+      "variable": "--sem-color-outline",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.accent",
+      "variable": "--sem-color-accent",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.on-accent",
+      "variable": "--sem-color-on-accent",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.success",
+      "variable": "--sem-color-success",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.warning",
+      "variable": "--sem-color-warning",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.danger",
+      "variable": "--sem-color-danger",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "color.focus-ring",
+      "variable": "--sem-color-focus-ring",
+      "type": "color",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "font.family.sans",
+      "variable": "--sem-font-family-sans",
+      "type": "fontFamily",
+      "required": true,
+      "perMode": false
+    },
+    {
+      "path": "radius.md",
+      "variable": "--sem-radius-md",
+      "type": "dimension",
+      "required": true,
+      "perMode": false,
+      "range": [
+        0,
+        48
+      ]
+    },
+    {
+      "path": "elevation.surface",
+      "variable": "--sem-elevation-surface",
+      "type": "shadow",
+      "required": true,
+      "perMode": true
+    },
+    {
+      "path": "scale.density",
+      "variable": "--sem-density-factor",
+      "type": "number",
+      "required": true,
+      "perMode": false,
+      "range": [
+        0.75,
+        1.5
+      ]
+    },
+    {
+      "path": "scale.type",
+      "variable": "--sem-type-scale",
+      "type": "number",
+      "required": true,
+      "perMode": false,
+      "range": [
+        0.875,
+        1.25
+      ]
+    },
+    {
+      "path": "color.surface-container",
+      "variable": "--sem-color-surface-container",
+      "type": "color",
+      "required": false,
+      "perMode": true
+    },
+    {
+      "path": "color.outline-variant",
+      "variable": "--sem-color-outline-variant",
+      "type": "color",
+      "required": false,
+      "perMode": true
+    },
+    {
+      "path": "color.on-primary-container",
+      "variable": "--sem-color-on-primary-container",
+      "type": "color",
+      "required": false,
+      "perMode": true
+    },
+    {
+      "path": "color.backdrop",
+      "variable": "--sem-color-backdrop",
+      "type": "color",
+      "required": false,
+      "perMode": true,
+      "alpha": true
+    },
+    {
+      "path": "font.size.xs",
+      "variable": "--sem-font-size-xs",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        8,
+        96
+      ]
+    },
+    {
+      "path": "font.size.sm",
+      "variable": "--sem-font-size-sm",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        8,
+        96
+      ]
+    },
+    {
+      "path": "font.size.md",
+      "variable": "--sem-font-size-md",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        8,
+        96
+      ]
+    },
+    {
+      "path": "font.size.lg",
+      "variable": "--sem-font-size-lg",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        8,
+        96
+      ]
+    },
+    {
+      "path": "font.size.xl",
+      "variable": "--sem-font-size-xl",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        8,
+        96
+      ]
+    },
+    {
+      "path": "font.size.2xl",
+      "variable": "--sem-font-size-2xl",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        8,
+        96
+      ]
+    },
+    {
+      "path": "font.weight.regular",
+      "variable": "--sem-font-weight-regular",
+      "type": "fontWeight",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "font.weight.medium",
+      "variable": "--sem-font-weight-medium",
+      "type": "fontWeight",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "font.weight.semibold",
+      "variable": "--sem-font-weight-semibold",
+      "type": "fontWeight",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "font.weight.bold",
+      "variable": "--sem-font-weight-bold",
+      "type": "fontWeight",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "line-height.tight",
+      "variable": "--sem-line-height-tight",
+      "type": "number",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0.8,
+        3
+      ]
+    },
+    {
+      "path": "line-height.normal",
+      "variable": "--sem-line-height-normal",
+      "type": "number",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0.8,
+        3
+      ]
+    },
+    {
+      "path": "radius.none",
+      "variable": "--sem-radius-none",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        9999
+      ]
+    },
+    {
+      "path": "radius.sm",
+      "variable": "--sem-radius-sm",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        9999
+      ]
+    },
+    {
+      "path": "radius.lg",
+      "variable": "--sem-radius-lg",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        9999
+      ]
+    },
+    {
+      "path": "radius.full",
+      "variable": "--sem-radius-full",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        9999
+      ]
+    },
+    {
+      "path": "elevation.flat",
+      "variable": "--sem-elevation-flat",
+      "type": "shadow",
+      "required": false,
+      "perMode": true
+    },
+    {
+      "path": "elevation.low",
+      "variable": "--sem-elevation-low",
+      "type": "shadow",
+      "required": false,
+      "perMode": true
+    },
+    {
+      "path": "elevation.medium",
+      "variable": "--sem-elevation-medium",
+      "type": "shadow",
+      "required": false,
+      "perMode": true
+    },
+    {
+      "path": "motion.duration.fast",
+      "variable": "--sem-motion-duration-fast",
+      "type": "duration",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "motion.duration.normal",
+      "variable": "--sem-motion-duration-normal",
+      "type": "duration",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "motion.duration.slow",
+      "variable": "--sem-motion-duration-slow",
+      "type": "duration",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "motion.easing.standard",
+      "variable": "--sem-motion-easing-standard",
+      "type": "cubicBezier",
+      "required": false,
+      "perMode": false
+    },
+    {
+      "path": "space.0",
+      "variable": "--sem-space-0",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.1",
+      "variable": "--sem-space-1",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.2",
+      "variable": "--sem-space-2",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.3",
+      "variable": "--sem-space-3",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.4",
+      "variable": "--sem-space-4",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.5",
+      "variable": "--sem-space-5",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.6",
+      "variable": "--sem-space-6",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.7",
+      "variable": "--sem-space-7",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.8",
+      "variable": "--sem-space-8",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.9",
+      "variable": "--sem-space-9",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.10",
+      "variable": "--sem-space-10",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.11",
+      "variable": "--sem-space-11",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    },
+    {
+      "path": "space.12",
+      "variable": "--sem-space-12",
+      "type": "dimension",
+      "required": false,
+      "perMode": false,
+      "range": [
+        0,
+        256
+      ]
+    }
+  ],
+  "contrast": [
+    {
+      "foreground": "color.on-primary",
+      "background": "color.primary",
+      "required": 4.5
+    },
+    {
+      "foreground": "color.on-surface",
+      "background": "color.surface",
+      "required": 4.5
+    },
+    {
+      "foreground": "color.on-surface-variant",
+      "background": "color.surface-variant",
+      "required": 4.5
+    },
+    {
+      "foreground": "color.on-accent",
+      "background": "color.accent",
+      "required": 4.5
+    },
+    {
+      "foreground": "color.focus-ring",
+      "background": "color.surface",
+      "required": 3
+    },
+    {
+      "foreground": "color.outline",
+      "background": "color.surface",
+      "required": 3
+    },
+    {
+      "foreground": "color.primary",
+      "background": "color.surface",
+      "required": 3
+    },
+    {
+      "foreground": "color.danger",
+      "background": "color.surface",
+      "required": 3
+    },
+    {
+      "foreground": "color.success",
+      "background": "color.surface",
+      "required": 3
+    },
+    {
+      "foreground": "color.warning",
+      "background": "color.surface",
+      "required": 3
+    },
+    {
+      "foreground": "color.on-surface",
+      "background": "color.surface-variant",
+      "required": 4.5
+    }
+  ],
+  "extensionName": "^[a-z][a-z0-9-]{0,40}$"
+}
